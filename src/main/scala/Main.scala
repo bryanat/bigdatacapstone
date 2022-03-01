@@ -20,10 +20,11 @@ import consumerpack._
 import contextpack._
 
 object Main {
-  println("Main app started")
+  def main(args: Array[String]) = {
+    println("Main app started")
 
-  MainKafka.startMainKafka()
-  MainProducer.startMainProducer()
-  MainConsumer.startMainConsumer()
-
+    MainKafka.startMainKafka()
+    MainProducer.startMainProducer()
+    MainConsumer.startMainConsumer()
+  }
 }
