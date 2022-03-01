@@ -1,7 +1,7 @@
 
 scalaVersion := "2.11.12"
 
-name := "bigdatacapstone"
+name := "P3"
 organization := "rev"
 version := "1.0"
 
@@ -12,6 +12,7 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-hive" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % "2.4.8"
+libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8"
 
 // Kafka
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
@@ -24,4 +25,6 @@ libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka" % "1.6.3"
 // libraryDependencies += "io.circe" %% "circe-core" % "0.14.1"
 // libraryDependencies += "io.circe" %% "circe-generic" % "0.14.1"
 // libraryDependencies += "io.circe" %% "circe-parser" % "0.14.1"
+
+// https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-kafka-0-10
 
