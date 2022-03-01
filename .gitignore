@@ -1,0 +1,10 @@
+.bloop
+.metals
+.vscode
+.bsp
+.idea
+dataset-offline
+metastore_db
+project
+spark-warehouse
+target
