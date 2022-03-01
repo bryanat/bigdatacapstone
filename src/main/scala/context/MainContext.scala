@@ -6,6 +6,7 @@ import org.apache.spark.streaming._
 import org.apache.spark.sql._
 
 object MainContext {
+    
   def startMainContext(): Unit = {
     println("Main Context started...")
 

@@ -14,9 +14,9 @@ import org.apache.spark.sql._
 import contextpack._
 
 object MainKafka {
-  println("Main Kafka started...")
-
+    
   def startMainKafka(): Unit = {
+    println("Main Kafka started...")
     val kafkaParams = Map[String, Object](
     "bootstrap.servers" -> "localhost:9092,anotherhost:9092",
     "key.deserializer" -> classOf[StringDeserializer],
