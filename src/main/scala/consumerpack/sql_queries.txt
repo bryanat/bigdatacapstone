@@ -1,0 +1,13 @@
+5. change in price/cost ("sale") for products by timeframe
+
+-- with extract()
+select price as sale, extract (year_month from datetime) from TABLE_NAME
+
+-- with REGEXP()
+select price as sale from TABLE_NAME where datetime REGEXP '%[1-2][0-9][0-9][0-9]-[0-1][0-9]%';
+
+
+6. popular cities/countries by most purchases
+
+select city, sum(purchase) from TABLE_NAME group by city
+select country, sum(purchase) from TABLE_NAME group by country
