@@ -88,7 +88,27 @@ object MainKafka {
     ----------------------------------
     //lists all the topics - handy for debugging
     kafka.topics.sh --bootstrap-server 127.0.0.1:9092 --list
+    ----------------------------------
+    !Actual topic creation:
+    
+    Main topics:
 
+    bin/kafka-topics.sh --create --zookeeper localhost:9092 \
+      --replication-factor 1 --partitions 1 \
+      --topic _orderall
+
+    bin/kafka-topics.sh --create --zookeeper localhost:9092 \
+      --replication-factor 1 --partitions 1 \
+      --topic Consumer
+
+    bin/kafka-topics.sh --create --zookeeper localhost:9092 \
+      --replication-factor 1 --partitions 1 \
+      --topic Product
+
+    bin/kafka-topics.sh --create --zookeeper localhost:9092 \
+      --replication-factor 1 --partitions 1 \
+      --topic Payment
+    ----------------------------------
 
   */
 
