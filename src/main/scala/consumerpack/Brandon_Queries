@@ -1,0 +1,26 @@
+// order_id | customer_id | customer_name
+// product_id | product_name | product_category
+// payment_type* | qty | price
+// datetime | country | city
+// ecommerce_website_name
+// payment_txn_id | payment_txn_success | failure_reason
+
+1) Most Common payment Methods
+
+SELECT COUNT(payment_type)
+FROM ???
+ORDER BY payment_type DESC
+
+2) Avg purchase cost per person, grouped by ecommerce site
+
+SELECT AVG(price)
+FROM ???
+WHERE payment_txn_success = 'Y'
+GROUP BY customer_id
+
+2a) possible further breakdown by location
+
+SELECT AVG(price), country
+FROM ???
+WHERE payment_txn_success = 'Y'
+GROUP BY customer_id, country
