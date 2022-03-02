@@ -28,6 +28,6 @@ object Main {
     //MainKafka.startMainKafka()
     MainProducer.startMainProducer()
     MainConsumer.startMainConsumer()
-    IDK.startIDK()
+    SparkStreamingContext.startSparkStreamingContext()
   }
 }
