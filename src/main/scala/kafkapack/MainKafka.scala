@@ -86,6 +86,8 @@ object MainKafka {
     3. defines topic '_orderall'
     4. creates topic by calling '--create' command
     ----------------------------------
+    //lists all the topics - handy for debugging
+    kafka.topics.sh --bootstrap-server 127.0.0.1:9092 --list
 
 
   */
