@@ -7,7 +7,7 @@ object IDK {
     println("IDK started...")
     var sc = MainContext.getSparkContext()
     //error happening
-    var filecontents = sc.textFile("/home/bryanat/bigdatacapstone/dataset-online/dstreams/empty-file-just-to-force-gen-dstreams-folder-in-git-push.csv")
+    var filecontents = sc.textFile("file:///C:\\Users\\joyce\\IdeaProjects\\bigdatacapstone\\dataset-online\\dstreams\\empty-file-just-to-force-gen-dstreams-folder-in-git-push.csv")
     println(filecontents.collect().mkString(","))
     //var path = "$TROJAN_HOME/dataset-online/dstreams"
     //DStream from monitored file directory
