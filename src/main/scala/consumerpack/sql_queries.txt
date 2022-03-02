@@ -8,19 +8,32 @@ from TABLE_NAME
 where payment_txt_success = 'N';
 
 
---failed transactions by location
+-- failed transactions by location
 select order_id, payment_txn_id, failure_reason, city, country
 from TABLE_NAME
 where payment_txt_success = 'N';
 
 
---failed transactions by price
+-- failed transactions by price
 select order_id, payment_txn_id, failure_reason, price
 from TABLE_NAME
 where payment_txt_success = 'N';
 
 
---failed transactions by category
+-- failed transactions by category
 select order_id, payment_txn_id, failure_reason, product_category
 from TABLE_NAME
 where payment_txt_success = 'N';
+
+
+-- count of each failure reasons
+select failure_reason, count(payment_txn_id) as quantity
+from TABLE_NAME
+where payment_txt_success = 'N'
+group by failure_reason;
+
+
+-- count of successful transactions vs failure transactions
+select payment_txt_success, count(payment_txn_id) as quantity
+from TABLE_NAME
+group by payment_txt_success;
