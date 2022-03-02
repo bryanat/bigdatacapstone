@@ -22,9 +22,12 @@ import contextpack._
 object Main {
   def main(args: Array[String]) = {
     println("Main app started")
+    //System.setProperty("hadoop.home.dir", "/home/bryanat/hadoop/hadoop-3.2.2")
+    
 
-    MainKafka.startMainKafka()
+    //MainKafka.startMainKafka()
     MainProducer.startMainProducer()
     MainConsumer.startMainConsumer()
+    IDK.startIDK()
   }
 }
