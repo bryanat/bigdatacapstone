@@ -1,0 +1,7 @@
+3.Most Popular dates for Purchases
+  select Order_id extract (mintues from datetime)as mintues from Table_Name
+
+4. Popular product categories/avg price per product
+
+select  product_Categories extract (month from datetime)from TABLE_NAME group by Product_Categories
+select  AVG(price) from TABLE_NAME group by Product_Categories order by asc

@@ -1,5 +1,6 @@
 package kafkapack
 
+
 // Kafka deps
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -17,6 +18,7 @@ object MainKafka {
     
   def startMainKafka(): Unit = {
     println("Main Kafka started...")
+
     val kafkaParams = Map[String, Object](
     "bootstrap.servers" -> "localhost:9092,anotherhost:9092",
     "key.deserializer" -> classOf[StringDeserializer],
