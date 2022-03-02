@@ -38,7 +38,7 @@ object MainKafka {
     ==================================
 
     Super Topic:
-    _Orderall
+    _orderall
 
     3 Main topics:
     Customer
@@ -69,6 +69,25 @@ object MainKafka {
       qty
       failure_reason
       datetime
+  */
+
+  /*
+    ==================================
+    Topic Creation
+    (Transposition of above)
+    ==================================
+    ----------------------------------
+    Example Syntax in console:
+    kafka.topics.sh --bootstrap-server 127.0.0.1:9092 --topic _orderall --create
+
+    Breakdown of steps:
+    1. calls topics .sh (equivelent to .bat in Windows)
+    2. connects to bootstrap server ip 127.0.0.1 at port 9092
+    3. defines topic '_orderall'
+    4. creates topic by calling '--create' command
+    ----------------------------------
+
+
   */
 
   val topics = Array("topicA", "topicB")
