@@ -4,10 +4,10 @@
 select price as sale, extract (year_month from datetime) as YEAR_MONTH from TABLE_NAME order by YEAR_MONTH asc
 
 -- with REGEXP()
-select price as sale, datetime as Year_Month from TABLE_NAME where datetime REGEXP '%[1-2][0-9][0-9][0-9]-[0-1][0-9]%' order by YEAR_MONTH asc;
+select price as sale, datetime as Year_Month from TABLE_NAME where datetime REGEXP '^[1-2][0-9][0-9][0-9]-[0-1][0-9]' order by YEAR_MONTH asc;
 
 -- with rlike()
-select price as sale, datetime as Year_Month from TABLE_NAME where rlike(datetime, %[1-2][0-9][0-9][0-9]-[0-1][0-9]%) order by YEAR_MONTH asc;
+select price as sale, datetime as Year_Month from TABLE_NAME where rlike(datetime, [1-2][0-9][0-9][0-9]-[0-1][0-9]) order by YEAR_MONTH asc;
 
 -- with date_part()
 select price as sale, year('xxxx-xx-xx'), month('xxxx-xx-xx') from TABLE_NAME order by year, month
