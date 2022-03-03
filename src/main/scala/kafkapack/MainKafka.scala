@@ -89,8 +89,10 @@ object MainKafka {
     //lists all the topics - handy for debugging
     kafka.topics.sh --bootstrap-server 127.0.0.1:9092 --list
     ----------------------------------
-    !Actual topic creation:
+    !Mock topic creation:
     
+    //Can there be subtopics and are they partitions?
+    //source of question https://hevodata.com/learn/kafka-topic/#42
     Main topics:
 
     bin/kafka-topics.sh --create --zookeeper localhost:9092 \
@@ -109,10 +111,10 @@ object MainKafka {
       --replication-factor 1 --partitions 1 \
       --topic Payment
     ----------------------------------
-
   */
 
-  val topics = Array("topicA", "topicB")
+  val topics = Array("_orderall", "Consumer", "Product", "Payment")
+  val subtopicsConsumer = Array("order_id", "customer_id", "customer_name", "country", "city", "datetime")
   val stream = KafkaUtils.createDirectStream[String, String](
     // StreamingContext below, get current running StreamingContext imported from context package
     ssc,
