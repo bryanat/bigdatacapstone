@@ -1,7 +1,10 @@
 package kafkapack
 
-//import org.apache.kafka.clients.producer._
-//import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, RecordMetadata, ProducerConfig}
+import java.util.concurrent.Future
+import java.util.Properties
+
+
 
 
 object SendToKafka {
@@ -16,7 +19,8 @@ requestSet.foreachPartition((partitions: Iterator[String]) => {
   val producer: KafkaProducer[String, String] = new KafkaProducer[String, String](props)
   partitions.foreach((line: String) => {
     try {
-      producer.send(new ProducerRecord[String, String]("testtopic", line))
+      //var fields= selected fields from lines
+      producer.send(new ProducerRecord[String, String]("testtopic", fields))
     } catch {
       case ex: Exception => {
         log.warn(ex.getMessage, ex)
@@ -25,6 +29,39 @@ requestSet.foreachPartition((partitions: Iterator[String]) => {
   })
 })
 */
+
+
+// var ssc = MainContext.getStreamingContext()
+
+
+// def setProducer(): Unit = {
+//   val props = new Properties();
+//   props.put("bootstrap.servers", "localhost:127.0.0.1:9092");
+//   props.put("acks", "all");
+//   props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+//   props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+ 
+//   val producer = new KafkaProducer[String, String](props);
+//   val dstream = ssc.textFileStream("file:///home/bryanat/bigdatacapstone/dataset-online/dstreams")
+
+// dstream.foreachRDD(rdd => {
+//     rdd.foreachPartition {partitions =>
+//         val producer: KafkaProducer[String, String] = new KafkaProducer[String, String](props)
+//         partitions.foreach((line: String) => {
+//         try {
+//         producer.send(new ProducerRecord[String, String]("testtopic", line))
+//         println("inside producer send")
+        
+//         } catch {
+//         case ex: Exception => {
+//             println("didn't suceed")
+//         }
+//     }
+// })
+// producer.close()
+//     }
+// })
+// }
 
 
 }

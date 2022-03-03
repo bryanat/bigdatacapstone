@@ -1,0 +1,44 @@
+package kafkapack
+import org.apache.spark._
+import org.apache.spark.streaming._
+import org.apache.spark.sql._
+import org.apache.spark.sql.types._
+import org.apache.kafka.common.serialization
+import contextpack._
+
+object StructWrite {
+
+
+    def send(topicName:String, topicFields: Array[String]): Unit={
+    
+  
+        val sc = MainContext.getSparkSession()
+        import sc.implicits._
+
+
+
+        //create schema from csv file
+        val csvschema = new StructType().add("product_id", "string").add("product_name", "string").add("product_category", "string").add("price", "string")
+        val csvDF = sc
+        .readStream
+        .option("sep", ",")
+        .schema(csvschema)      // Specify schema of the csv files
+        .csv("dataset-online/productdata.csv")    // Equivalent to format("csv").load("/path/to/directory")
+
+        //CREATE TOPICS DATAFRAME HERE
+        val topicDF = csvDF.select(topicFields(0), topicFields(1))
+
+        //write kafka schema to topic
+        val ds = csvDF
+        .selectExpr("CAST(value AS STRING)")
+        .writeStream
+        .format("kafka")
+        .option("kafka.bootstrap.servers", "host1:port1,host2:port2")
+        .option("topic", topicName)
+        .start()
+
+    }
+
+
+
+}
