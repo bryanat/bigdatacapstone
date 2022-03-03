@@ -139,7 +139,8 @@ object MainTopics {
   // line -> trim 
   // val captialCaseReg = "([A-Z][a-z]+)".r
 
-   start regex - working template
+  //  start regex - working template
+  /*
   var filename = "dataset-online\\citylist.csv" 
 
   for (line <- Source.fromFile(filename).getLines) { 
@@ -157,7 +158,7 @@ object MainTopics {
 
         // }
       }
-  
+  */
 
   val stream = KafkaUtils.createDirectStream[String, String](
     // StreamingContext below, get current running StreamingContext imported from context package
