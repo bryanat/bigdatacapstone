@@ -19,7 +19,8 @@ requestSet.foreachPartition((partitions: Iterator[String]) => {
   val producer: KafkaProducer[String, String] = new KafkaProducer[String, String](props)
   partitions.foreach((line: String) => {
     try {
-      producer.send(new ProducerRecord[String, String]("testtopic", line))
+      //var fields= selected fields from lines
+      producer.send(new ProducerRecord[String, String]("testtopic", fields))
     } catch {
       case ex: Exception => {
         log.warn(ex.getMessage, ex)
