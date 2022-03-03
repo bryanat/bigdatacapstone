@@ -1,4 +1,6 @@
 package kafkapack
+import contextpack._
+
 
 // Kafka deps
 import org.apache.kafka.clients.consumer.ConsumerRecord

@@ -40,6 +40,11 @@ object MainContext {
     ssc
   }
 
+   //Spark SQL context, SparkSession
+   def getSparkSession(): SparkSession = {
+    val sc = SparkSession.builder().appName("Pthree").config("spark.master", "local").config("spark.driver.memory", "4g").config("spark.executor.memory", "4g").enableHiveSupport().getOrCreate()
+    sc
+  }
 }
 
 /*
