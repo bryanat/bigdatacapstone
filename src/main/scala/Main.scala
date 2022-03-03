@@ -24,17 +24,17 @@ object Main {
     println("Main app started")
     //System.setProperty("hadoop.home.dir", "C://hadoop")
     
-    // Kafka main
-    MainKafka.startMainKafka()
+    ////Kafka main
+    ////MainKafka consumer works
+    //MainKafka.startMainKafka()
     //SparkStreamingContext.startSparkStreamingContext()
+    TestProducer.setProducer()
     
     // Producer main
     //MainProducer.startMainProducer()
 
-    //MainKafka.startMainKafka()
     //MainProducer.startMainProducer()
     //MainConsumer.startMainConsumer()
-    TestProducer.setProducer()
     //SparkStreamingContext.startSparkStreamingContext()
 
   }

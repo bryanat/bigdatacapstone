@@ -7,36 +7,48 @@ import java.util.Properties
 
 object TestProducer {
 
+  def setProducer(): Unit = {
 
-var ssc = MainContext.getStreamingContext()
+    var ssc = MainContext.getStreamingContext()
+  
+    val props = new Properties();
+    props.put("bootstrap.servers", "localhost:9092");
+    props.put("acks", "all");
+    props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+    props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+  
+  //   val producer = new KafkaProducer[String, String](props);
+    val producer = new KafkaProducer[String, String](props);
+    val dstream = ssc.textFileStream("file:///home/bryanat/bigdatacapstone/dataset-online/dstreams")
+  
+    dstream.foreachRDD(rdd => {
 
-
-def setProducer(): Unit = {
-  val props = new Properties();
-  props.put("bootstrap.servers", "localhost:9092");
-  props.put("acks", "all");
-  props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-  props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
- 
-  val producer = new KafkaProducer[String, String](props);
-  val dstream = ssc.textFileStream("file:///home/bryanat/bigdatacapstone/dataset-online/dstreams")
-
-dstream.foreachRDD(rdd => {
-    rdd.foreachPartition {partitions =>
-        val producer: KafkaProducer[String, String] = new KafkaProducer[String, String](props)
-        partitions.foreach((line: String) => {
-        try {
-        producer.send(new ProducerRecord[String, String]("testtopic", line))
-        println("inside producer send")
-        } catch {
-        case ex: Exception => {
-            println("didn't suceed")
-        }
-    }
-})
-producer.close()
-    }
-})
+      val now = System.currentTimeMillis()
+      println(s"Current unix time is: $now")
+  
+      //println(rdd)
+  
+      rdd.foreachPartition {partitions =>
+          val producer: KafkaProducer[String, String] = new KafkaProducer[String, String](props)
+          partitions.foreach((line: String) => {
+          try {
+            var topicName = "urmom"
+            // SEND TO TOPIC AS PRODUCERRECORD
+            producer.send(new ProducerRecord[String, String]("urmom", line))
+            println(line.length)
+            println(s"Producer has published to topic: $topicName")
+            println(line)
+          } catch {
+          case ex: Exception => {
+              println("didn't suceed")
+          }
+      }
+  })
+  }
+  })
+//producer.close()
+    ssc.start()             // Start the computation
+    ssc.awaitTermination()  // Wait for the computation to terminate
 }
 
 // def send(topic: String, key: K, value: V): Future[RecordMetadata] =
