@@ -23,7 +23,7 @@ object Main {
   def main(args: Array[String]) = {
     println("Main app started")
 
-    MainKafka.startMainKafka()
+//    MainKafka.startMainKafka()
     MainProducer.startMainProducer()
     MainConsumer.startMainConsumer()
   }
