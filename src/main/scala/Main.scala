@@ -26,8 +26,9 @@ object Main {
     
 
     //MainKafka.startMainKafka()
-    MainProducer.startMainProducer()
-    MainConsumer.startMainConsumer()
-    SparkStreamingContext.startSparkStreamingContext()
+    //MainProducer.startMainProducer()
+    //MainConsumer.startMainConsumer()
+    TestProducer.setProducer()
+    //SparkStreamingContext.startSparkStreamingContext()
   }
 }
