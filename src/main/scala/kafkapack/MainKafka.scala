@@ -134,12 +134,10 @@ object MainKafka {
   
   //addition of columns to filter out bad data
   //Regex for Uppercase-Lowercase Letters ([A-Z][a-z]+) Capital Case
-  val captialCaseReg = "([A-Z][a-z]+)".r
-  
-  lines.map {
-    case regex(name) => Some(name)
-    case _ => None
-  }
+  // chop up line get every character between column - every 7th column
+  // assume start from string
+  // line -> trim 
+  // val captialCaseReg = "([A-Z][a-z]+)".r
 
   val stream = KafkaUtils.createDirectStream[String, String](
     // StreamingContext below, get current running StreamingContext imported from context package
