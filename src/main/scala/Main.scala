@@ -35,8 +35,8 @@ object Main {
     //MainProducer.startMainProducer()
     //MainConsumer.startMainConsumer()
     //TestProducer.setProducer()
-    StructRead.subscribe()
-    StructWrite.send("topic1", Array("product_id", "product_category"))
+    //StructRead.subscribe()
+    //StructWrite.send("topic1", Array("product_id", "product_category"))
 
     //SparkStreamingContext.startSparkStreamingContext()
 

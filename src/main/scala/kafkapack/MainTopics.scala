@@ -16,7 +16,7 @@ import org.apache.spark.sql._
 
 import contextpack._
 
-object MainKafka {
+object MainTopics {
     
   def startMainKafka(): Unit = {
     println("Main Kafka started...")
@@ -138,6 +138,26 @@ object MainKafka {
   // assume start from string
   // line -> trim 
   // val captialCaseReg = "([A-Z][a-z]+)".r
+
+   start regex - working template
+  var filename = "dataset-online\\citylist.csv" 
+
+  for (line <- Source.fromFile(filename).getLines) { 
+        /*
+         * EACH LOOP IS A LINE IN THE IMPORTED FILE
+         */
+        val regexComma = "(?!,)[^,]*".r // split by comma
+
+        /*
+         * ListOps in constant O(1) time, .prepend (set) is constant, head and tail (get) is constant 
+         */
+        val listOfValues = regexComma.findAllMatchIn(line).toList
+        
+        // if (!= "([A-Z][a-z]+)".r){
+
+        // }
+      }
+  
 
   val stream = KafkaUtils.createDirectStream[String, String](
     // StreamingContext below, get current running StreamingContext imported from context package
