@@ -8,3 +8,5 @@ metastore_db
 project
 spark-warehouse
 target
+RYProducerTest.scala
+RYConsumer.scala
