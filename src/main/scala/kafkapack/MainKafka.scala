@@ -2,10 +2,13 @@ package kafkapack
 
 // Kafka deps
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.spark.streaming.kafka010._
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
+
+
 // Spark deps
 import org.apache.spark._
 import org.apache.spark.streaming._
@@ -112,9 +115,15 @@ object MainKafka {
       --topic Payment
     ----------------------------------
   */
-
+  
+  //Declare Main topics
   val topics = Array("_orderall", "Consumer", "Product", "Payment")
+
+  //two approaches to subtopics: create additional array or integrate the data into partitions of main topics
+  //below is what the arrray approach may look like
+  //List for regex
   val subtopicsConsumer = Array("order_id", "customer_id", "customer_name", "country", "city", "datetime")
+
   val stream = KafkaUtils.createDirectStream[String, String](
     // StreamingContext below, get current running StreamingContext imported from context package
     ssc,
