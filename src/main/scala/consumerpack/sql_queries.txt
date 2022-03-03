@@ -12,5 +12,5 @@ select price as sale, datetime as Year_Month from TABLE_NAME where rlike(datetim
 
 6. popular cities/countries by most purchases
 
-select city, sum(payment_txn_id) as purchase_count from TABLE_NAME where payment_txn_success = 'Y' group by city
-select country, sum(payment_txn_id) as purchase_count from TABLE_NAME where payment_txn_success = 'Y' group by country
+select city, sum(payment_txn_id) as purchase_count from TABLE_NAME where payment_txn_success = 'Y' group by city order by city
+select country, sum(payment_txn_id) as purchase_count from TABLE_NAME where payment_txn_success = 'Y' group by country order by country
