@@ -121,8 +121,25 @@ object MainKafka {
 
   //two approaches to subtopics: create additional array or integrate the data into partitions of main topics
   //below is what the arrray approach may look like
-  //List for regex
-  val subtopicsConsumer = Array("order_id", "customer_id", "customer_name", "country", "city", "datetime")
+  //List for regex - has all of the data columns for regex to refer to
+  //purpose for this is to ennsure match of columns
+
+  val regexParseColumns = List("order_id", "customer_id",
+      "customer_name", "country", "city",
+      "datetime", "order_id", "product_id", 
+      "product_name", "product_category", "datetime", 
+      "order_id", "payment_type", "payment_txn_id", 
+      "payment_txn_success", "price", "qty", 
+      "failure_reason", "datetime")
+  
+  //addition of columns to filter out bad data
+  //Regex for Uppercase-Lowercase Letters ([A-Z][a-z]+) Capital Case
+  val captialCaseReg = "([A-Z][a-z]+)".r
+  
+  lines.map {
+    case regex(name) => Some(name)
+    case _ => None
+  }
 
   val stream = KafkaUtils.createDirectStream[String, String](
     // StreamingContext below, get current running StreamingContext imported from context package
