@@ -13,26 +13,24 @@ import org.apache.spark.sql._
 
 import contextpack._
 
-object MainKafka {
+object MainConsumer {
     
-  def startMainKafka(): Unit = {
+  def startMainConsumer(): Unit = {
     println("Main Kafka started...")
 
     val sconf = new SparkConf().setMaster("local[*]").setAppName("P3").setSparkHome("C:\\Spark")
     val sc = new SparkContext(sconf)
     val ssc  = new StreamingContext(sc, Seconds(2))
-    
-
-
+    ssc.sparkContext.setLogLevel("ERROR")
     
     val kafkaParams = Map[String, Object](
-    "bootstrap.servers" -> "localhost:9092,anotherhost:9092",
+    "bootstrap.servers" -> "localhost:9092",
     "key.deserializer" -> classOf[StringDeserializer],
     "value.deserializer" -> classOf[StringDeserializer],
     "group.id" -> "use_a_separate_group_id_for_each_stream",
     "auto.offset.reset" -> "latest",
     "enable.auto.commit" -> (false: java.lang.Boolean)
-  )
+  )  
 
   val topics = Array("topicA", "topicB")
   val stream = KafkaUtils.createDirectStream[String, String](
@@ -43,29 +41,31 @@ object MainKafka {
   )
 
   stream.foreachRDD { rdd =>
-  val offsetRanges = rdd.collect().mkString(",")
-  println(offsetRanges)
 
-  // begin your transaction
+    val now = System.currentTimeMillis()
+    println(s"Current unix time is: $now")
 
-  // update results
-  // update offsets where the end of existing offsets matches the beginning of this batch of offsets
-  // assert that offsets were updated correctly
+    val offsetRanges = rdd.collect().mkString(",")
+    println(offsetRanges)
 
-  // end your transaction
-  }
+    // begin your transaction
 
-  ssc.start()             // Start the computation
-  ssc.awaitTermination()  // Wait for the computation to terminate
+    // update results
+    // update offsets where the end of existing offsets matches the beginning of this batch of offsets
+    // assert that offsets were updated correctly
 
+    // end your transaction
+    }
 
+    ssc.start()             // Start the computation
+    ssc.awaitTermination()  // Wait for the computation to terminate
 
+    //stream.map(record => (record.key, record.value))
 
-  //stream.map(record => (record.key, record.value))
-  
-  }
+    }
 }
 
 
 //consumer?
 //val stream = KafkaUtils.createStream(ssc, "localhost:9092", "spark-streaming-consumer-group", Map("test" -> 1))
+
