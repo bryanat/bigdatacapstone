@@ -24,22 +24,35 @@ object Main {
     println("Main app started")
     //System.setProperty("hadoop.home.dir", "C://hadoop")
     
+<<<<<<< HEAD
     ////Kafka main
     ////MainConsumer consumer works
     //MainConsumer.startMainConsumer()
 
     //SparkStreamingContext.startSparkStreamingContext()
     TestProducer.setProducer()
+=======
+    // Kafka main
+    //sMainKafka.startMainKafka()
+    //SparkStreamingContext.startSparkStreamingContext()
+>>>>>>> 7535e685694340f3920a9810de2177b187955e10
     
     // Producer main
     //MainProducer.startMainProducer()
 
+<<<<<<< HEAD
     //MainProducer.startMainProducer()
     //MainConsumer.startMainConsumer()
 
     //TestProducer.setProducer()
     
     // Spark Structured Streaming + Kafka
+=======
+    //MainKafka.startMainKafka()
+    //MainProducer.startMainProducer()
+    //MainConsumer.startMainConsumer()
+    //TestProducer.setProducer()
+>>>>>>> 7535e685694340f3920a9810de2177b187955e10
     //StructRead.subscribe()
     //StructWrite.send("topic1", Array("product_id", "product_category"))
 
