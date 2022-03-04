@@ -60,7 +60,7 @@ class RYConsumer {
     table.createTempView("t1")
 //    5. change in price/cost ("sale") for products by timeframe
 
-    val table2 = table.select(col("datetime"),to_date(col("DateTime"), "MM/dd/yyyy").as("DateTime"))
+    val table2 = table.select(col("datetime"), to_date(col("DateTime"), "MM/dd/yyyy").as("DateTime"))
     table2.createTempView("t2")
     spark.sql("select t1.product_name, t1.price as sale, t2.DateTime from t1 left join t2 using (datetime) order by t2.DateTime asc").show()
 
