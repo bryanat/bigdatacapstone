@@ -17,7 +17,7 @@ object ProducerStreaming {
   //create streaming source
   val ssc = MainContext.getStreamingContext()
   //where is our source of streaming file?
-  var dstream = ssc.textFileStream("file:///home/bryanat/bigdatacapstone/dataset-online/dstream")
+  var dstream = ssc.textFileStream("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/dstream")
 
   //Producer team will stream their line by line stream data to socketTextStream("ec2-3-81-9-55.compute-1.amazonaws.com", 9092)
   // Create a DStream that will connect to hostname:port, like localhost:9999
@@ -44,21 +44,22 @@ object ProducerStreaming {
   //send the producer message with respect to a particular topic 
   dstream.foreachRDD { rdd =>
     val testrdd = rdd.collect()
-    println(testrdd.mkString)
+    // println(testrdd.mkString)
     println("inside rdd is running")
-    val metadata = kafkasink.value.testsend(topic, "bryan")
-    println(metadata.topic())
-    kafkasink.value.send(topic, "tebbles")
-    // rdd.foreachPartition { partitionOfRecords =>
-    //   println("inside foreachPartition running") 
-    // partitionOfRecords.foreach({message => 
-    //   //regex/ pick your fields in record
-    //     println("inside partitioned record is running")
-    //     val metadata = kafkasink.value.testsend(topic, message)
-    //     println(metadata.topic())
-    //     kafkasink.value.send(topic, message)
-    // })
-    // }
+    // val metadata = kafkasink.value.testsend(topic, "bryan")
+    // println(metadata.topic())
+    // kafkasink.value.send(topic, "tebbles")
+    rdd.foreachPartition { partitionOfRecords =>
+      println("inside foreachPartition running") 
+    partitionOfRecords.foreach({message => 
+      //regex/ pick your fields in record
+        println("inside partitioned record is running")
+        val metadata = kafkasink.value.testsend(topic, message)
+        println(metadata.topic())
+        kafkasink.value.send(topic, message)
+        println(message)
+    })
+    }
   }
   ssc.start()             // Start the computation
   ssc.awaitTermination()  // Wait for the computation to terminate
