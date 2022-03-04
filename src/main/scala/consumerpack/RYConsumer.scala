@@ -5,19 +5,24 @@ import org.apache.kafka.clients.consumer.ConsumerConfig._
 import org.apache.kafka.clients.consumer.{ConsumerRecord, ConsumerRecords, KafkaConsumer}
 import org.apache.kafka.common.serialization.{IntegerDeserializer, StringDeserializer}
 import org.apache.spark.sql._
+import org.apache.spark.sql.catalyst.dsl.expressions.{DslExpression, StringToAttributeConversionHelper}
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types.DateType
 
 import java.time.Duration
 import scala.collection.JavaConverters._
 
 class RYConsumer {
   System.setProperty("hadoop.home.dir", "C:\\winutils")
+
   val spark = SparkSession.builder()
     .appName("ConsumerQuery")
     .config("spark.master", "local")
     .getOrCreate()
 
 
-  val df = spark.read.json("dataset-offline/yelp_academic_dataset_business.json")
+  val table = spark.read.option("delimiter", ",").option("header", "true").csv("dataset-offline/p3_dummy_data.csv")
+
 
   def consumerTest(): Unit = {
 
@@ -52,21 +57,16 @@ class RYConsumer {
   }
 
   def queryConsumer():Unit = {
-
+    table.createTempView("t1")
 //    5. change in price/cost ("sale") for products by timeframe
-//
-//    -- with extract()
-//    select price as sale, extract (year_month from datetime) as YEAR_MONTH from TABLE_NAME order by YEAR_MONTH asc
-//
-//    -- with REGEXP()
-//    select price as sale, datetime as Year_Month from TABLE_NAME where datetime REGEXP '^[1-2][0-9][0-9][0-9]-[0-1][0-9]' order by YEAR_MONTH asc;
 
-    df.show(30)
+    val table2 = table.select(col("datetime"),to_date(col("DateTime"), "MM/dd/yyyy").as("DateTime"))
+    table2.createTempView("t2")
+    spark.sql("select t1.product_name, t1.price as sale, t2.DateTime from t1 left join t2 using (datetime) order by t2.DateTime asc").show()
 
-//    val dfQ5 = df2.groupBy("name","city", "review_count")
-//      .agg(avg("stars").as("review_score")).sort(col("city"))
-//      .sort(col("review_score").desc).sort(col("review_count").desc).where(col("review_score") >= 4.5) limit 10
-//    dfQ5.show(10)
+//    6. popular cities/countries by most purchases
 
+    spark.sql("select city, count(payment_txn_id) as purchase_count from t1 where payment_txn_success = 'Y' group by city order by purchase_count desc").show()
+    spark.sql("select country, count(payment_txn_id) as purchase_count from t1 where payment_txn_success = 'Y' group by country order by purchase_count desc").show()
   }
 }
