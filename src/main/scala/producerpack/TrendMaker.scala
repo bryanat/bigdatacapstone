@@ -14,7 +14,6 @@ class TrendThread(data:Vector[String]) extends Runnable{
   val dat = data
 
   override def run(): Unit = {
-
     println( Thread.currentThread().getName() + " is running a thread!")
     dat.foreach(p => println(p))
   }
@@ -35,22 +34,22 @@ class TrendMaker {
 
   def startTreads():Unit= {
     //this starts the threads by first running through the currently running threads adn removing the dead ones.
-    for(i<-0 until runningThreads.length){
+    Thread.sleep(1000)
+    println(runningThreads.length)
+    while (runningThreads.length > 0){
       //if there is a running thread, then we want toi leave it alone. otherwise, we need to stop it
       //this can be removed
-      if(!runningThreads(i).isAlive){
-        runningThreads.remove(i)
+      if(!runningThreads(runningThreads.length-1).isAlive){
+        runningThreads.remove(runningThreads.length-1)
+        println("Remaining threads in running " +  runningThreads.length.toString)
       }
     }
+
     //add the new threads to running threads
     while(waitingThreads.nonEmpty && runningThreads.length < threadCount){
       runningThreads += waitingThreads.pop()
     }
     runningThreads.foreach(p => {if (!p.isAlive) p.start()})
   }
-  def startAllWaitingThreads():Unit = {
-    while(waitingThreads.nonEmpty){
-      startTreads()
-    }
-  }
+  println("Remaining threads in running " +  runningThreads.length.toString)
 }
