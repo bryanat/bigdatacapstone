@@ -1,6 +1,7 @@
 package kafkapack
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, RecordMetadata}
 import java.util.Properties
+import java.util.concurrent.Future
 import scala.collection.mutable.HashMap
 
 
@@ -11,6 +12,7 @@ class KafkaSink(createProducer: ()=>KafkaProducer[String, String]) extends Seria
 
   //sends the producer record
   def send(topic: String, message: String): Unit= producer.send(new ProducerRecord(topic, message))
+  def testsend(topic: String, message: String): RecordMetadata = producer.send(new ProducerRecord(topic, message)).get()
 
 }
   
@@ -27,6 +29,7 @@ class KafkaSink(createProducer: ()=>KafkaProducer[String, String]) extends Seria
 
         val producerFunction = () => {
             val producer = new KafkaProducer[String, String](props)
+            println("producer created in kafka sink 398ugbgai;vjdv")
             //close kafka producer before shutdown of JVM so buffered messages are not lost
             sys.ShutdownHookThread {
             producer.close()

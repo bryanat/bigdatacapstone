@@ -24,7 +24,7 @@ object Main {
     println("Main app started")
 
     MainKafka.startMainKafka()
-    MainProducer.startMainProducer()
-    MainConsumer.startMainConsumer()
+    // MainProducer.startMainProducer()
+    // MainConsumer.startMainConsumer()
   }
 }

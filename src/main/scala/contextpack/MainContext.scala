@@ -14,8 +14,6 @@ object MainContext {
     getSparkContext()
     getStreamingContext()
     // Spark log level set to not print INFO lines, accessed through the SparkContext (sc) "The associated SparkContext [sc beneath ssc] can be accessed using ssc.sparkContext ~= sc"
-    getSparkContext().setLogLevel("ERROR")
-    getStreamingContext().sparkContext.setLogLevel("ERROR")
   }
 
   def getSparkConf(): SparkConf = {
@@ -27,6 +25,7 @@ object MainContext {
   def getSparkContext(): SparkContext = {
     // Spark SparkContext (sc) is main entrypoint for Spark API
     val sc = new SparkContext(getSparkConf())
+    sc.setLogLevel("ERROR")
     sc
   }
 
@@ -34,6 +33,7 @@ object MainContext {
   def getStreamingContext(): StreamingContext = {
     // Spark StreamingContext (ssc) is main entrypoint for Spark Streaming API, built on top of SparkContext (sc)
     val ssc  = new StreamingContext(getSparkContext(), Seconds(2))
+    ssc.sparkContext.setLogLevel("ERROR")
     ssc
   }
 
