@@ -23,6 +23,8 @@ class RYConsumer {
 
   val table = spark.read.option("delimiter", ",").option("header", "true").csv("dataset-offline/p3_dummy_data.csv")
 
+  val successYes = "Y"
+  val successNo = "N"
 
   def consumerTest(): Unit = {
 
@@ -62,11 +64,11 @@ class RYConsumer {
 
     val table2 = table.select(col("datetime"), to_date(col("DateTime"), "MM/dd/yyyy").as("DateTime"))
     table2.createTempView("t2")
-    spark.sql("select t1.product_name, t1.price as sale, t2.DateTime from t1 left join t2 using (datetime) order by t2.DateTime asc").show()
+    //spark.sql("select t1.product_name, t1.price as sale, t2.DateTime from t1 left join t2 using (datetime) order by t2.DateTime asc").show()
 
 //    6. popular cities/countries by most purchases
 
-    spark.sql("select city, count(payment_txn_id) as purchase_count from t1 where payment_txn_success = 'Y' group by city order by purchase_count desc").show()
-    spark.sql("select country, count(payment_txn_id) as purchase_count from t1 where payment_txn_success = 'Y' group by country order by purchase_count desc").show()
+    spark.sql(s"select city, count(payment_txn_id) as purchase_count from t1 where payment_txn_success = '$successYes' group by city order by purchase_count desc").show()
+    spark.sql(s"select country, count(payment_txn_id) as purchase_count from t1 where payment_txn_success = '$successYes' group by country order by purchase_count desc").show()
   }
 }
