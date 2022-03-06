@@ -33,7 +33,10 @@ object trend1 {
     val test2 = DataCollection.getSportsList(spark)
 //    test.foreach(println)
 //    test2.foreach(println)
-    MaxTest.getMaxPrice(spark)
+    val test3 = DataCollection.filterByPriceAbove(spark, 500)
+    test3.foreach(println)
+    val test4 = DataCollection.filterByPriceBelow(spark, 500)
+    test4.foreach(println)
 
 //    println(customerVector(49))
 //    println(customerVector(49).get(1))

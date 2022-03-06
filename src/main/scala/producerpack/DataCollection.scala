@@ -197,4 +197,71 @@ object DataCollection {
     resultVector
   }
 
+  def getMaxPrice(spark: SparkSession): Double = {
+    val df = spark.read.csv("dataset-online/productdata.csv")
+    //Price vector first row contains a string "price" from header resulting in error during math comparison "<" & ">"
+    //there is one string and a ton of integers get rid of one string before creating the vector
+    //question for Cameron: can we do .toDouble ???
+
+    val productVector = DataCollection.getProductDataList(spark)
+    val listOfPrices = ListBuffer("1.0")
+    var tempPrice = ""
+
+    for (i <- 0 until productVector.length - 1) {
+      tempPrice = productVector(i).get(3).asInstanceOf[String]
+      listOfPrices += tempPrice
+    }
+    listOfPrices.remove(1)
+    var listOfPricesDoubles = listOfPrices.map(x => x.toDouble)
+    val maxPrice = listOfPricesDoubles.max
+    maxPrice
+  }
+
+  def filterByPriceAbove(spark: SparkSession, filter: Double): Vector[Row] ={
+    val productVector = DataCollection.getProductDataList(spark)
+    val listOfPrices = ListBuffer("1.0")
+    var tempPrice = ""
+
+    for (i <- 0 until productVector.length - 1) {
+      tempPrice = productVector(i).get(3).asInstanceOf[String]
+      listOfPrices += tempPrice
+    }
+
+
+    var indexKeeper = ListBuffer[Int]()
+    var resultList = ListBuffer[Row]()
+
+    for (i <- 0 to productVector.length - 2) {
+      if (listOfPrices(i).toDouble > filter){
+        indexKeeper += i
+      }
+      indexKeeper.foreach(x => resultList += productVector(x))
+    }
+    val resultVector = resultList.toVector
+    resultVector
+  }
+
+  def filterByPriceBelow(spark: SparkSession, filter: Double): Vector[Row] ={
+    val productVector = DataCollection.getProductDataList(spark)
+    val listOfPrices = ListBuffer("1.0")
+    var tempPrice = ""
+
+    for (i <- 0 until productVector.length - 1) {
+      tempPrice = productVector(i).get(3).asInstanceOf[String]
+      listOfPrices += tempPrice
+    }
+
+    var indexKeeper = ListBuffer[Int]()
+    var resultList = ListBuffer[Row]()
+
+    for (i <- 0 to productVector.length - 2) {
+      if (listOfPrices(i).toDouble < filter){
+        indexKeeper += i
+      }
+      indexKeeper.foreach(x => resultList += productVector(x))
+    }
+    val resultVector = resultList.toVector
+    resultVector
+  }
+
 }
