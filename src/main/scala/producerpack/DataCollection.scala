@@ -6,16 +6,16 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 
-object DataCollection {
+class DataCollection {
 
-//  System.setProperty("hadoop.home.dir", "c:/winutils")
-//  val spark = SparkSession
-//    .builder()
-//    .appName("project1")
-//    .config("spark.master","local")
-//    .enableHiveSupport()
-//    .getOrCreate()
-//  spark.sparkContext.setLogLevel("ERROR")
+  //  System.setProperty("hadoop.home.dir", "c:/winutils")
+  //  val spark = SparkSession
+  //    .builder()
+  //    .appName("project1")
+  //    .config("spark.master","local")
+  //    .enableHiveSupport()
+  //    .getOrCreate()
+  //  spark.sparkContext.setLogLevel("ERROR")
 
   //getProductDataList will return the following Rows in a Vector: [product_id, product_name, product_category, price]
   def getProductDataList(spark: SparkSession): Vector[Row] ={
@@ -64,12 +64,12 @@ object DataCollection {
 
   //getComputersList will return a vector with ONLY the rows that contain data about computer sales.
   def getComputersList(spark: SparkSession): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
 
     for (i <- 0 until productVector.length-1){
       if (productVector(i).get(2).toString == "Computers"){
-          productListBuffer += productVector(i)
+        productListBuffer += productVector(i)
       }
     }
     val productList = productListBuffer.toList
@@ -79,7 +79,7 @@ object DataCollection {
 
   //getClothingList will return a vector with ONLY the rows that contain data about clothing sales.
   def getClothingList(spark: SparkSession): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
 
     for (i <- 0 until productVector.length-1){
@@ -94,7 +94,7 @@ object DataCollection {
 
   //getHomeGardenList will return a vector with ONLY the rows that contain data about Home & Garden sales.
   def getHomeGardenList(spark: SparkSession): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
 
     for (i <- 0 until productVector.length-1){
@@ -109,7 +109,7 @@ object DataCollection {
 
   //getGroceryList will return a vector with ONLY the rows that contain data about Grocery sales.
   def getGroceryList(spark: SparkSession): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
 
     for (i <- 0 until productVector.length-1){
@@ -124,7 +124,7 @@ object DataCollection {
 
   //getSportsList will return a vector with ONLY the rows that contain data about Sports sales.
   def getSportsList(spark: SparkSession): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
 
     for (i <- 0 until productVector.length-1){
@@ -139,7 +139,7 @@ object DataCollection {
 
   //getAutomotiveList will return a vector with ONLY the rows that contain data about Automotive sales.
   def getAutomotiveList(spark: SparkSession): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
 
     for (i <- 0 until productVector.length-1){
@@ -154,7 +154,7 @@ object DataCollection {
 
   //getElectronicsList will return a vector with ONLY the rows that contain data about electronics sales.
   def getElectronicsList(spark: SparkSession): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
 
     for (i <- 0 until productVector.length-1){
@@ -169,7 +169,7 @@ object DataCollection {
 
   //getShoesList will return a vector with ONLY the rows that contain data about shoe sales.
   def getShoesList(spark: SparkSession): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
 
     for (i <- 0 until productVector.length-1){
@@ -184,7 +184,7 @@ object DataCollection {
 
   //getBooksList will return a vector with ONLY the rows that contain data about Book sales.
   def getBooksList(spark: SparkSession): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
 
     for (i <- 0 until productVector.length-1){
@@ -203,7 +203,7 @@ object DataCollection {
     //there is one string and a ton of integers get rid of one string before creating the vector
     //question for Cameron: can we do .toDouble ???
 
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val listOfPrices = ListBuffer("1.0")
     var tempPrice = ""
 
@@ -218,7 +218,7 @@ object DataCollection {
   }
 
   def filterByPriceAbove(spark: SparkSession, filter: Double): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val listOfPrices = ListBuffer("1.0")
     var tempPrice = ""
 
@@ -242,7 +242,7 @@ object DataCollection {
   }
 
   def filterByPriceBelow(spark: SparkSession, filter: Double): Vector[Row] ={
-    val productVector = DataCollection.getProductDataList(spark)
+    val productVector = getProductDataList(spark)
     val listOfPrices = ListBuffer("1.0")
     var tempPrice = ""
 
