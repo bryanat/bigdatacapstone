@@ -1,12 +1,15 @@
 package kafkapack
-import contextpack._
 import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
 
+import contextpack._
+
 // import scala.collection.JavaConverters._
 // import org.apache.kafka.clients.consumer.KafkaConsumer
 // import org.apache.kafka.common.serialization.StringDeserializer 
+
+
 
 object StructRead {
 
