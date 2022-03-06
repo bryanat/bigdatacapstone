@@ -19,24 +19,39 @@ object trend1 {
   spark.sparkContext.setLogLevel("ERROR")
 
   val trendTag = "TR1"
+  val rs = new RandomSelections
+  val dc = new DataCollection
 
   //Set up the data that we will be using
-  var locationVector = DataCollection.getCityCountryList(spark)
-  var customerVector = DataCollection.getCustomersList(spark)
-  var failureVector = DataCollection.getfailReasonsList(spark)
-  var websiteVector = DataCollection.getWebsiteList(spark)
-  var electronicVector = DataCollection.getElectronicsList(spark)
+  var locationVector = dc.getCityCountryList(spark)
+  var customerVector = dc.getCustomersList(spark)
+  var failureVector = dc.getfailReasonsList(spark)
+  var websiteVector = dc.getWebsiteList(spark)
+  var electronicVector = dc.getElectronicsList(spark)
   val random = new Random()
 
+
   def main(args: Array[String]): Unit = {
-    val test = DataCollection.getBooksList(spark)
-    val test2 = DataCollection.getSportsList(spark)
+    val test = dc.getBooksList(spark)
+    val test2 = dc.getSportsList(spark)
 //    test.foreach(println)
 //    test2.foreach(println)
-    val test3 = DataCollection.filterByPriceAbove(spark, 500)
-    test3.foreach(println)
-    val test4 = DataCollection.filterByPriceBelow(spark, 500)
-    test4.foreach(println)
+//    val test3 = dc.filterByPriceAbove(spark, 500)
+//    test3.foreach(println)
+//    val test4 = dc.filterByPriceBelow(spark, 500)
+//    test4.foreach(println)
+    println(rs.getRandomCustomerID(spark))
+    println(rs.getRandomCustomerID(spark))
+    println(rs.getRandomCustomerID(spark))
+    println(rs.getRandomWebsite(spark))
+    println(rs.getRandomWebsite(spark))
+    println(rs.getRandomWebsite(spark))
+    println(rs.getRandomProduct(spark))
+    println(rs.getRandomProduct(spark))
+    println(rs.getRandomProduct(spark))
+    println(rs.getRandomCategory(spark))
+    println(rs.getRandomCategory(spark))
+    println(rs.getRandomCategory(spark))
 
 //    println(customerVector(49))
 //    println(customerVector(49).get(1))
