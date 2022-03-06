@@ -8,14 +8,8 @@ import scala.collection.mutable.ListBuffer
 
 class DataCollection {
 
-  //  System.setProperty("hadoop.home.dir", "c:/winutils")
-  //  val spark = SparkSession
-  //    .builder()
-  //    .appName("project1")
-  //    .config("spark.master","local")
-  //    .enableHiveSupport()
-  //    .getOrCreate()
-  //  spark.sparkContext.setLogLevel("ERROR")
+  // These first get Methods are created to easily import our data from CSV files into vectors. This process involves
+  // CSV --> DataFrame --> List --> Scala List --> Vector
 
   //getProductDataList will return the following Rows in a Vector: [product_id, product_name, product_category, price]
   def getProductDataList(spark: SparkSession): Vector[Row] ={
@@ -197,12 +191,9 @@ class DataCollection {
     resultVector
   }
 
+  //We will collect all of our prices into a list, convert the list into a list of doubles, apply the max function, and then return the result.
   def getMaxPrice(spark: SparkSession): Double = {
     val df = spark.read.csv("dataset-online/productdata.csv")
-    //Price vector first row contains a string "price" from header resulting in error during math comparison "<" & ">"
-    //there is one string and a ton of integers get rid of one string before creating the vector
-    //question for Cameron: can we do .toDouble ???
-
     val productVector = getProductDataList(spark)
     val listOfPrices = ListBuffer("1.0")
     var tempPrice = ""
@@ -217,19 +208,20 @@ class DataCollection {
     maxPrice
   }
 
+  // The main idea behind the filtering system is to keep a record of all index's that contain a price above a certain amount.
+  // After we've collected the indexes, we will pull ONLY those indexes and add them to a new list, which will then be turned into a vector.
+  // This method relies that the order of our products will stay static (which they will be, I'm assuming)
   def filterByPriceAbove(spark: SparkSession, filter: Double): Vector[Row] ={
     val productVector = getProductDataList(spark)
     val listOfPrices = ListBuffer("1.0")
     var tempPrice = ""
+    var indexKeeper = ListBuffer[Int]()
+    var resultList = ListBuffer[Row]()
 
     for (i <- 0 until productVector.length - 1) {
       tempPrice = productVector(i).get(3).asInstanceOf[String]
       listOfPrices += tempPrice
     }
-
-
-    var indexKeeper = ListBuffer[Int]()
-    var resultList = ListBuffer[Row]()
 
     for (i <- 0 to productVector.length - 2) {
       if (listOfPrices(i).toDouble > filter){
@@ -241,6 +233,7 @@ class DataCollection {
     resultVector
   }
 
+  // Same process as filterByPriceAbove, however switched the comparison.
   def filterByPriceBelow(spark: SparkSession, filter: Double): Vector[Row] ={
     val productVector = getProductDataList(spark)
     val listOfPrices = ListBuffer("1.0")
