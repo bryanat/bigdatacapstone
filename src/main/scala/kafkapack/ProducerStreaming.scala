@@ -71,8 +71,11 @@ object ProducerStreaming {
   //ssc.stop()
 
   }
-
-
+/*
+  partitions.foreach((line: String) => {
+    producer.send(new ProducerRecord[String, String]("urmom", line))
+  }
+*/
 
     //Finally, this can be further optimized by reusing connection objects across multiple RDDs/batches. One can maintain a static pool of connection objects than can be reused as RDDs of multiple batches are pushed to the external system, thus further reducing the overheads.
 // dstream.foreachRDD { rdd =>
