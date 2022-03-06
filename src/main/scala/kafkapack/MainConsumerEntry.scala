@@ -1,11 +1,11 @@
 package kafkapack
 
-object MainKafka2 {
+object MainConsumerEntry {
   
     def main(args: Array[String]): Unit = {
+        println("MainConsumerEntry started...")
         
         ConsumerStreaming.readFromSource("topic1")
-
 
     }
 }
