@@ -45,5 +45,9 @@ object Main {
 
     //SparkStreamingContext.startSparkStreamingContext()
 
+    MainKafka.startMainKafka()
+    // MainProducer.startMainProducer()
+    // MainConsumer.startMainConsumer()
   }
+
 }
