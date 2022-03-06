@@ -24,6 +24,10 @@ object ProducerStreaming {
   //val lines = ssc.socketTextStream("localhost", 9999)
 
 
+  //checkpoint: restarting point
+  //ssc.checkpoint("checkpoint-directory")
+
+
   //set KafkaProducer properties
   val props = new HashMap[String, Object]()
   props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,  "localhost:9092,anotherhost:9092")
@@ -38,22 +42,23 @@ object ProducerStreaming {
   //create an instance of broadcast Kafka producer
   val kafkasink = ssc.sparkContext.broadcast(KafkaSink(props))
   val now = System.currentTimeMillis()
-  println(s"Current unix time is: $now")
+  println(s"(Producer) Current unix time is: $now")
 
 
   //send the producer message with respect to a particular topic 
   dstream.foreachRDD { rdd =>
     val testrdd = rdd.collect()
     // println(testrdd.mkString)
-    println("inside rdd is running")
+    println("(Producer) inside rdd is running")
     // val metadata = kafkasink.value.testsend(topic, "bryan")
     // println(metadata.topic())
     // kafkasink.value.send(topic, "tebbles")
     rdd.foreachPartition { partitionOfRecords =>
-      println("inside foreachPartition running") 
+      println("" +
+        "(Producer) inside foreachPartition running") 
     partitionOfRecords.foreach({message => 
       //regex/ pick your fields in record
-        println("inside partitioned record is running")
+        println("(Producer) inside partitioned record is running")
         val metadata = kafkasink.value.testsend(topic, message)
         println(metadata.topic())
         kafkasink.value.send(topic, message)
@@ -63,6 +68,7 @@ object ProducerStreaming {
   }
   ssc.start()             // Start the computation
   ssc.awaitTermination()  // Wait for the computation to terminate
+  //ssc.stop()
 
   }
 

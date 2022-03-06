@@ -1,34 +1,66 @@
 package kafkapack
 import contextpack._
 import scala.collection.JavaConverters._
-import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer 
 import org.apache.spark.streaming.kafka010._
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
-
+import org.apache.spark.TaskContext
 
 
 object ConsumerStreaming {
   //read from kafka 
-      val kafkaParams = Map[String, Object](
+
+  def readFromSource(topic: String): Unit = {
+
+
+    val kafkaParams = Map[String, Object](
     "bootstrap.servers" -> "localhost:9092,anotherhost:9092",
     "key.deserializer" -> classOf[StringDeserializer],
     "value.deserializer" -> classOf[StringDeserializer],
     "group.id" -> "use_a_separate_group_id_for_each_stream",
     "auto.offset.reset" -> "latest",
     "enable.auto.commit" -> (false: java.lang.Boolean)
-  )
+     )
 
-  val topics = Array("topicA", "topicB")
-  val stream = KafkaUtils.createDirectStream[String, String](
-    // StreamingContext below, get current running StreamingContext imported from context package
-    MainContext.getStreamingContext(),
-    PreferConsistent,
-    Subscribe[String, String](topics, kafkaParams)
-  )
+    //topics has to be Array type, not Strings
+    val topics = Array(topic)
+    var ssc = MainContext.getStreamingContext()
+    val stream = KafkaUtils.createDirectStream[String, String](
+      // StreamingContext below, get current running StreamingContext imported from context package
+      ssc,
+      PreferConsistent,
+      Subscribe[String, String](topics, kafkaParams)
+    )
+
+      
+      val now = System.currentTimeMillis()
+    println(s"(Consumer) Current unix time is: $now")
 
 
+    // stream.foreachRDD { rdd => 
+    //   val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
+    //   rdd.foreachPartition { iter =>
+    //     val o: OffsetRange = offsetRanges(TaskContext.get.partitionId)
+    //     println(s"${o.topic} ${o.partition} ${o.fromOffset} ${o.untilOffset}")
+    //   }
+    // }
+
+    stream.foreachRDD { rdd => 
+    rdd.foreach { record => 
+    val value = record.value()
+    println("(Consumer) value below")
+    println(value) 
+    }
+    }
+
+
+    ssc.start()             // Start the computation
+    ssc.awaitTermination()  // Wait for the computation to terminate
+
+
+  }
     
 
 
