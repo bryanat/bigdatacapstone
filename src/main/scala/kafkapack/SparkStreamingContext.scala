@@ -14,6 +14,8 @@ object SparkStreamingContext {
     //MainContext.getStreamingContext()
   var ssc = MainContext.getStreamingContext()
   var dstream = ssc.textFileStream("file:///home/bryanat/bigdatacapstone/dataset-online/dstreams")
+  /////////produce
+  /////////consumer
   dstream.print()
 
   ssc.start()             // Start the computation
