@@ -43,14 +43,14 @@ object trend1 {
 
 
   def main(args: Array[String]): Unit = {
-    var orderCounter = 100000
-    var orderID = trendTag+orderCounter.toString
-    for (i <- 0 to 10) {
-        println(createInitialTransaction(orderID, "Grocery"))
-      orderCounter = orderCounter+1
-      orderID = trendTag+orderCounter.toString
-
-      }
+//    var orderCounter = 100000
+//    var orderID = trendTag+orderCounter.toString
+//    for (i <- 0 to 10) {
+//        println(createInitialTransaction(orderID,"All"))
+//      orderCounter = orderCounter+1
+//      orderID = trendTag+orderCounter.toString
+//
+//      }
 
 
 
@@ -67,8 +67,11 @@ object trend1 {
 //    val test2 = dc.getSportsList(spark)
 //    test.foreach(println)
 //    test2.foreach(println)
-//    val test3 = dc.filterByPriceAbove(spark, 500)
+//    val test3 = dc.filterByPriceAbove(spark, 1000.00)
 //    test3.foreach(println)
+//    println()
+    val test4 = dc.filterByPriceBelow(spark, 500)
+    test4.foreach(println)
 //    val test4 = dc.filterByPriceBelow(spark, 500)
 //    test4.foreach(println)
 //    println(rs.getRandomCustomerID(spark))

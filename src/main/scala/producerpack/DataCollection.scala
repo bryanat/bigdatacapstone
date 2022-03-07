@@ -231,9 +231,9 @@ class DataCollection {
       listOfPrices += tempPrice
     }
 
-    for (i <- 0 to productVector.length - 2) {
+    for (i <- 1 to productVector.length - 2) {
       if (listOfPrices(i).toDouble > filter){
-        indexKeeper += i
+        indexKeeper += i-1
       }
       indexKeeper.foreach(x => resultList += productVector(x))
     }
@@ -255,9 +255,9 @@ class DataCollection {
     var indexKeeper = ListBuffer[Int]()
     var resultList = ListBuffer[Row]()
 
-    for (i <- 0 to productVector.length - 2) {
+    for (i <- 1 to productVector.length - 2) {
       if (listOfPrices(i).toDouble < filter){
-        indexKeeper += i
+        indexKeeper += i-1
       }
       indexKeeper.foreach(x => resultList += productVector(x))
     }
