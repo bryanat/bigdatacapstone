@@ -1,3 +1,4 @@
+
 scalaVersion := "2.11.12"
 
 name := "P3"
@@ -17,9 +18,12 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-hive" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % "2.4.8"
+<<<<<<< HEAD
 
 //Spark + Kafka integration spark-streaming-kafka only supports max Scala version 2.11
 libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka" % "1.6.3"
+=======
+>>>>>>> 7279be2... update
 libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8"
 
 // Kafka
