@@ -1,3 +1,4 @@
+
 scalaVersion := "2.11.12"
 
 name := "P3"
@@ -17,9 +18,7 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-hive" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % "2.4.8"
-// https://mvnrepository.com/artifact/org.apache.spark/spark-sql-kafka-0-10
-libraryDependencies += "org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.8" 
-//libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8"
+libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8"
 
 // Kafka
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
