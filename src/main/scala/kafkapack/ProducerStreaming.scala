@@ -17,7 +17,7 @@ object ProducerStreaming {
   //create streaming source
   val ssc = MainContext.getStreamingContext()
   //where is our source of streaming file?
-  var dstream = ssc.textFileStream("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/dstream")
+  var dstream = ssc.textFileStream("file:///home/bryanat/bigdatacapstone/dataset-online/dstream")
 
   //Producer team will stream their line by line stream data to socketTextStream("ec2-3-81-9-55.compute-1.amazonaws.com", 9092)
   // Create a DStream that will connect to hostname:port, like localhost:9999
