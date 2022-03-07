@@ -56,6 +56,14 @@ class DataCollection {
     returnVector
   }
 
+  def getPaymentList(spark: SparkSession): Vector[Row] ={
+    val df = spark.read.csv("dataset-online/paymentTypes.csv")
+    val productList = df.collectAsList()
+    val productListScala = productList.asScala.toList
+    val returnVector = productListScala.toVector
+    returnVector
+  }
+
   //getComputersList will return a vector with ONLY the rows that contain data about computer sales.
   def getComputersList(spark: SparkSession): Vector[Row] ={
     val productVector = getProductDataList(spark)
