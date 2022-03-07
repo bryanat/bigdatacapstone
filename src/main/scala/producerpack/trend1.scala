@@ -35,8 +35,8 @@ object trend1 {
 
 
 
-  def createInitialTransaction(orderID: String): String={
-    val initialString = orderID+ "," + rs.getRandomCustomerID(spark)+rs.getRandomProduct(spark, "Grocery")+rs.getRandomPayment(spark)+random.nextInt(25)+","+
+  def createInitialTransaction(orderID: String, category: String): String={
+    val initialString = orderID+ "," + rs.getRandomCustomerID(spark)+rs.getRandomProduct(spark, category)+rs.getRandomPayment(spark)+random.nextInt(25)+","+
       "10-02-2017,"+rs.getRandomLocation(spark)+rs.getRandomWebsite(spark)+"pay_id,"+"success"
     initialString
   }
@@ -46,7 +46,7 @@ object trend1 {
     var orderCounter = 100000
     var orderID = trendTag+orderCounter.toString
     for (i <- 0 to 10) {
-        println(createInitialTransaction(orderID))
+        println(createInitialTransaction(orderID, "Grocery"))
       orderCounter = orderCounter+1
       orderID = trendTag+orderCounter.toString
 
