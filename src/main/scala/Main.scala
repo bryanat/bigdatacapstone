@@ -23,15 +23,13 @@ object Main {
   def main(args: Array[String]) = {
     println("Main app started")
     //System.setProperty("hadoop.home.dir", "C://hadoop")
-    
-    // Kafka main
-    MainKafka.startMainKafka()
-    //SparkStreamingContext.startSparkStreamingContext()
-    
-    // Producer main
-    //MainProducer.startMainProducer()
 
-    // Consumer main
-    //MainConsumer.startMainConsumer()
+    ////Kakfa Main
+
+    ////Producer Main
+
+    ////Consumer Main
+
   }
+
 }
