@@ -31,7 +31,6 @@ object trend1 {
   var websiteVector = dc.getWebsiteList(spark)
   var electronicVector = dc.getElectronicsList(spark)
   val random = new Random()
-
   var groceryVector = dc.getGroceryList(spark)
 
 
@@ -54,60 +53,69 @@ object trend1 {
     resultString
   }
 
-
-  def main(args: Array[String]): Unit = {
+  def getTrend1(): Vector[String]={
     var orderCounter = 100000
     var orderID = trendTag+orderCounter.toString
     var repeatCounter = 1
-    for (i <- 0 to 10) {
-        val tempString = createInitialTransaction(orderID,"Grocery")
-        val resultString = manipulateTransactionTrend1(tempString, repeatCounter)
+    var resultList = ListBuffer("")
+    for (i <- 0 to 100) {
+      val tempString = createInitialTransaction(orderID,"Grocery")
+      val resultString = manipulateTransactionTrend1(tempString, repeatCounter)
       orderCounter = orderCounter+1
       orderID = trendTag+orderCounter.toString
       repeatCounter = repeatCounter + 1
+      resultList += resultString
       if(repeatCounter == 4){
         repeatCounter=1
       }
       println(resultString)
     }
-
-
-
-
-
-
-
-
-
-
-
-    // ALL OF THE COMMENTED BELOW IS JUST FOR TESTING DIFFERENT METHODS OF DataCollection AND RandomSelections
-//    val test = dc.getGroceryList(spark)
-//    val test2 = dc.getSportsList(spark)
-//    test.foreach(println)
-//    test2.foreach(println)
-//    val test3 = dc.filterByPriceAbove(spark, 1000.00)
-//    test3.foreach(println)
-//    println()
-//    val test4 = dc.filterByPriceBelow(spark, 500)
-//    test4.foreach(println)
-//    val test4 = dc.filterByPriceBelow(spark, 500)
-//    test4.foreach(println)
-//    println(rs.getRandomCustomerID(spark))
-//    println(rs.getRandomCustomerID(spark))
-//    println(rs.getRandomCustomerID(spark))
-//    println(rs.getRandomWebsite(spark))
-//    println(rs.getRandomWebsite(spark))
-//    println(rs.getRandomWebsite(spark))
-//    println(rs.getRandomProduct(spark))
-//    println(rs.getRandomProduct(spark))
-//    println(rs.getRandomProduct(spark))
-//    println(rs.getRandomCategory(spark))
-//    println(rs.getRandomCategory(spark))
-//    println(rs.getRandomCategory(spark))
-
-//    println(customerVector(49))
-//    println(customerVector(49).get(1))
+    val resultVector = resultList.toVector
+    resultVector
   }
+
+
+//  def main(args: Array[String]): Unit = {
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    // ALL OF THE COMMENTED BELOW IS JUST FOR TESTING DIFFERENT METHODS OF DataCollection AND RandomSelections
+////    val test = dc.getGroceryList(spark)
+////    val test2 = dc.getSportsList(spark)
+////    test.foreach(println)
+////    test2.foreach(println)
+////    val test3 = dc.filterByPriceAbove(spark, 1000.00)
+////    test3.foreach(println)
+////    println()
+////    val test4 = dc.filterByPriceBelow(spark, 500)
+////    test4.foreach(println)
+////    val test4 = dc.filterByPriceBelow(spark, 500)
+////    test4.foreach(println)
+////    println(rs.getRandomCustomerID(spark))
+////    println(rs.getRandomCustomerID(spark))
+////    println(rs.getRandomCustomerID(spark))
+////    println(rs.getRandomWebsite(spark))
+////    println(rs.getRandomWebsite(spark))
+////    println(rs.getRandomWebsite(spark))
+////    println(rs.getRandomProduct(spark))
+////    println(rs.getRandomProduct(spark))
+////    println(rs.getRandomProduct(spark))
+////    println(rs.getRandomCategory(spark))
+////    println(rs.getRandomCategory(spark))
+////    println(rs.getRandomCategory(spark))
+//
+////    println(customerVector(49))
+////    println(customerVector(49).get(1))
+//  }
 }
 
