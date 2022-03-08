@@ -11,19 +11,13 @@ import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
 import scala.collection.mutable.ListBuffer
+import java.io._
 
 object ConsumerStreaming {
-  //read from kafka 
 
-  def readFromSource(topic: String): List[String] = {
+  def readFromSource(topic: String): Unit = {
     
-    val sconf = MainContext.getSparkConf()
-    val sc = new SparkContext(sconf)
-    val ssc = new StreamingContext(sc, Seconds(2))
-    ssc.sparkContext.setLogLevel("ERROR")
-    val ssess = SparkSession.builder.config(sc.getConf).getOrCreate()
-
-
+    
     val kafkaParams = Map[String, Object](
     "bootstrap.servers" -> "localhost:9092,anotherhost:9092",
     "key.deserializer" -> classOf[StringDeserializer],
@@ -35,7 +29,7 @@ object ConsumerStreaming {
 
     //topics has to be Array type, not Strings
     val topics = Array(topic)
-    //val ssc = MainContext.getStreamingContext()
+    val ssc = MainContext.getStreamingContext()
     val topicdstream = KafkaUtils.createDirectStream[String, String](
       // StreamingContext below, get current running StreamingContext imported from context package
       ssc,
@@ -44,45 +38,71 @@ object ConsumerStreaming {
     )
 
       
-      val now = System.currentTimeMillis()
+    val now = System.currentTimeMillis()
     println(s"(Consumer) Current unix time is: $now")
 
-    //testing offsets
-    // topicdstream.foreachRDD { rdd => 
-    //   val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
-    //   rdd.foreachPartition { iter =>
-    //     val o: OffsetRange = offsetRanges(TaskContext.get.partitionId)
-    //     println(s"${o.topic} ${o.partition} ${o.fromOffset} ${o.untilOffset}")
-    //   }
-    // }
     
     
-    //windowStream method
-    // val windowStream = topicdstream.window(Minutes(1))
-    // windowStream.transform{rdd => rdd.join(dataset)}
-    val array = new ListBuffer[String]()
-    import ssess.implicits._
-    topicdstream.foreachRDD {rdd => rdd.coalesce(1).saveAsTextFile("/dataset-online")}
-      //if 601 seconds then dont include in dataframe
+    
+     var prevrdd =SparkContext.getOrCreate.emptyRDD[String]
+    // //windowStream method
+    //  val windowStream = topicdstream.window(Minutes(1))
+    //  windowStream.foreachRDD{rdd => rdd.foreach{
+    //  record => 
+    // val sc = SparkContext.getOrCreate()
+    //  val value = record.value()
+    //  prevrdd = prevrdd.union(sc.parallelize(List(value)))}
+    //  }
+
+    // val array = new ListBuffer[String]()
+
+
+    //import ssess.implicits._
+    //var file = "C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/data/test.txt"
+    topicdstream.foreachRDD {rdd => 
+      rdd.foreach { record =>
+        //.value() returns deserialized value column
+        val sc = SparkContext.getOrCreate()
+        val value = record.value()
+        //parallelize value into rdd
+        prevrdd = sc.parallelize(List(value)).union(prevrdd)
+        //prevrdd.coalesce(1).saveAsTextFile("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/data3"+sc.applicationId+"/"+ System.currentTimeMillis())
+        prevrdd.coalesce(1).saveAsTextFile("hdfs://namenode_ip:port/myNewFolder/"+sc.applicationId+"/"+ System.currentTimeMillis())
+      }
+    }
     //   rdd.foreach { record =>
     //   val value = record.value()
     //   array += value
-    //   //need separator
     //   println(array.mkString("\n"))
     //   }
     // }
     ssc.start()             // Start the computation
     ssc.awaitTermination()  // Wait for the computation to terminate
-
-    array.toList
-  }
     
+    //array.toList
+  }
+  
+}
 
 
+//testing offsets
+// topicdstream.foreachRDD { rdd => 
+  //   val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
+  //   rdd.foreachPartition { iter =>
+    //     val o: OffsetRange = offsetRanges(TaskContext.get.partitionId)
+//     println(s"${o.topic} ${o.partition} ${o.fromOffset} ${o.untilOffset}")
+//   }
+// }
 
+// Import dependencies and create kafka params as in Create Direct Stream above
 
+// val offsetRanges = Array(
+//   // topic, partition, inclusive starting offset, exclusive ending offset
+//   OffsetRange(topic, 0, 0, 100)
+// )
 
-    //Streams can be very easily joined with other streams.
+// val rdd = KafkaUtils.createRDD[String, String](sc, kafkaParams, offsetRanges, PreferConsistent)
+//Streams can be very easily joined with other streams.
 // val stream1: DStream[String, String] = ...
 // val stream2: DStream[String, String] = ...
 // val joinedStream = stream1.join(stream2)
@@ -94,12 +114,16 @@ object ConsumerStreaming {
 // val joinedStream = windowedStream1.join(windowedStream2)
 
 
- //Here is yet another example of joining a windowed stream with a dataset.
+//Here is yet another example of joining a windowed stream with a dataset.
 //  val dataset: RDD[String, String] = ...
 // val windowedStream = stream.window(Seconds(20))...
 // val joinedStream = windowedStream.transform { rdd => rdd.join(dataset) }
 
 //// Reduce last 30 seconds of data, every 10 seconds
 //val windowedWordCounts = pairs.reduceByKeyAndWindow((a:Int,b:Int) => (a + b), Seconds(30), Seconds(10))
-}
-
+    //val sconf = MainContext.getSparkConf()
+     //val sc = new SparkContext(sconf)
+   //  val ssc = new StreamingContext(sc, Seconds(2))
+   // ssc.sparkContext.setLogLevel("ERROR")
+    //val ssess = SparkSession.builder.config(sc.getConf).getOrCreate()
+    // val ssess = MainContext.getSparkContext()

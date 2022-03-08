@@ -11,24 +11,23 @@ import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.sql._
 import scala.collection.mutable.ListBuffer
+import org.apache.spark.rdd.RDD
 
-class ConsumerStreaming2(createConsumerArray: ()=>List[String]) {
+class ConsumerStreaming2(createConsumerArray: ()=>RDD[String]) {
 
  lazy val stringArray = createConsumerArray()
  
 
-  def createDF(): DataFrame = {
+//   def createDF(): DataFrame = {
         
-        //get sparkcontext and sparksession for parallelization
-        val sconf = MainContext.getSparkConf()
-        val sc = new SparkContext(sconf)
-        val ssess = SparkSession.builder.config(sc.getConf).getOrCreate()
+//         //get sparkcontext and sparksession for parallelization
+//         val ssess = MainContext.getSparkSession()
 
-        import ssess.implicits._
-        val rdd = sc.parallelize(stringArray)
-        val df = rdd.toDF()
-        df
-    }
+//         import ssess.implicits._
+//         val rdd = ssess.sparkContext.parallelize(stringArray)
+//         val df = rdd.toDF()
+//         df
+//     }
 }
 
   object ConsumerStreaming2 {
@@ -42,11 +41,6 @@ class ConsumerStreaming2(createConsumerArray: ()=>List[String]) {
         def apply(topic: String): ConsumerStreaming2 = {
             
             val ssc = MainContext.getStreamingContext()
-        // val sconf = MainContext.getSparkConf()
-        // val sc = new SparkContext(sconf)
-        // val ssc = new StreamingContext(sc, Seconds(2))
-        // ssc.sparkContext.setLogLevel("ERROR")
-        // val ssess = SparkSession.builder.config(sc.getConf).getOrCreate()
 
 
         val kafkaParams = Map[String, Object](
@@ -60,9 +54,7 @@ class ConsumerStreaming2(createConsumerArray: ()=>List[String]) {
 
         //topics has to be Array type, not Strings
         val topics = Array(topic)
-        //val ssc = MainContext.getStreamingContext()
         val topicdstream = KafkaUtils.createDirectStream[String, String](
-        // StreamingContext below, get current running StreamingContext imported from context package
         ssc,
         PreferConsistent,
         Subscribe[String, String](topics, kafkaParams)
@@ -75,17 +67,28 @@ class ConsumerStreaming2(createConsumerArray: ()=>List[String]) {
         //windowStream method
         // val windowStream = topicdstream.window(Minutes(1))
         // windowStream.transform{rdd => rdd.join(dataset)}
+        
+        var prevrdd =SparkContext.getOrCreate.emptyRDD[String]
         val arrayFunc = () => {
         //import ssess.implicits._
-        topicdstream.foreachRDD {rdd =>
-        //if 601 seconds then dont include in dataframe
+        topicdstream.foreachRDD {rdd => 
             rdd.foreach { record =>
-            val value = record.value()
-            arrayx += value
-            println(arrayx.mkString("\n"))
+            //.value() returns deserialized value column
+             val sc = SparkContext.getOrCreate()
+             val value = record.value()
+             //parallelize value into rdd
+             var valuerdd = sc.parallelize(List(value))
+             //add current rdd to previous rdd
+             val newrdd = prevrdd.union(valuerdd)
+             //set prev rdd to curr rdd
+            prevrdd = newrdd
+            // arrayx += value
+            // println(arrayx.mkString("\n"))
             }
         }
-        arrayx.toList
+        //arrayx.toList
+        prevrdd
+
         }
         ssc.start()             // Start the computation
         ssc.awaitTermination()  // Wait for the computation to terminate
