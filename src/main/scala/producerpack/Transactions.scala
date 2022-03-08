@@ -25,18 +25,17 @@ class Transactions {
   }
 
   // Returns Random 100 Transactions with no applied Trend
-  def getRandomTransactions(rs: RandomSelections, spark: SparkSession): Vector[String]={
+  def getRandomTransactions(rs: RandomSelections, spark: SparkSession, returnAmount: Int): Vector[String]={
     var orderCounter = 100000
     var orderID = "NOT"+orderCounter.toString
     var repeatCounter = 1
     var resultList = ListBuffer("")
     var tempString = ""
-    for (i <- 0 to 100) {
+    for (i <- 0 to returnAmount) {
       tempString = createInitialTransaction(rs, spark, orderID,"All")
       orderCounter = orderCounter+1
       orderID = "NOT"+orderCounter.toString
       resultList += tempString
-      println(tempString)
     }
     println()
     val resultVector = resultList.toVector

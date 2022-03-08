@@ -39,12 +39,12 @@ object trend1 {
     resultString
   }
 
-  def getTrend1(): Vector[String]={
+  def getTrend1(returnAmount: Int): Vector[String]={
     var orderCounter = 100000
     var orderID = trendTag+orderCounter.toString
     var repeatCounter = 1
     var resultList = ListBuffer("")
-    for (i <- 0 to 5) {
+    for (i <- 0 to returnAmount) {
       val tempString = trans.createInitialTransaction(rs, spark, orderID,"Grocery")
       val resultString = manipulateTransactionTrend1(tempString, repeatCounter)
       orderCounter = orderCounter+1
@@ -54,7 +54,6 @@ object trend1 {
       if(repeatCounter == 4){
         repeatCounter=1
       }
-      println(resultString)
     }
     val resultVector = resultList.toVector
     resultVector
