@@ -22,24 +22,10 @@ object trend1 {
 
   val trendTag = "TR1"
   val rs = new RandomSelections
-  val dc = new DataCollection
+  val trans = new Transactions
 
   //Set up the data that we will be using
-  var locationVector = dc.getCityCountryList(spark)
-  var customerVector = dc.getCustomersList(spark)
-  var failureVector = dc.getfailReasonsList(spark)
-  var websiteVector = dc.getWebsiteList(spark)
-  var electronicVector = dc.getElectronicsList(spark)
-  val random = new Random()
-  var groceryVector = dc.getGroceryList(spark)
 
-
-
-  def createInitialTransaction(orderID: String, category: String): String={
-    val initialString = orderID+ "," + rs.getRandomCustomerID(spark)+rs.getRandomProduct(spark, category)+rs.getRandomPayment(spark)+random.nextInt(25)+","+
-      "10-02-2017,"+rs.getRandomLocation(spark)+rs.getRandomWebsite(spark)+ random.nextInt(204202) + "," +"success"
-    initialString
-  }
 
   def manipulateTransactionTrend1(inputTransaction: String, counter: Int): String = {
     val splitT = inputTransaction.split(",")
@@ -58,8 +44,8 @@ object trend1 {
     var orderID = trendTag+orderCounter.toString
     var repeatCounter = 1
     var resultList = ListBuffer("")
-    for (i <- 0 to 100) {
-      val tempString = createInitialTransaction(orderID,"Grocery")
+    for (i <- 0 to 5) {
+      val tempString = trans.createInitialTransaction(rs, spark, orderID,"Grocery")
       val resultString = manipulateTransactionTrend1(tempString, repeatCounter)
       orderCounter = orderCounter+1
       orderID = trendTag+orderCounter.toString
