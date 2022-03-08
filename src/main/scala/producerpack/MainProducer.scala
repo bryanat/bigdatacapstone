@@ -18,9 +18,9 @@ object MainProducer {
         val rs = new RandomSelections
 
         println("Main Producer started...")
-        var trend1Vector = trend1.getTrend1()
+        var trend1Vector = trend1.getTrend1(100)
         trend1Vector.foreach(println)
-        var randomVector = trans.getRandomTransactions(rs, spark)
+        var randomVector = trans.getRandomTransactions(rs, spark, 500)
         randomVector.foreach(println)
     }
 }
