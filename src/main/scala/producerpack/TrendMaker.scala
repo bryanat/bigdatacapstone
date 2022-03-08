@@ -3,9 +3,6 @@ package producerpack
 import scala.collection.mutable.Stack
 import scala.collection.mutable.ListBuffer
 import contextpack.MainContext
-import org.apache.kafka.clients.producer._
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
-import org.apache.spark.sql._
 
 
 class TrendThread(data:Vector[String]) extends Runnable{
