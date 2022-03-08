@@ -10,16 +10,7 @@ import scala.collection.mutable.ListBuffer
 // "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city,website,pay_id,success"
 
 object trend1 {
-
-  System.setProperty("hadoop.home.dir", "c:/winutils")
-  val spark = SparkSession
-    .builder()
-    .appName("project1")
-    .config("spark.master", "local")
-    .enableHiveSupport()
-    .getOrCreate()
-  spark.sparkContext.setLogLevel("ERROR")
-
+  
   val trendTag = "TR1"
   val rs = new RandomSelections
   val trans = new Transactions
@@ -39,7 +30,7 @@ object trend1 {
     resultString
   }
 
-  def getTrend1(returnAmount: Int): Vector[String]={
+  def getTrend1(spark: SparkSession, returnAmount: Int): Vector[String]={
     var orderCounter = 100000
     var orderID = trendTag+orderCounter.toString
     var repeatCounter = 1
