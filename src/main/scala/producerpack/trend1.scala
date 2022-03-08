@@ -3,6 +3,7 @@ package producerpack
 import org.apache.spark.sql.SparkSession
 import java.util.Random
 import java.util.Date
+import scala.collection.mutable.ListBuffer
 
 // Trend One will show a larger amount of online grocery orders from North America than any other country.
 // Our return string will be in the following format:
@@ -37,20 +38,38 @@ object trend1 {
 
   def createInitialTransaction(orderID: String, category: String): String={
     val initialString = orderID+ "," + rs.getRandomCustomerID(spark)+rs.getRandomProduct(spark, category)+rs.getRandomPayment(spark)+random.nextInt(25)+","+
-      "10-02-2017,"+rs.getRandomLocation(spark)+rs.getRandomWebsite(spark)+"pay_id,"+"success"
+      "10-02-2017,"+rs.getRandomLocation(spark)+rs.getRandomWebsite(spark)+ random.nextInt(204202) + "," +"success"
     initialString
+  }
+
+  def manipulateTransactionTrend1(inputTransaction: String, counter: Int): String = {
+    val splitT = inputTransaction.split(",")
+    var resultString = ""
+    if (counter == 3){
+      resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + splitT(6) + "," +
+        "Crypto" + "," + splitT(8) + "," + splitT(9) + "," + splitT(10) + "," + "United States" + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14)
+      return resultString
+    }
+    resultString = inputTransaction
+    resultString
   }
 
 
   def main(args: Array[String]): Unit = {
-//    var orderCounter = 100000
-//    var orderID = trendTag+orderCounter.toString
-//    for (i <- 0 to 10) {
-//        println(createInitialTransaction(orderID,"All"))
-//      orderCounter = orderCounter+1
-//      orderID = trendTag+orderCounter.toString
-//
-//      }
+    var orderCounter = 100000
+    var orderID = trendTag+orderCounter.toString
+    var repeatCounter = 1
+    for (i <- 0 to 10) {
+        val tempString = createInitialTransaction(orderID,"Grocery")
+        val resultString = manipulateTransactionTrend1(tempString, repeatCounter)
+      orderCounter = orderCounter+1
+      orderID = trendTag+orderCounter.toString
+      repeatCounter = repeatCounter + 1
+      if(repeatCounter == 4){
+        repeatCounter=1
+      }
+      println(resultString)
+    }
 
 
 
@@ -70,8 +89,8 @@ object trend1 {
 //    val test3 = dc.filterByPriceAbove(spark, 1000.00)
 //    test3.foreach(println)
 //    println()
-    val test4 = dc.filterByPriceBelow(spark, 500)
-    test4.foreach(println)
+//    val test4 = dc.filterByPriceBelow(spark, 500)
+//    test4.foreach(println)
 //    val test4 = dc.filterByPriceBelow(spark, 500)
 //    test4.foreach(println)
 //    println(rs.getRandomCustomerID(spark))
