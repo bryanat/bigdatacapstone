@@ -10,13 +10,10 @@ import scala.collection.mutable.ListBuffer
 // "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city,website,pay_id,success"
 
 object trend1 {
-  
+
   val trendTag = "TR1"
   val rs = new RandomSelections
   val trans = new Transactions
-
-  //Set up the data that we will be using
-
 
   def manipulateTransactionTrend1(inputTransaction: String, counter: Int): String = {
     val splitT = inputTransaction.split(",")

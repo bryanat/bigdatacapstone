@@ -38,6 +38,18 @@ class RandomSelections {
     val resultString = randomResult(0).toString + "," + randomResult(1).toString + ","
     resultString
   }
+  def getRandomFail(vector: Vector[Row], spark: SparkSession, checkFail: String): String ={
+    if (checkFail.equals("Y")){
+      return "100"
+    }
+    val randomNum = rs.nextInt(vector.length-1)
+    val randomResult = vector(randomNum)
+    var resultString = randomResult(0).toString
+    if (resultString.equals("100")){
+      resultString = "101"
+    }
+    resultString
+  }
   // getRandomProduct: Will return a string of a random product selected from ProductData
   def getRandomProduct(vector: Vector[Row], spark: SparkSession, category: String): String ={
 
