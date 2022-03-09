@@ -1,8 +1,6 @@
 package producerpack
 
 import org.apache.spark.sql.SparkSession
-import java.util.Random
-import java.util.Date
 import scala.collection.mutable.ListBuffer
 
 // Trend One will show a larger amount of online grocery orders from North America than any other country.
@@ -15,18 +13,24 @@ object trend1 {
   val rs = new RandomSelections
   val trans = new Transactions
 
+  //here we will inject our randomly created string with information that we need to create a trend
+  //in this case, every third transaction will be updated to contain 'Crypto' as payment type and 'United States' as the country
+  // We receive a comma separated string, split it by ",", use the array to create a new string, and return.
   def manipulateTransactionTrend1(inputTransaction: String, counter: Int): String = {
     val splitT = inputTransaction.split(",")
     var resultString = ""
     if (counter == 3){
       resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + splitT(6) + "," +
-        "Crypto" + "," + splitT(8) + "," + splitT(9) + "," + splitT(10) + "," + "United States" + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14)
+        "Crypto" + "," + splitT(8) + "," + splitT(9) + "," + splitT(10) + "," + "United States" + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14) + "," + splitT(15)
       return resultString
     }
     resultString = inputTransaction
     resultString
   }
 
+  //This is the main driver of Trend1 that will return a vector of transaction strings.
+  // For this trend I only want to look at grocery orders, so I createInitalTransactions using only 'Grocery'
+  // the counter is integrated to ensure that I will have enough data entry points for Crypto/US to show a clear trend.
   def getTrend1(spark: SparkSession, returnAmount: Int): Vector[String]={
     var orderCounter = 100000
     var orderID = trendTag+orderCounter.toString
@@ -46,49 +50,5 @@ object trend1 {
     val resultVector = resultList.toVector
     resultVector
   }
-
-
-//  def main(args: Array[String]): Unit = {
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    // ALL OF THE COMMENTED BELOW IS JUST FOR TESTING DIFFERENT METHODS OF DataCollection AND RandomSelections
-////    val test = dc.getGroceryList(spark)
-////    val test2 = dc.getSportsList(spark)
-////    test.foreach(println)
-////    test2.foreach(println)
-////    val test3 = dc.filterByPriceAbove(spark, 1000.00)
-////    test3.foreach(println)
-////    println()
-////    val test4 = dc.filterByPriceBelow(spark, 500)
-////    test4.foreach(println)
-////    val test4 = dc.filterByPriceBelow(spark, 500)
-////    test4.foreach(println)
-////    println(rs.getRandomCustomerID(spark))
-////    println(rs.getRandomCustomerID(spark))
-////    println(rs.getRandomCustomerID(spark))
-////    println(rs.getRandomWebsite(spark))
-////    println(rs.getRandomWebsite(spark))
-////    println(rs.getRandomWebsite(spark))
-////    println(rs.getRandomProduct(spark))
-////    println(rs.getRandomProduct(spark))
-////    println(rs.getRandomProduct(spark))
-////    println(rs.getRandomCategory(spark))
-////    println(rs.getRandomCategory(spark))
-////    println(rs.getRandomCategory(spark))
-//
-////    println(customerVector(49))
-////    println(customerVector(49).get(1))
-//  }
 }
 
