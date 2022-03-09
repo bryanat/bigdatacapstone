@@ -23,6 +23,8 @@ object MainProducer {
         trend1Vector.foreach(println)
         var randomVector = trans.getRandomTransactions(rs, spark, 500)
         randomVector.foreach(println)
+        var trend2Vector = trend2.getTrend2(spark, 150)
+        trend2Vector.foreach(println)
     }
 
 }

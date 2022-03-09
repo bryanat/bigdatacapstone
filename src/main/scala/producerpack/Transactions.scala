@@ -23,11 +23,30 @@ class Transactions {
   val websiteList = dc.getWebsiteList(spark)
   val failList = dc.getfailReasonsList(spark)
 
+  // The Base Transaction String that we will be manipulating in Trends
   def createInitialTransaction(rs:RandomSelections, spark: SparkSession, orderID: String, category: String): String={
     val failOrNo = getRandomSuccess()
     val initialString = orderID+ "," + rs.getRandomCustomerID(customerList, spark)+rs.getRandomProduct(productList, spark, category)+rs.getRandomPayment(paymentList, spark)+random.nextInt(25)+","+
       getRandomDate() + "," +rs.getRandomLocation(locationList, spark)+rs.getRandomWebsite(websiteList, spark)+ random.nextInt(204202) + "," + failOrNo + "," + rs.getRandomFail(failList, spark, failOrNo)
     initialString
+  }
+
+  // Returns Random 100 Transactions with no applied Trend
+  def getRandomTransactions(rs: RandomSelections, spark: SparkSession, returnAmount: Int): Vector[String]={
+    var orderCounter = 100000
+    var orderID = "NOT"+orderCounter.toString
+    var repeatCounter = 1
+    var resultList = ListBuffer("")
+    var tempString = ""
+    for (i <- 0 to returnAmount) {
+      tempString = createInitialTransaction(rs, spark, orderID,"All")
+      orderCounter = orderCounter+1
+      orderID = "NOT"+orderCounter.toString
+      resultList += tempString
+    }
+    println()
+    val resultVector = resultList.toVector
+    resultVector
   }
 
   def getRandomDate(): String={
@@ -38,6 +57,10 @@ class Transactions {
     val resultString = (gc.get(Calendar.YEAR)) + "-" + (gc.get(Calendar.MONTH) + 1) + "-" + gc.get(Calendar.DAY_OF_MONTH) + " "+ random.nextInt(23).toString +
       ":"+ getRandomMinutes() + ":" + getRandomMinutes()
     resultString
+  }
+
+  def getRandomTime(): String={
+    random.nextInt(23).toString + ":"+ getRandomMinutes() + ":" + getRandomMinutes()
   }
 
   def getRandomSuccess(): String ={
@@ -58,23 +81,5 @@ class Transactions {
       tempString = "0" + temp.toString
     }
     tempString
-  }
-
-  // Returns Random 100 Transactions with no applied Trend
-  def getRandomTransactions(rs: RandomSelections, spark: SparkSession, returnAmount: Int): Vector[String]={
-    var orderCounter = 100000
-    var orderID = "NOT"+orderCounter.toString
-    var repeatCounter = 1
-    var resultList = ListBuffer("")
-    var tempString = ""
-    for (i <- 0 to returnAmount) {
-      tempString = createInitialTransaction(rs, spark, orderID,"All")
-      orderCounter = orderCounter+1
-      orderID = "NOT"+orderCounter.toString
-      resultList += tempString
-    }
-    println()
-    val resultVector = resultList.toVector
-    resultVector
   }
 }
