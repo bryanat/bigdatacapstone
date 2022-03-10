@@ -114,10 +114,10 @@ topicdstream.foreachRDD {rdd =>
       spark.sql("INSERT INTO TABLE csmessages_hive_table SELECT * FROM csmessages")
 
       // Select the parsed messages from the table using SQL and print it (since it runs on drive display few records)
-      val messagesqueryDataFrame =
+      val messagesqueryDF =
       spark.sql("SELECT * FROM csmessages")
       println(s"========= $time =========")
-      messagesqueryDataFrame.show()
+      messagesqueryDF.show()
     }
     }
 
