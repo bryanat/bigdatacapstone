@@ -2,6 +2,7 @@ package producerpack
 
 import org.apache.spark.sql.SparkSession
 import producerpack.DataCollection
+import scala.util.Random
 
 import scala.collection.mutable.ListBuffer
 
@@ -22,7 +23,7 @@ object ExponentialIncreaseOverTimeTrend {
     //get the data from object
     val collector = new DataCollection
     val customerData = collector.getCustomersList(spark)
-    val productData = collector.getComputersList(spark)
+    val productData = collector.getCategoryList(spark, "Computers")
     val failReasons = collector.getfailReasonsList(spark)
     val websites = collector.getWebsiteList(spark)
     val paymentTypes = collector.getPaymentList(spark)
@@ -39,7 +40,7 @@ object ExponentialIncreaseOverTimeTrend {
     ex*Math.pow(2,baseInt)
   }
 
-  def increaseDate(date:ListBuffer[Int]):Unit={
+  def increaseDate(date:ListBuffer[Int]):ListBuffer[Int]={
     //date will come in MM, DD, YYYY
     //check specail months, 2 and 12. leap years arent considered
     date(0) match {
@@ -48,7 +49,7 @@ object ExponentialIncreaseOverTimeTrend {
           //roll month over, set day to one
           date(0)+=1
           date(1) = 1
-          return
+          return date
         }
       case 12 =>
         if (date(1) == 31) {
@@ -56,23 +57,28 @@ object ExponentialIncreaseOverTimeTrend {
           date(0) = 1
           date(1) = 1
           date(2) += 1
-          return
+          return date
         }
+      case _ =>
     }
     //now that specail months are out of the way...
-    if(date(0) > 7){
+    if(date(0) < 7){
+      println("In the first 7 months")
       date(0)%2 match {
-        case 0 =>
-          if(date(1) == 30) {
+        case 0 =>{
+          if (date(1) == 30) {
             //roll month and set day to 1
             date(0) += 1
             date(1) = 1
+            return date
           }
+      }
         case 1 =>
           if (date(1) == 31){
             //roll month
             date(0) += 1
             date(1) = 1
+            return date
           }
       }
     } else {
@@ -82,14 +88,18 @@ object ExponentialIncreaseOverTimeTrend {
             //roll month and set day to 1
             date(0) += 1
             date(1) = 1
+            return date
           }
         case 1 =>
           if (date(1) == 30){
             //roll month
             date(0) += 1
             date(1) = 1
+            return date
           }
       }
     }
+    date(1) += 1
+    date
   }
 }
