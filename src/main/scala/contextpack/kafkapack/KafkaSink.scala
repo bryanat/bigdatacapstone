@@ -3,6 +3,9 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, RecordM
 import java.util.Properties
 import java.util.concurrent.Future
 import scala.collection.mutable.HashMap
+// import java.util.concurrent.atomic.AtomicReference
+// import org.apache.kafka.clients.producer.Callback
+// import kafkapack.KafkaDStreamExceptionHandler
 
 
 //() => KafkaProducer is equivalent to createProducer[KafkaProducer]()
@@ -11,7 +14,7 @@ class KafkaSink(createProducer: ()=>KafkaProducer[String, String]) extends Seria
   lazy val producer = createProducer()
 
   //sends the producer record
-  def send(topic: String, message: String): Unit= producer.send(new ProducerRecord(topic, message))
+  def send(topic: String, message: String): Future[RecordMetadata]= producer.send(new ProducerRecord(topic, message))
   def testsend(topic: String, message: String): RecordMetadata = producer.send(new ProducerRecord(topic, message)).get()
 
 }

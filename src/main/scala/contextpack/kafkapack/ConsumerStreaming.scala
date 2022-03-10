@@ -12,6 +12,7 @@ import org.apache.spark.streaming._
 import org.apache.spark.sql._
 import scala.collection.mutable.ListBuffer
 import java.io._
+import org.apache.hadoop.fs.{FileSystem, Path}
 
 object ConsumerStreaming {
 
@@ -28,7 +29,7 @@ object ConsumerStreaming {
      )
 
     //topics has to be Array type, not Strings
-    val topics = Array(topic)
+    val topics = Set(topic)
     val ssc = MainContext.getStreamingContext()
     val topicdstream = KafkaUtils.createDirectStream[String, String](
       // StreamingContext below, get current running StreamingContext imported from context package
@@ -66,16 +67,22 @@ object ConsumerStreaming {
         val value = record.value()
         //parallelize value into rdd
         prevrdd = sc.parallelize(List(value)).union(prevrdd)
-        //prevrdd.coalesce(1).saveAsTextFile("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/data3"+sc.applicationId+"/"+ System.currentTimeMillis())
-        prevrdd.coalesce(1).saveAsTextFile("hdfs://namenode_ip:port/myNewFolder/"+sc.applicationId+"/"+ System.currentTimeMillis())
-      }
+        prevrdd.coalesce(1).saveAsTextFile("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/data3"+sc.applicationId+"/"+ System.currentTimeMillis())
+      //   val filepath = "hdfs://namenode_ip:port/data/"+sc.applicationId+"/"+ System.currentTimeMillis()
+      //   prevrdd.coalesce(1).saveAsTextFile(filepath)
+      //   val fs = FileSystem.get(sc.hadoopConfiguration)
+      //   val deletepath = new Path(filepath)
+      //   if (fs.exists(deletepath)) {
+      //       fs.delete(deletepath, true) }
+      // }
+      println(value)
     }
     //   rdd.foreach { record =>
     //   val value = record.value()
     //   array += value
     //   println(array.mkString("\n"))
     //   }
-    // }
+     }
     ssc.start()             // Start the computation
     ssc.awaitTermination()  // Wait for the computation to terminate
     
