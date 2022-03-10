@@ -31,11 +31,10 @@ object ProducerStreaming {
   //set KafkaProducer properties
   val props = new HashMap[String, Object]()
   props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,  "localhost:9092,anotherhost:9092")
-  //    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
-  //    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
   props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
   props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
   props.put("producer.type", "async")
+  props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "30000")
   props.put(ProducerConfig.BATCH_SIZE_CONFIG, "49152")
 
 
@@ -47,7 +46,7 @@ object ProducerStreaming {
 
   //send the producer message with respect to a particular topic 
   dstream.foreachRDD { rdd =>
-    val testrdd = rdd.collect()
+    //val testrdd = rdd.collect()
     // println(testrdd.mkString)
     println("(Producer) inside rdd is running")
     // val metadata = kafkasink.value.testsend(topic, "bryan")

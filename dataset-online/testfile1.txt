@@ -1,4 +1,4 @@
-bin/kafka-server-start.sh config/server.propertiesorder_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,price,datetime,country,city,ecommerce_website_name,payment_txn_id,payment_txn_success
+order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,price,datetime,country,city,ecommerce_website_name,payment_txn_id,payment_txn_success
 NWQJ4DOW4P,51255,Jody Saunders,RAMY4ARGVTY,Corsair Vengeance LPX 16 GB,Computers,credit,80.89,1/17/2022 20:33,US,New York,computer-repair.org,85XB5Y,Y
 0PZKVT8V6V,79974,Ray Patrick,RAMMHB4W78K,Kingston HyperX Fury 16 GB,Computers,debit,124.84,3/1/2022 14:25,France,Paris,all-box-shop.com,8F33UK,Y
 YXPPSRC743,75054,Harvey Mccoy,RAM0L6LFCF8,Silicon Power Gaming 16 GB,Computers,gift card,89.45,1/24/2022 14:38,India,New Delhi,allcomputer.net,3JR1P1,Y
@@ -19,3 +19,5 @@ UZEF9U0ZKP,16257,Andre Hawkins,CPUKB0LM1KY,Intel Core i7-10700F,Computers,debit,
 GTO8L32WN6,57387,Todd Smith,CPUPZQG4AIF,Intel Core i9-9900K,Computers,credit,413.69,1/26/2022 3:10,Fiji,Suva,computerstudio.org,7RSFTX,Y
 FLXIS0JGL4,55169,Elena Jensen,CPUKD5UVHUI,AMD Athlon 200GE,Computers,debit,99.89,1/30/2022 20:38,US,Tempe,pccomputer.blog,2VHNOM,Y
 C8OUVHXEYF,74032,Raymond Tucker,CPUUNJO79P8,AMD Ryzen 9 5900X,Computers,debit,210.15,1/20/2022 4:47,Nigeria,Abuja,computercenter.blog,Q6BG1A,N
+IHAD6KJB7K,81899,Robert Fischer,INTKD5UVHUI,Kera by Francois Challet,Books,debit,29.99,1/30/2022 18:33,US,Nantuck,goodreadss.blog,FLW38B,Y
+KJS74BHJAQ,96122,Neo Maximus,INTUNJO79P8,Garden of Life by Joy,Books,debit,29.50,1/20/2022 6:22,China,Shanghai,taobaobookss.blog,HFV29B,Y

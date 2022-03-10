@@ -29,7 +29,7 @@ class KafkaSink(createProducer: ()=>KafkaProducer[String, String]) extends Seria
 
         val producerFunction = () => {
             val producer = new KafkaProducer[String, String](props)
-            println("producer created in kafka sink 398ugbgai;vjdv")
+            println("producer created in kafka sink")
             //close kafka producer before shutdown of JVM so buffered messages are not lost
             sys.ShutdownHookThread {
             producer.close()
