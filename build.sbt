@@ -5,7 +5,7 @@
 =======
 
 >>>>>>> kafka/bryan
->>>>>>> 7ea179716759d4e429c50db34db153b5718e5645
+// >>>>>>> 7ea179716759d4e429c50db34db153b5718e5645
 scalaVersion := "2.11.12"
 
 name := "P3"
@@ -33,7 +33,7 @@ libraryDependencies += "org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.8"
 =======
 libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8"
 >>>>>>> kafka/bryan
->>>>>>> 7ea179716759d4e429c50db34db153b5718e5645
+// >>>>>>> 7ea179716759d4e429c50db34db153b5718e5645
 
 // Kafka
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
