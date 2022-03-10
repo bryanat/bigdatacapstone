@@ -16,7 +16,7 @@ import kafkapack._
 import producerpack._
 // Consumer branch
 import consumerpack._
-// Spark Contexts
+
 import contextpack._
 
 object Main {
@@ -27,6 +27,6 @@ object Main {
 
     //MainKafka.startMainKafka()
     MainProducer.startMainProducer()
-    MainConsumer.startMainConsumer()
+
   }
 }
