@@ -38,7 +38,7 @@ object trend2 {
     val splitT = inputTransaction.split(",")
     var resultString = ""
     resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + splitT(6) + "," +
-      "Visa" + "," + "2008-10-16" + " " + trans.getRandomTime() + "," + splitT(9) + "," + splitT(10) + "," + splitT(11) + "," + splitT(12) + "," + splitT(13) + "," + splitT(14) + "," + splitT(15)
+      "Visa" + "," + splitT(8) + "," + "2008-10-16" + " " + trans.getRandomTime() + "," + splitT(10) + "," + splitT(11) + "," + splitT(12) + "," + splitT(13) + "," + splitT(14) + "," + splitT(15)
     return resultString
   }
 
