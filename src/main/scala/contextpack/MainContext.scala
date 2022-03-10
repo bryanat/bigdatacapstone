@@ -19,7 +19,7 @@ object MainContext {
 
   def getSparkConf(): SparkConf = {
     // may need to import team members's SPARK_HOME Path for .setSparkHome(/*SPARK_HOME_PATH*/) for each individual member's branches
-    val sconf = new SparkConf().setMaster("local[*]").setAppName("P3")//.setSparkHome("C:\\Spark")
+    val sconf = new SparkConf().set("spark.driver.allowMultipleContexts", "true").setMaster("local[*]").setAppName("P3")//.setSparkHome("C:\\Spark")
     sconf
   }
 
