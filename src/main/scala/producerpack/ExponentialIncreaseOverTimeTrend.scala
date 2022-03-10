@@ -5,9 +5,7 @@ object ExponentialIncreaseOverTimeTrend {
   def createTrend(product: Vector[String], dataPoints:Int):Vector[String] = {
     //I will try and
     var resultVector = Vector[String]()
-
-
-
+    
     return resultVector
   }
 }
