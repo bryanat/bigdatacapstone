@@ -1,0 +1,39 @@
+--7. possible fraud purchases (by payment_txn_success as failed)
+--	Subsections by location / category / price
+
+
+-- see all failed transactions
+select order_id, payment_txn_id, failure_reason, price, product, category, city, country
+from TABLE_NAME
+where payment_txn_success = 'N';
+
+
+-- failed transactions by location
+select order_id, payment_txn_id, failure_reason, city, country
+from TABLE_NAME
+where payment_txn_success = 'N';
+
+
+-- failed transactions by price
+select order_id, payment_txn_id, failure_reason, price
+from TABLE_NAME
+where payment_txn_success = 'N';
+
+
+-- failed transactions by category
+select order_id, payment_txn_id, failure_reason, product_category
+from TABLE_NAME
+where payment_txn_success = 'N';
+
+
+-- count of each failure reasons
+select failure_reason, count(payment_txn_id) as quantity
+from TABLE_NAME
+where payment_txn_success = 'N'
+group by failure_reason;
+
+
+-- count of successful transactions vs failure transactions
+select payment_txn_success, count(payment_txn_id) as quantity
+from TABLE_NAME
+group by payment_txn_success;
