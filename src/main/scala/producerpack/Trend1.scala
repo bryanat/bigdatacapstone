@@ -8,7 +8,7 @@ import java.util.Date
 // Our return string will be in the following format:
 // "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city,website,pay_id,success"
 
-object trend1 {
+object Trend1 {
 
   System.setProperty("hadoop.home.dir", "c:/winutils")
   val spark = SparkSession
@@ -45,8 +45,9 @@ object trend1 {
   def main(args: Array[String]): Unit = {
     var orderCounter = 100000
     var orderID = trendTag+orderCounter.toString
-    for (i <- 0 to 10) {
-        println(createInitialTransaction(orderID))
+    // for (i <- 0 to 10) {
+    while (true) {
+      println(createInitialTransaction(orderID))
       orderCounter = orderCounter+1
       orderID = trendTag+orderCounter.toString
 
