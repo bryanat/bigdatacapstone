@@ -19,14 +19,16 @@ object MainProducer {
         val rs = new RandomSelections
 
         println("Main Producer started...")
-        var trend1Vector = trend1.getTrend1(spark, 100)
-        trend1Vector.foreach(println)
-        var randomVector = trans.getRandomTransactions(rs, spark, 500)
-        randomVector.foreach(println)
-        var trend2Vector = trend2.getTrend2(spark, 150)
-        trend2Vector.foreach(println)
-        var trend3Vector = trend3.getTrend3(spark, 500)
-        trend3Vector.foreach(println)
+//        var trend1Vector = trend1.getTrend1(spark, 100)
+//        trend1Vector.foreach(println)
+//        var randomVector = trans.getRandomTransactions(rs, spark, 500)
+//        randomVector.foreach(println)
+//        var trend2Vector = trend2.getTrend2(spark, 150)
+//        trend2Vector.foreach(println)
+//        var trend3Vector = trend3.getTrend3(spark, 500)
+//        trend3Vector.foreach(println)
+        var trend5Vector = trend5.getTrend5(spark, 500)
+        trend5Vector.foreach(println)
     }
 
 }
