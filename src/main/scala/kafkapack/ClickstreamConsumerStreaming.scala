@@ -88,11 +88,11 @@ object ClickstreamConsumerStreaming {
       .getOrCreate()
    
     // Drop the table if it already exists 
-    spark.sql("DROP TABLE IF EXISTS csmessages_hive_table")
+    spark.sql("DROP TABLE IF EXISTS kafka_to_hive_table")
     // Create the table to store your streams 
-    spark.sql("CREATE TABLE csmessages_hive_table (order_id STRING, customer_id STRING, product_id STRING, product_name STRING" +
+    spark.sql("CREATE TABLE kafka_to_hive_table (order_id STRING, customer_id STRING, customer_name STRING, product_id STRING, product_name STRING, " +
       "product_category STRING, payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
-      "ecommerce_webname STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) STORED AS TEXTFILE")
+      "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) STORED AS TEXTFILE")
 // Convert RDDs of the lines DStream to DataFrame and run a SQL query
 
 
@@ -113,7 +113,7 @@ topicdstream.foreachRDD {rdd =>
       messagedf.createOrReplaceTempView("csmessages")
       
       //Insert continuous streams into Hive table
-      spark.sql("INSERT INTO TABLE csmessages_hive_table SELECT * FROM csmessages")
+      spark.sql("INSERT INTO TABLE kafka_to_hive_table SELECT * FROM csmessages")
 
       // Select the parsed messages from the table using SQL and print it (since it runs on drive display few records)
       val messagesqueryDF =
@@ -135,7 +135,7 @@ topicdstream.foreachRDD {rdd =>
     //   messagesDataFrame.createOrReplaceTempView("csmessages")
       
     //   //Insert continuous streams into Hive table
-    //   spark.sql("INSERT INTO TABLE csmessages_hive_table SELECT * FROM csmessages")
+    //   spark.sql("INSERT INTO TABLE kafka_to_hive_table SELECT * FROM csmessages")
 
     //   // Select the parsed messages from the table using SQL and print it (since it runs on drive display few records)
     //   val messagesqueryDataFrame =
