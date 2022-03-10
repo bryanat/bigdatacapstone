@@ -31,6 +31,12 @@ libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
 libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
 libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.4.1"
 
+// Akka
+// https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor
+// https://mvnrepository.com/artifact/com.typesafe.akka/akka-stream
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.5.32"
+libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.32"
+
 
 
 // Circe (Serializer)
