@@ -20,6 +20,10 @@ import consumerpack._
 import contextpack._
 
 object Main {
+
+  val ryProducerTest = new RYProducerTest
+  val ryConsumerTest = new RYConsumer
+
   def main(args: Array[String]) = {
     System.setProperty("hadoop.home.dir", "C:\\winutils")
 
@@ -28,5 +32,12 @@ object Main {
     //MainKafka.startMainKafka()
     MainProducer.startMainProducer()
     MainConsumer.startMainConsumer()
+//    MainKafka.startMainKafka()
+//    MainProducer.startMainProducer()
+//    MainConsumer.startMainConsumer()
+    //ryProducerTest.producerTest()
+    //ryConsumerTest.consumerTest()
+
+    ryConsumerTest.queryConsumer()
   }
 }
