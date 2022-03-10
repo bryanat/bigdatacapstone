@@ -5,6 +5,7 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
+import scala.util.matching.Regex._
 
 class DataCollection {
 
@@ -168,6 +169,25 @@ class DataCollection {
     val resultVector = productList.toVector
     resultVector
   }
+
+  //getSpecificTypeFromCategory --currently not working--
+  /*def getSpecificItemTypeFromCategory(spark: SparkSession): Vector[Row] = {
+    val productVector = getProductDataList(spark)
+    val productListBuffer = ListBuffer[Row]()
+    productVector.foreach(println)
+    val pattern = """A\w*""".r
+
+
+    for (i <- 0 until productVector.length-1){
+      if (productVector(i).get(2).toString == "Books" && (productVector(i).get(1).toString).matches("""A\w*"""))
+      {
+        productListBuffer += productVector(i)
+      }
+    }
+    val productList = productListBuffer.toList
+    val resultVector = productList.toVector
+    resultVector
+  }*/
 
   //getShoesList will return a vector with ONLY the rows that contain data about shoe sales.
   def getShoesList(spark: SparkSession): Vector[Row] ={

@@ -55,7 +55,7 @@ object trend1 {
   }
 
 
-  def main(args: Array[String]): Unit = {
+  /*def main(args: Array[String]): Unit = {
     var orderCounter = 100000
     var orderID = trendTag+orderCounter.toString
     var repeatCounter = 1
@@ -108,6 +108,6 @@ object trend1 {
 
 //    println(customerVector(49))
 //    println(customerVector(49).get(1))
-  }
+  }*/
 }
 
