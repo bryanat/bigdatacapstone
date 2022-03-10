@@ -31,11 +31,13 @@ object Main {
     //System.setProperty("hadoop.home.dir", "C://hadoop")
 
     ////Kakfa Main
+    //MainConsumerEntry.main() //need two terminals "sbt run" for Kafka entry points
+    //MainProducerEntry.main() //need two terminals "sbt run" for Kafka entry points
 
     ////Producer Main
+    MainProducer.startMainProducer()
 
     ////Consumer Main
-    MainProducer.startMainProducer()
     MainConsumer.startMainConsumer()    
     ryConsumerTest.queryConsumer()
     //ryProducerTest.producerTest()
