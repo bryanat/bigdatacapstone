@@ -1,6 +1,6 @@
 package producerpack
 
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.SparkSession
 
 import java.util.Random
 
@@ -10,95 +10,110 @@ import java.util.Random
 class RandomSelections {
 
   val rs = new Random()
+  val dc = new DataCollection
 
   //getRandomCustomerID: Will return a string of both CustomerID&CustomerName
-  def getRandomCustomerID(vector: Vector[Row], spark: SparkSession): String ={
-    val randomNum = rs.nextInt(vector.length-1)
-    val randomResult = vector(randomNum)
+  def getRandomCustomerID(spark: SparkSession): String ={
+    val customerList = dc.getCustomersList(spark)
+    val randomNum = rs.nextInt(customerList.length-1)
+    val randomResult = customerList(randomNum)
     val resultString = randomResult(0).toString + "," + randomResult(1).toString + ","
     resultString
   }
   // getRandomWebsite: Will return a string of only a random domain (URL)
-  def getRandomWebsite(vector: Vector[Row], spark: SparkSession): String ={
-    val randomNum = rs.nextInt(vector.length-1)
-    val randomResult = vector(randomNum)
+  def getRandomWebsite(spark: SparkSession): String ={
+    val websiteList = dc.getWebsiteList(spark)
+    val randomNum = rs.nextInt(websiteList.length-1)
+    val randomResult = websiteList(randomNum)
     val resultString = randomResult(1).toString + ","
     resultString
   }
-  def getRandomPayment(vector: Vector[Row], spark: SparkSession): String ={
-    val randomNum = rs.nextInt(vector.length-1)
-    val randomResult = vector(randomNum)
+  def getRandomPayment(spark: SparkSession): String ={
+    val paymentList = dc.getPaymentList(spark)
+    val randomNum = rs.nextInt(paymentList.length-1)
+    val randomResult = paymentList(randomNum)
     val resultString = randomResult(0).toString + ","
     resultString
   }
 
-  def getRandomLocation(vector: Vector[Row], spark: SparkSession): String ={
-    val randomNum = rs.nextInt(vector.length-1)
-    val randomResult = vector(randomNum)
+  def getRandomLocation(spark: SparkSession): String ={
+    val locationList = dc.getCityCountryList(spark)
+    val randomNum = rs.nextInt(locationList.length-1)
+    val randomResult = locationList(randomNum)
     val resultString = randomResult(0).toString + "," + randomResult(1).toString + ","
     resultString
   }
   // getRandomProduct: Will return a string of a random product selected from ProductData
-  def getRandomProduct(vector: Vector[Row], spark: SparkSession, category: String): String ={
+  def getRandomProduct(spark: SparkSession, category: String): String ={
 
     category match {
       case "All" => {
-        val randomNum = rs.nextInt(vector.length-1)
-        val randomResult = vector(randomNum)
+        val productList = dc.getProductDataList(spark)
+        val randomNum = rs.nextInt(productList.length-1)
+        val randomResult = productList(randomNum)
         val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
         resultString
       }
       case "Computers" => {
-        val randomNum = rs.nextInt(vector.length-1)
-        val randomResult = vector(randomNum)
+        val productList = dc.getComputersList(spark)
+        val randomNum = rs.nextInt(productList.length-1)
+        val randomResult = productList(randomNum)
         val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
         resultString
       }
       case "Clothing" => {
-        val randomNum = rs.nextInt(vector.length-1)
-        val randomResult = vector(randomNum)
+        val productList = dc.getClothingList(spark)
+        val randomNum = rs.nextInt(productList.length-1)
+        val randomResult = productList(randomNum)
         val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
         resultString
       }
       case "Home & Garden" => {
-        val randomNum = rs.nextInt(vector.length-1)
-        val randomResult = vector(randomNum)
+        val productList = dc.getHomeGardenList(spark)
+        val randomNum = rs.nextInt(productList.length-1)
+        val randomResult = productList(randomNum)
         val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
         resultString
       }
       case "Grocery" => {
-        val randomNum = rs.nextInt(vector.length-1)
-        val randomResult = vector(randomNum)
+        val productList = dc.getGroceryList(spark)
+        val randomNum = rs.nextInt(productList.length-1)
+        val randomResult = productList(randomNum)
         val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
         resultString
       }
       case "Sports" => {
-        val randomNum = rs.nextInt(vector.length-1)
-        val randomResult = vector(randomNum)
+        val productList = dc.getSportsList(spark)
+        val randomNum = rs.nextInt(productList.length-1)
+        val randomResult = productList(randomNum)
         val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
         resultString
       }
       case "Automotive" => {
-        val randomNum = rs.nextInt(vector.length-1)
-        val randomResult = vector(randomNum)
+        val productList = dc.getAutomotiveList(spark)
+        val randomNum = rs.nextInt(productList.length-1)
+        val randomResult = productList(randomNum)
         val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
         resultString
       }
       case "Electronics" => {
-        val randomNum = rs.nextInt(vector.length-1)
-        val randomResult = vector(randomNum)
+        val productList = dc.getElectronicsList(spark)
+        val randomNum = rs.nextInt(productList.length-1)
+        val randomResult = productList(randomNum)
         val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
         resultString
       }
       case "Shoes" => {
-        val randomNum = rs.nextInt(vector.length-1)
-        val randomResult = vector(randomNum)
+        val productList = dc.getShoesList(spark)
+        val randomNum = rs.nextInt(productList.length-1)
+        val randomResult = productList(randomNum)
         val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
         resultString
       }
       case "Books" => {
-        val randomNum = rs.nextInt(vector.length-1)
-        val randomResult = vector(randomNum)
+        val productList = dc.getBooksList(spark)
+        val randomNum = rs.nextInt(productList.length-1)
+        val randomResult = productList(randomNum)
         val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
         resultString
       }
@@ -106,9 +121,10 @@ class RandomSelections {
 
   }
   // getRandomCategory: Will return a string of a random Category
-  def getRandomCategory(vector: Vector[Row], spark: SparkSession): String ={
-    val randomNum = rs.nextInt(vector.length-1)
-    val randomResult = vector(randomNum)
+  def getRandomCategory(spark: SparkSession): String ={
+    val productList = dc.getProductDataList(spark)
+    val randomNum = rs.nextInt(productList.length-1)
+    val randomResult = productList(randomNum)
     val resultString = randomResult(2).toString
     resultString
   }
