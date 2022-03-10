@@ -16,14 +16,12 @@ object trend1 {
   //here we will inject our randomly created string with information that we need to create a trend
   //in this case, every third transaction will be updated to contain 'Crypto' as payment type and 'United States' as the country
   // We receive a comma separated string, split it by ",", use the array to create a new string, and return.
-  def manipulateTransactionTrend1(inputTransaction: String, counter: Int): String = {
+  def manipulateTransactionTrend1(inputTransaction: String): String = {
     val splitT = inputTransaction.split(",")
     var resultString = ""
-    if (counter == 3){
-      resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + splitT(6) + "," +
-        "Crypto" + "," + splitT(8) + "," + splitT(9) + "," + splitT(10) + "," + "United States" + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14) + "," + splitT(15)
-      return resultString
-    }
+    resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + splitT(6) + "," +
+      "Crypto" + "," + splitT(8) + "," + splitT(9) + "," + splitT(10) + "," + "United States" + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14) + "," + splitT(15)
+    return resultString
     resultString = inputTransaction
     resultString
   }
@@ -36,16 +34,18 @@ object trend1 {
     var orderID = trendTag+orderCounter.toString
     var repeatCounter = 1
     var resultList = ListBuffer("")
-    for (i <- 0 to returnAmount) {
+    for (i <- 0 to returnAmount){
       val tempString = trans.createInitialTransaction(rs, spark, orderID,"Grocery")
-      val resultString = manipulateTransactionTrend1(tempString, repeatCounter)
+      resultList += tempString
       orderCounter = orderCounter+1
       orderID = trendTag+orderCounter.toString
-      repeatCounter = repeatCounter + 1
+    }
+    for (i <- 0 to returnAmount*3) {
+      val tempString = trans.createInitialTransaction(rs, spark, orderID,"Grocery")
+      val resultString = manipulateTransactionTrend1(tempString)
+      orderCounter = orderCounter+1
+      orderID = trendTag+orderCounter.toString
       resultList += resultString
-      if(repeatCounter == 4){
-        repeatCounter=1
-      }
     }
     val resultVector = resultList.toVector
     resultVector
