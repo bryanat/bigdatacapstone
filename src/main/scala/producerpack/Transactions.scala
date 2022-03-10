@@ -1,7 +1,7 @@
 package producerpack
 
 import org.apache.spark.sql.{Row, SparkSession}
-import producerpack.trend1.spark
+import producerpack.Trend1.spark
 
 import java.util.Random
 import scala.collection.mutable.ListBuffer

@@ -36,7 +36,7 @@ object Trend1 {
 
 
   def createInitialTransaction(orderID: String): String={
-    val initialString = orderID+ "," + rs.getRandomCustomerID(spark)+rs.getRandomProduct(spark, "Grocery")+rs.getRandomPayment(spark)+random.nextInt(25)+","+
+    val initialString = orderID+ "," + rs.getRandomCustomerID(spark) +rs.getRandomProduct(spark, "Grocery")+rs.getRandomPayment(spark)+random.nextInt(25)+","+
       "10-02-2017,"+rs.getRandomLocation(spark)+rs.getRandomWebsite(spark)+"pay_id,"+"success"
     initialString
   }
