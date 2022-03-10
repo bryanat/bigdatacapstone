@@ -57,21 +57,5 @@ object ProducerStreaming {
     }
     ssc.start()             // Start the computation
     ssc.awaitTermination()  // Wait for the computation to terminate
-    //ssc.stop()
-
     }
-/*
-  partitions.foreach((line: String) => {
-    producer.send(new ProducerRecord[String, String]("urmom", line))
-  }
-*/
-
-    //Finally, this can be further optimized by reusing connection objects across multiple RDDs/batches. One can maintain a static pool of connection objects than can be reused as RDDs of multiple batches are pushed to the external system, thus further reducing the overheads.
-// dstream.foreachRDD { rdd =>
-//   rdd.foreachPartition { partitionOfRecords =>
-//     // ConnectionPool is a static, lazily initialized pool of connections
-//     val connection = ConnectionPool.getConnection()
-//     partitionOfRecords.foreach(record => connection.send(record))
-//     ConnectionPool.returnConnection(connection)  // return to the pool for future reuse
-
 }
