@@ -30,7 +30,6 @@ object ExponentialIncreaseOverTimeTrend {
     val paymentTypes = collector.getPaymentList(spark)
     val places = collector.getCityCountryList(spark)
     val stepAmount:Double =  10/dataPoints.toDouble
-    println(stepAmount)
     val exCo =0.1
     //i think i can finally get to doing the actual thing
     var pntsDone = 0
@@ -84,7 +83,6 @@ object ExponentialIncreaseOverTimeTrend {
       curDate = increaseDate(curDate)
     }
     //shuffle and return the final vector
-    resultVector += stepAmount.toString
     resultVector.toVector
 
 
@@ -117,7 +115,6 @@ object ExponentialIncreaseOverTimeTrend {
     }
     //now that special months are out of the way...
     if(date(0) < 7){
-      println("In the first 7 months")
       date(0)%2 match {
         case 0 =>{
           if (date(1) == 30) {
