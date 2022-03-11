@@ -21,7 +21,7 @@ class RYConsumer {
     .getOrCreate()
 
 
-  val table = spark.read.option("delimiter", ",").option("header", "true").csv("dataset-offline/p3_dummy_data.csv")
+  val table = spark.read.option("delimiter", ",").option("header", "true").csv("dataset-online/testfile1.csv")
 
   val successYes = "Y"
   val successNo = "N"

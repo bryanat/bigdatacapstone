@@ -1,4 +1,4 @@
-package kafkapack
+package socketpack
 
 // optional import spark streaming
 

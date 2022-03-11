@@ -19,6 +19,8 @@ import consumerpack._
 // Spark Contexts
 import contextpack._
 
+import socketpack._
+
 object Main {
 
   val ryProducerTest = new RYProducerTest
@@ -41,6 +43,7 @@ object Main {
     ryConsumerTest.queryConsumer()
     //ryProducerTest.producerTest()
     //ryConsumerTest.consumerTest()
+    // var myClient = new Client(,)
   }
 
 }
