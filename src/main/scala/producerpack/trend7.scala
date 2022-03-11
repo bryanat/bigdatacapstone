@@ -20,8 +20,8 @@ object trend7 {
     val splitT = inputTransaction.split(",")
     var resultString = ""
    // if (counter == 1) {
-      resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + splitT(6) + "," +
-        "Bitcoin" + "," + splitT(8) + "," + splitT(9) + "," + splitT(10) + "," + splitT(11) + "," + splitT(12) + ","+ splitT(13) + "," + "N" + "," + "104"
+      resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + "Bitcoin" + "," +
+        splitT(7) + "," + splitT(8) + "," + splitT(9) + "," + splitT(10) + "," + splitT(11) + "," + splitT(12) + ","+ splitT(13) + "," + "N" + "," + "104"
       return resultString
    // }
     resultString = inputTransaction
