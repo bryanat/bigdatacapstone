@@ -106,7 +106,9 @@ topicdstream.foreachRDD {rdd =>
         //.value() returns deserialized value column
         val sc = SparkContext.getOrCreate()
         val value = record.value()
+        
         val time = record.timestamp()
+
         //parallelize value into rdd
         val messagedf = sc.parallelize(List(value)).toDF()
     // Creates a temporary view using the DataFrame
