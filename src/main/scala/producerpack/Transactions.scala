@@ -48,10 +48,29 @@ class Transactions {
       case "Shoes" => sendVector = shoeList
       case "Books" => sendVector = booksList
     }
-    val initialString = orderID+ "," + rs.getRandomCustomerID(customerList, spark)+rs.getRandomProduct(sendVector, spark)+rs.getRandomPayment(paymentList, spark)+random.nextInt(25)+","+
-      getRandomDateTime() + "," +rs.getRandomLocation(locationList, spark)+rs.getRandomWebsite(websiteList, spark)+ random.nextInt(204202) + "," + failOrNo + "," + rs.getRandomFail(failList, spark, failOrNo)
+    val (randomProduct,price) = rs.getRandomProduct(sendVector, spark)
+    val initialString = orderID+ "," + rs.getRandomCustomerID(customerList, spark)+ randomProduct + rs.getRandomPayment(paymentList, spark)+random.nextInt(25)+","+
+     price + "," + getRandomDateTime() + "," + rs.getRandomLocation(locationList, spark)+rs.getRandomWebsite(websiteList, spark)+ random.nextInt(204202) + "," + failOrNo + "," + rs.getRandomFail(failList, spark, failOrNo)
     initialString
   }
+
+  /* 0- Order ID
+/  1 - Customer ID
+/  2 - Customer Name
+/  3 - Product ID
+/  4 - Product Name
+/  5 - Product Category
+/  6 - Payment Type
+/  7 - QTY
+/  8 - Price
+/  9 - Datetime
+/  10 - Country
+/  11 - City
+/  12 - Website
+/  13 - Transaction ID
+/  14 - Transaction Success
+/  15 - Transaction fail reason
+*/
 
   // Returns Random 100 Transactions with no applied Trend
   def getRandomTransactions(rs: RandomSelections, spark: SparkSession, returnAmount: Int): Vector[String]={

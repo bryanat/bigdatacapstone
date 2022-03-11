@@ -23,8 +23,8 @@ object trend3 {
     val splitT = inputTransaction.split(",")
     var resultString = ""
       resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + splitT(6) + "," +
-        splitT(7) + "," + (splitT(8).toInt*3).toString + "," + trans.getRandomDate() + " " + getTimeBetween() + "," + splitT(10) + "," + "United States" + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14) + "," + splitT(15)
-      resultString
+        (splitT(7).toInt*3).toString + "," + splitT(8) + "," + trans.getRandomDate() + " " + getTimeBetween() + "," + "United States" + "," + splitT(11) + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14) + "," + splitT(15)
+    resultString
   }
 
   def getTimeBetween(): String ={
