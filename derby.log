@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Thu Mar 10 20:05:06 CST 2022:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-017f-76b8-f124-0000670378a0 
-on database directory C:\Users\joyce\IdeaProjects\bigdatacapstone\metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@7f244c01 
-Loaded from file:/C:/Users/joyce/IdeaProjects/bigdatacapstone/target/bg-jobs/sbt_3c27f3dc/target/6a358f49/d4f190b2/derby-10.12.1.1.jar
+Thu Mar 10 21:22:25 EST 2022:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-017f-76c8-cb1f-000090461638 
+on database directory /home/bryanat/bigdatacapstone/metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@33728312 
+Loaded from file:/home/bryanat/bigdatacapstone/target/bg-jobs/sbt_980e5a4a/target/dc716eb8/d4f190b2/derby-10.12.1.1.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_321-b07
-user.dir=C:\Users\joyce\IdeaProjects\bigdatacapstone
-os.name=Windows 10
+user.dir=/home/bryanat/bigdatacapstone
+os.name=Linux
 os.arch=amd64
-os.version=10.0
+os.version=5.13.0-35-generic
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

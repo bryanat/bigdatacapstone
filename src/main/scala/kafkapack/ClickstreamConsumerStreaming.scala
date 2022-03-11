@@ -22,13 +22,14 @@ object ClickstreamConsumerStreaming {
 
   def consumerKafka(args: Array[String]) {
 
+    val warehouseLocation = "file:${system:user.dir}/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
 
     System.setProperty("hadoop.home.dir", "C:\\hadoop")
     //val Array(brokers, topics) = args
     val topic = Set(args(0))
     val brokers = args(1)
     val sparkConf = new SparkConf()
-      .set("spark.sql.warehouse.dir", "hdfs://namenode/sql/metadata/hive")
+      .set("spark.sql.warehouse.dir", warehouseLocation)
       .set("spark.sql.catalogImplementation","hive")
       .setMaster("local[*]")
       .setAppName("p3")
@@ -60,7 +61,7 @@ object ClickstreamConsumerStreaming {
     
     
     
-    val warehouseLocation = "file:${system:user.dir}/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
+    // val warehouseLocation = "file:${system:user.dir}/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
     val ssql = SparkSession
       .builder
       .config(sparkConf)
