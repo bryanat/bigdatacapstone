@@ -1,5 +1,11 @@
 package kafkapack
 
+// optional import spark streaming
+
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.SparkSession
+
+// main library imports
 import akka.actor.{ Actor, ActorRef, Props }
 import akka.io.{ IO, Tcp }
 import akka.util.ByteString
