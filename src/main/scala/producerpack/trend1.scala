@@ -16,28 +16,11 @@ object trend1 {
   //here we will inject our randomly created string with information that we need to create a trend
   //in this case, every third transaction will be updated to contain 'Crypto' as payment type and 'United States' as the country
   // We receive a comma separated string, split it by ",", use the array to create a new string, and return.
-  /* 0- Order ID
-  /  1 - Customer ID
-  /  2 - Customer Name
-  /  3 - Product ID
-  /  4 - Product Name
-  /  5 - Product Category
-  /  6 - Payment Type
-  /  7 - QTY
-  /  8 - Price
-  /  9 - Datetime
-  /  10 - Country
-  /  11 - City
-  /  12 - Website
-  /  13 - Transaction ID
-  /  14 - Transaction Success
-  /  15 - Transaction fail reason
-   */
   def manipulateTransactionTrend1(inputTransaction: String): String = {
     val splitT = inputTransaction.split(",")
     var resultString = ""
-    resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + "Crypto" + "," +
-      splitT(7) + "," + splitT(8) + "," + splitT(9) + "," + "United States" + "," + splitT(11) + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14) + "," + splitT(15)
+    resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + splitT(6) + "," +
+      "Crypto" + "," + splitT(8) + "," + splitT(9) + "," + splitT(10) + "," + "United States" + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14) + "," + splitT(15)
     return resultString
     resultString = inputTransaction
     resultString
@@ -49,6 +32,7 @@ object trend1 {
   def getTrend1(spark: SparkSession, returnAmount: Int): Vector[String]={
     var orderCounter = 100000
     var orderID = trendTag+orderCounter.toString
+    var repeatCounter = 1
     var resultList = ListBuffer("")
     for (i <- 0 to returnAmount){
       val tempString = trans.createInitialTransaction(rs, spark, orderID,"Grocery")
