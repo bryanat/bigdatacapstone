@@ -29,6 +29,10 @@ object MainProducer {
 //        trend3Vector.foreach(println)
         var trend5Vector = trend5.getTrend5(spark, 500)
         trend5Vector.foreach(println)
+      var trend6Vector = trend6.getTrend6(spark, 500)
+      trend6Vector.foreach(println)
+      var trend7Vector = trend7.getTrend7(spark, 500)
+      trend7Vector.foreach(println)
     }
 
 }
