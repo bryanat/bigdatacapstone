@@ -26,7 +26,6 @@ object Main {
 
   def main(args: Array[String]) = {
     System.setProperty("hadoop.home.dir", "C:\\winutils")
-
     println("Main app started")
     //System.setProperty("hadoop.home.dir", "C://hadoop")
 

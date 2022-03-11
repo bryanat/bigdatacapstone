@@ -27,6 +27,20 @@ libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
 libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
 libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.4.1"
 
+// Akka
+// https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor
+// https://mvnrepository.com/artifact/com.typesafe.akka/akka-stream
+// https://mvnrepository.com/artifact/com.typesafe.akka/akka-stream-kafka
+// https://mvnrepository.com/artifact/com.lightbend.akka/akka-stream-alpakka-text
+// https://mvnrepository.com/artifact/com.lightbend.akka/alpakka
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.5.32"                   //core dependancy
+libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.32"                  //extra stream dependancy
+libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "2.0.7"             //for kafka integration - does not explicitly list Alpakka(?)
+libraryDependencies += "com.lightbend.akka" %% "akka-stream-alpakka-text" % "2.0.2"     //text file integration
+libraryDependencies += "com.lightbend.akka" %% "alpakka" % "1.0-M2"
+
+
+
 
 
 // Circe (Serializer)
