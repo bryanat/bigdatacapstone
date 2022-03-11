@@ -5,19 +5,7 @@ import scala.collection.mutable.ListBuffer
 
 // Trend Two will show downtime in Visa payments for a one day period.
 // Our return string will be in the following format:
-// "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city,website,pay_id,success"
-
-object trend2 {
-
-  val trendTag = "TR2"
-  val rs = new RandomSelections
-  val trans = new Transactions
-
-  //here we will inject our randomly created string with information that we need to create a trend
-  //in this case, I will be manipulating the DATE, Payment, Success, and FailReason fields of our string
-  // This will happen ON date 10-15-2008
-  // We receive a comma separated string, split it by ",", use the array to create a new string, and return.
-  /* 0- Order ID
+/* 0- Order ID
 /  1 - Customer ID
 /  2 - Customer Name
 /  3 - Product ID
@@ -34,6 +22,17 @@ object trend2 {
 /  14 - Transaction Success
 /  15 - Transaction fail reason
  */
+
+object trend2 {
+
+  val trendTag = "TR2"
+  val rs = new RandomSelections
+  val trans = new Transactions
+
+  //here we will inject our randomly created string with information that we need to create a trend
+  //in this case, I will be manipulating the DATE, Payment, Success, and FailReason fields of our string
+  // This will happen ON date 10-15-2008
+  // We receive a comma separated string, split it by ",", use the array to create a new string, and return.
 
   def manipulateTransactionTrend2(inputTransaction: String): String = {
     val splitT = inputTransaction.split(",")
@@ -60,9 +59,6 @@ object trend2 {
     return resultString
   }
 
-  //This is the main driver of Trend1 that will return a vector of transaction strings.
-  // For this trend I only want to look at grocery orders, so I createInitalTransactions using only 'Grocery'
-  // the counter is integrated to ensure that I will have enough data entry points for Crypto/US to show a clear trend.
   def getTrend2(spark: SparkSession, returnAmount: Int): Vector[String]={
     var orderCounter = 100000
     var orderID = trendTag+orderCounter.toString
