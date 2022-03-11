@@ -32,26 +32,7 @@ object MCTrends {
   var groceryVector = dc.getGroceryList(spark)
   val dec17 = "12-17-2021"
   val dec18 = "12-18-2021"
-  val dec19 = "12-18-2021"
-
-  //getSpecificTypeFromCategory --currently not working-- would go in datacollection otherwise
-  /*def getSpecificItemTypeFromCategory(spark: SparkSession): Vector[Row] = {
-    val productVector = getProductDataList(spark)
-    val productListBuffer = ListBuffer[Row]()
-    productVector.foreach(println)
-    val pattern = """A\w*""".r
-
-
-    for (i <- 0 until productVector.length-1){
-      if (productVector(i).get(2).toString == "Books" && (productVector(i).get(1).toString).matches("""A\w*"""))
-      {
-        productListBuffer += productVector(i)
-      }
-    }
-    val productList = productListBuffer.toList
-    val resultVector = productList.toVector
-    resultVector
-  }*/
+  val dec19 = "12-19-2021"
 
   def createTransactionMCTrend(orderID: String, category: String, date: String): String={
     val initialString = orderID+ "," + rs.getRandomCustomerID(spark)+rs.getRandomProduct(spark, category)+rs.getRandomPayment(spark)+random.nextInt(25)+","+
@@ -64,11 +45,25 @@ object MCTrends {
     var orderID = trendTag + orderCounter.toString
     for (i <- 0 to 10) {
       val resultString = createTransactionMCTrend(orderID, "Electronics",dec17)
-      val resultString2 = createTransactionMCTrend(orderID, "Clothes",dec17)
-      val resultString3 = createTransactionMCTrend(orderID, "Electronics",dec17)
+      val resultString2 = createTransactionMCTrend(orderID, "Clothing",dec17)
+      val resultString3 = createTransactionMCTrend(orderID, "Home & Garden",dec17)
+      val resultString4 = createTransactionMCTrend(orderID, "Electronics",dec18)
+      val resultString5 = createTransactionMCTrend(orderID, "Clothing",dec18)
+      val resultString6 = createTransactionMCTrend(orderID, "Home & Garden",dec18)
+      val resultString7 = createTransactionMCTrend(orderID, "Electronics",dec19)
+      val resultString8 = createTransactionMCTrend(orderID, "Clothing",dec19)
+      val resultString9 = createTransactionMCTrend(orderID, "Home & Garden",dec19)
       orderCounter = orderCounter + 1
       orderID = trendTag + orderCounter.toString
       println(resultString)
+      println(resultString2)
+      println(resultString3)
+      println(resultString4)
+      println(resultString5)
+      println(resultString6)
+      println(resultString7)
+      println(resultString8)
+      println(resultString9)
     }
 
   }
