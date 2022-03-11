@@ -17,39 +17,79 @@ class Transactions {
   val gc = new GregorianCalendar()
 
   val productList = dc.getProductDataList(spark)
-  val electronicList = dc.getCategoryList(spark, "Electronics")
-  val computersList = dc.getCategoryList(spark, "Computers")
-  val clothingList = dc.getCategoryList(spark, "Clothing")
-  val homeGardenList = dc.getCategoryList(spark, "Home & Garden")
-  val groceryList = dc.getCategoryList(spark, "Grocery")
-  val sportsList = dc.getCategoryList(spark, "Sports")
-  val automotiveList = dc.getCategoryList(spark, "Automotive")
-  val shoeList = dc.getCategoryList(spark, "Shoes")
-  val booksList = dc.getCategoryList(spark, "Books")
+
+
+  val (electronicList, indexes1) = dc.getCategoryList(spark, "Electronics")
+  val (computersList, indexes2) = dc.getCategoryList(spark, "Computers")
+  val (clothingList, indexes3) = dc.getCategoryList(spark, "Clothing")
+  val (homeGardenList, indexes4) = dc.getCategoryList(spark, "Home & Garden")
+  val (groceryList, indexes5) = dc.getCategoryList(spark, "Grocery")
+  val (sportsList, indexes6) = dc.getCategoryList(spark, "Sports")
+  val (automotiveList, indexes7) = dc.getCategoryList(spark, "Automotive")
+  val (shoeList, indexes8) = dc.getCategoryList(spark, "Shoes")
+  val (booksList, indexes9) = dc.getCategoryList(spark, "Books")
   val customerList = dc.getCustomersList(spark)
   val paymentList = dc.getPaymentList(spark)
   val locationList = dc.getCityCountryList(spark)
   val websiteList = dc.getWebsiteList(spark)
   val failList = dc.getfailReasonsList(spark)
   var sendVector = productList
+  var pricesList = dc.getPricesList(spark)
 
   // The Base Transaction String that we will be manipulating in Trends
   def createInitialTransaction(rs:RandomSelections, spark: SparkSession, orderID: String, category: String): String={
+    var indexes = ListBuffer(0)
     val failOrNo = getRandomSuccess()
     category match {
-      case "All" => sendVector = productList
-      case "Computers" => sendVector = computersList
-      case "Clothing" => sendVector = clothingList
-      case "Home & Garden" => sendVector = homeGardenList
-      case "Grocery" => sendVector = groceryList
-      case "Sports" => sendVector = sportsList
-      case "Automotive" => sendVector = automotiveList
-      case "Electronics" => sendVector = electronicList
-      case "Shoes" => sendVector = shoeList
-      case "Books" => sendVector = booksList
+      case "All" => {
+        var counter = 0
+        sendVector = productList
+        indexes+=0
+        for (i <- 0 to productList.length-1){
+          indexes += counter
+          counter = counter + 1
+        }
+      }
+      case "Computers" => {
+        sendVector = computersList
+        indexes2.foreach(x => indexes += x)
+      }
+      case "Clothing" => {
+        sendVector = clothingList
+        indexes3.foreach(x => indexes += x)
+      }
+      case "Home & Garden" => {
+        sendVector = homeGardenList
+        indexes4.foreach(x => indexes += x)
+      }
+      case "Grocery" => {
+        sendVector = groceryList
+        indexes5.foreach(x => indexes += x)
+      }
+      case "Sports" => {
+        sendVector = sportsList
+        indexes6.foreach(x => indexes += x)
+      }
+      case "Automotive" => {
+        sendVector = automotiveList
+        indexes7.foreach(x => indexes += x)
+      }
+      case "Electronics" => {
+        sendVector = electronicList
+        indexes1.foreach(x => indexes += x)
+      }
+      case "Shoes" => {
+        sendVector = shoeList
+        indexes8.foreach(x => indexes += x)
+      }
+      case "Books" => {
+        sendVector = booksList
+        indexes9.foreach(x => indexes += x)
+      }
     }
-    val initialString = orderID+ "," + rs.getRandomCustomerID(customerList, spark)+rs.getRandomProduct(sendVector, spark)+rs.getRandomPayment(paymentList, spark)+random.nextInt(25)+","+
-      getRandomDateTime() + "," +rs.getRandomLocation(locationList, spark)+rs.getRandomWebsite(websiteList, spark)+ random.nextInt(204202) + "," + failOrNo + "," + rs.getRandomFail(failList, spark, failOrNo)
+    var (productString, index) = rs.getRandomProduct(sendVector, spark)
+    val initialString = orderID+ "," + rs.getRandomCustomerID(customerList, spark)+productString+rs.getRandomPayment(paymentList, spark)+random.nextInt(25)+","+
+      pricesList(indexes(index)+2).get(0) + "," + getRandomDateTime() + "," +rs.getRandomLocation(locationList, spark)+rs.getRandomWebsite(websiteList, spark)+ random.nextInt(204202) + "," + failOrNo + "," + rs.getRandomFail(failList, spark, failOrNo)
     initialString
   }
 
