@@ -70,7 +70,7 @@ object YashConsumer extends App {
     //adding mysql connectivity
     //creates a new table within db selected, with table titled as "All_Sales"
     val prop = new Properties()
-    prop.setProperty("user", %root%)
-    prop.setProperty("password", %dhayal%)
-    writeData.write.jdbc("jdbc:mysql://localhost:3306/NEED_DB_HERE", "All_Sales", prop)
+    prop.setProperty("user", "root")
+    prop.setProperty("password", "dhayal")
+    table.write.jdbc("jdbc:mysql://localhost:3306/NEED_DB_HERE", "All_Sales", prop)
 }
