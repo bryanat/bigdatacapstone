@@ -17,5 +17,9 @@ object TestAkka extends App {
     implicit val system: ActorSystem = ActorSystem("QuickStart")
 //   Code here
     val source: Source[Int, NotUsed] = Source(1 to 100)
+    val done: Future[Done] = source.runForeach(i => println(i))
+    implicit val ec = system.dispatcher
+    done.onComplete(_ => system.terminate())
 
+    
 }
