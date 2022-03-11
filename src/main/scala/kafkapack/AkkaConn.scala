@@ -3,6 +3,7 @@ package kafkapack
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, ProducerConfig, RecordMetadata}
 import akka.stream._
 import akka.stream.scaladsl._
+import akka.stream.scaladsl.Framing
 
 // to follow along with quickstart
 import akka.{ Done, NotUsed }
@@ -12,15 +13,26 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import java.nio.file.Paths
 
+import akka.actor.Actor
+import akka.stream.actor.ActorSubscriberMessage.{OnComplete, OnError}
+import akka.stream.actor.{ActorPublisherMessage, ActorPublisher}
+
+import akka.io.{ IO, Tcp }
+
 
 // -- start Akka code --
 
 class AkkaConn{
-    // val ssc = MainContext.getStreamingContext()
-    // val dstream = ssc.textFileStream("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/dstream")
+    
+    val binding: Future[scaladsl.Tcp.ServerBinding] =
+    Tcp().bind("127.0.0.1", 8888).to(Sink.ignore).run()
+    
+    binding.map { b =>
+    b.unbind() onComplete {
+        case _ => // ...
+    }
+    }
 
-    implicit val system: ActorSystem = ActorSystem("QuickStart")
-    // val source = 
 }
 
 // -- end Akka code --
