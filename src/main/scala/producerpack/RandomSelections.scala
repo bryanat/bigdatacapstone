@@ -51,11 +51,11 @@ class RandomSelections {
     resultString
   }
   // getRandomProduct: Will return a string of a random product selected from ProductData
-  def getRandomProduct(vector: Vector[Row], spark: SparkSession): (String,Int) ={
+  def getRandomProduct(vector: Vector[Row], spark: SparkSession): String ={
     val randomNum = rs.nextInt(vector.length-1)
     val randomResult = vector(randomNum)
-    val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + ","
-    (resultString, randomNum)
+    val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + "," + randomResult(3).toString + ","
+    resultString
   }
   // getRandomCategory: Will return a string of a random Category
   def getRandomCategory(vector: Vector[Row], spark: SparkSession): String ={
