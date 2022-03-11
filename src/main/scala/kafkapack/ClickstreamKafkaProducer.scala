@@ -9,13 +9,25 @@ import scala.collection.mutable.HashMap
 import contextpack._
 
 
+
+
 object ClickstreamKafkaProducer extends App{
 
   def producerKafka(args: Array[String]): Unit = {
   
   val topic = args(0)
   val brokers = args(1)
-  
+
+  // val TCP_IP = "localhost"
+  // val TCP_PORT = 40123
+  // val MESSAGE = "Test data Test data Test data"
+
+  // s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  // s.connect((TCP_IP, TCP_PORT))
+  // s.send(MESSAGE)
+  // s.close()
+    
+
   // val rnd = new Random()
   // val props = new Properties()
   // props.put("metadata.broker.list", brokers)
@@ -27,11 +39,14 @@ object ClickstreamKafkaProducer extends App{
 
   // Create a DStream that will connect to hostname:port, like localhost:9999
   val ssc = MainContext.getStreamingContext()
+  val dstream = ssc.textFileStream("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/dstream")
   //Producer team will stream their line by line stream data to socketTextStream("ec2-3-81-9-55.compute-1.amazonaws.com", 9092)
-  val dstream = ssc.socketTextStream("3.81.9.55", 9092)
+  //val dstream = ssc.socketTextStream("3.81.9.55", 9092)
+
+
 
    val props = new HashMap[String, Object]()
-  props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
+  props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
   props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
   props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
   props.put("producer.type", "async")
@@ -66,6 +81,8 @@ object ClickstreamKafkaProducer extends App{
     })
     })
   })
+  ssc.start()             // Start the computation
+  ssc.awaitTermination()  // Wait for the computation to terminate
   //val config = new ProducerConfig(props)
   // val producer = new KafkaProducer[String, String](props)
   // val t = System.currentTimeMillis()
