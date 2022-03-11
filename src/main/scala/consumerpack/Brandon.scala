@@ -45,7 +45,7 @@ object Brandon extends App {
 val df_price = df.withColumn("price", round(col("price"), 2))
 
   df_price.where(df("payment_txn_success") === "Y")
-      .groupBy("customer_id","ecommerce_website_name")
+      .groupBy("ecommerce_website_name")
       .avg("price")
       .withColumnRenamed("avg(price)", "cost_per_person")
       .orderBy(col("cost_per_person"))
@@ -53,10 +53,10 @@ val df_price = df.withColumn("price", round(col("price"), 2))
 
   println("2a) possible further breakdown by location")
   df_price.where(df("payment_txn_success") === "Y")
-    .groupBy("customer_id","ecommerce_website_name", "country")
+    .groupBy("ecommerce_website_name", "country")
     .avg("price")
     .withColumnRenamed("avg(price)", "cost_per_person")
-    .orderBy(col("cost_per_person"))
+    .orderBy(col("cost_per_person").desc, col("country").asc)
     .show(999)
     /*
 SELECT AVG(price), ecommerce_website_name, country
