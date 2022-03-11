@@ -1,83 +1,71 @@
 package kafkapack
 
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, ProducerConfig, RecordMetadata}
-import akka.stream._
-import akka.stream.scaladsl._
-import akka.stream.scaladsl.Framing
-
-// to follow along with quickstart
-import akka.{ Done, NotUsed }
-import akka.actor.ActorSystem
-import akka.util.ByteString
-import scala.concurrent._
-import scala.concurrent.duration._
-import java.nio.file.Paths
-
-import akka.actor.Actor
-import akka.stream.actor.ActorSubscriberMessage.{OnComplete, OnError}
-import akka.stream.actor.{ActorPublisherMessage, ActorPublisher}
-
+import akka.actor.{ Actor, ActorRef, Props }
 import akka.io.{ IO, Tcp }
+import akka.util.ByteString
+import java.net.InetSocketAddress
 
-
-// -- start Akka code --
-
-class AkkaConn{
-    
-    val binding: Future[scaladsl.Tcp.ServerBinding] =
-    Tcp().bind("127.0.0.1", 8888).to(Sink.ignore).run()
-    
-    binding.map { b =>
-    b.unbind() onComplete {
-        case _ => // ...
-    }
-    }
-
+object Client {
+  def props(remote: InetSocketAddress, replies: ActorRef) =
+    Props(classOf[Client], remote, replies)
+}
+ 
+class Client(remote: InetSocketAddress, listener: ActorRef) extends Actor {
+ 
+  import Tcp._
+  import context.system
+ 
+  IO(Tcp) ! Connect(remote)
+ 
+  def receive = {
+    case CommandFailed(_: Connect) =>
+      listener ! "connect failed"
+      context stop self
+ 
+    case c @ Connected(remote, local) =>
+      listener ! c
+      val connection = sender()
+      connection ! Register(self)
+      context become {
+        case data: ByteString =>
+          connection ! Write(data)
+        case CommandFailed(w: Write) =>
+          // O/S buffer was full
+          listener ! "write failed"
+        case Received(data) =>
+          listener ! data
+        case "close" =>
+          connection ! Close
+        case _: ConnectionClosed =>
+          listener ! "connection closed"
+          context stop self
+      }
+  }
+}
+class Server extends Actor {
+ 
+  import Tcp._
+  import context.system
+ 
+  IO(Tcp) ! Bind(self, new InetSocketAddress("44.195.89.83", 50070))
+ 
+  def receive = {
+    case b @ Bound(localAddress) =>
+      // do some logging or setup ...
+ 
+    case CommandFailed(_: Bind) => context stop self
+ 
+    case c @ Connected(remote, local) =>
+      val handler = context.actorOf(Props[SimplisticHandler])
+      val connection = sender()
+      connection ! Register(handler)
+  }
 }
 
-// -- end Akka code --
-
-// -- Old KafkaSink code --
-
-// import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, RecordMetadata}
-// import java.util.Properties
-// import java.util.concurrent.Future
-// import scala.collection.mutable.HashMap
-// import java.util.concurrent.atomic.AtomicReference
-// import org.apache.kafka.clients.producer.Callback
-// import kafkapack.KafkaDStreamExceptionHandler
-
-//() => KafkaProducer is equivalent to createProducer[KafkaProducer]()
-// class KafkaSink(createProducer: ()=>KafkaProducer[String, String]) extends Serializable {
-//   //calls the object that creates a lazily evaluated producer
-//   lazy val producer = createProducer()
-
-//   //sends the producer record
-//   def send(topic: String, message: String): Future[RecordMetadata]= producer.send(new ProducerRecord(topic, message))
-//   def testsend(topic: String, message: String): RecordMetadata = producer.send(new ProducerRecord(topic, message)).get()
-
-// }
-  
-
-
-
-//   //when KafkaSink object is called, apply method is implemented
-//   object KafkaSink {
-
-//     //converts Map properties to KafkaProducer properties
-//     import scala.collection.JavaConversions._
-
-//     def apply(props: HashMap[String, Object]): KafkaSink= {
-
-//         val producerFunction = () => {
-//             val producer = new KafkaProducer[String, String](props)
-//             println("producer created in kafka sink")
-//             //close kafka producer before shutdown of JVM so buffered messages are not lost
-//             sys.ShutdownHookThread {
-//             producer.close()
-//         }
-//         producer
-//     }
-//     new KafkaSink(producerFunction)
-//     }
-//   }
+class SimplisticHandler extends Actor {
+  import Tcp._
+  def receive = {
+    case Received(data) => sender() ! Write(data)
+    case PeerClosed     => context stop self
+  }
+}
