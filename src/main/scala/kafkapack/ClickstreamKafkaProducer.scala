@@ -39,19 +39,22 @@ object ClickstreamKafkaProducer extends App{
 
   // Create a DStream that will connect to hostname:port, like localhost:9999
   val ssc = MainContext.getStreamingContext()
-  val dstream = ssc.textFileStream("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/dstream")
+  val dstream = ssc.textFileStream("file:\\C:/Users/joyce/IdeaProjects/bigdatacapstone/dstream1")
   //Producer team will stream their line by line stream data to socketTextStream("ec2-3-81-9-55.compute-1.amazonaws.com", 9092)
-  //val dstream = ssc.socketTextStream("3.81.9.55", 9092)
+  
 
 
 
    val props = new HashMap[String, Object]()
-  props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
+  props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
   props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
   props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
   props.put("producer.type", "async")
-  props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "30000")
-  props.put(ProducerConfig.BATCH_SIZE_CONFIG, "49152")
+  props.put(ProducerConfig.RETRIES_CONFIG, "3")
+  props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true")
+  props.put(ProducerConfig.ACKS_CONFIG, "all")
+  // props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "60000")
+  // props.put(ProducerConfig.BATCH_SIZE_CONFIG, "49152")
 
 
   //create an instance of broadcast Kafka producer
@@ -63,16 +66,14 @@ object ClickstreamKafkaProducer extends App{
   //send the producer message with respect to a particular topic 
   dstream.foreachRDD ({ rdd =>
     println("(Producer) inside rdd is running")
+      //  kafkasink.value.send(topic, "tebbles")
+      //  val metadata = kafkasink.value.testsend(topic, "tebbles")
+      //   println(metadata.topic())
     rdd.foreachPartition ({ records =>
       println("(Producer) inside record partition is running")
-      // val metadata: List[Future[RecordMetadata]] = records.map { record => {
-      //   kafkasink.value.send(topic, record)
-      // }.toList
-      //metadata.foreach(metadata=>println(metadata.value())
       
-
       records.foreach({message => 
-      println("(Producer) inside partitioned record is running")
+        println("(Producer) inside partitioned record is running")
         val metadata = kafkasink.value.testsend(topic, message)
         println(metadata.topic())
         kafkasink.value.send(topic, message)
@@ -83,6 +84,11 @@ object ClickstreamKafkaProducer extends App{
   })
   ssc.start()             // Start the computation
   ssc.awaitTermination()  // Wait for the computation to terminate
+  // val metadata: List[Future[RecordMetadata]] = records.map { record => {
+  //   kafkasink.value.send(topic, record)
+  // }.toList
+  //metadata.foreach(metadata=>println(metadata.value())
+  
   //val config = new ProducerConfig(props)
   // val producer = new KafkaProducer[String, String](props)
   // val t = System.currentTimeMillis()
@@ -94,7 +100,7 @@ object ClickstreamKafkaProducer extends App{
   //   val data = new ProducerRecord[String, String](topic, ip, msg);
   //   producer.send(data);
   // }
-
+  
   // System.out.println("sent per second: " + events * 1000 / (System.currentTimeMillis() - t));
   // producer.close();
 }
