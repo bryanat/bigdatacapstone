@@ -22,7 +22,7 @@ object ClickstreamConsumerStreaming {
 
   def consumerKafka(args: Array[String]) {
 
-    val warehouseLocation = "file:${system:user.dir}/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
+    val warehouseLocation = "file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
 
     System.setProperty("hadoop.home.dir", "C:\\hadoop")
     //val Array(brokers, topics) = args
@@ -35,6 +35,7 @@ object ClickstreamConsumerStreaming {
       .setAppName("p3")
     val sc = new SparkContext(sparkConf)
     val ssc  = new StreamingContext(sc, Seconds(2))
+    ssc.sparkContext.setLogLevel("ERROR")
 
     // Create direct Kafka stream with brokers and topics
     //val topicsSet = topics.split(",").toSet
@@ -61,38 +62,46 @@ object ClickstreamConsumerStreaming {
     
     
     
-    // val warehouseLocation = "file:${system:user.dir}/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
     val ssql = SparkSession
       .builder
       .config(sparkConf)
-      //.config("spark.master", "local")
       .config("spark.sql.warehouse.dir", warehouseLocation)
-      //.config("spark.sql.catalogImplementation","hive")
       .enableHiveSupport()
       .getOrCreate()
    
     // Drop the table if it already exists 
     ssql.sql("DROP TABLE IF EXISTS mainhive")
-    println("after deletion")
     // Create the table to store your streams 
-    ssql.sql("CREATE TABLE mainhive(order_id STRING, customer_id STRING, product_id STRING, product_name STRING, product_category STRING, payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, ecommerce_webname STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) STORED AS TEXTFILE")
-    //ssql.sql("CREATE TABLE mainhive(order STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE")
+    ssql.sql("CREATE TABLE mainhive(random STRING, order_id STRING, customer_id STRING, product_id STRING, " +
+      "product_name STRING, product_category STRING, price STRING, payment_type STRING, qty STRING, " +
+      "datetime STRING, city STRING, country STRING, ecommerce_webname STRING, payment_txn_id STRING, " +
+      "payment_txn_success STRING) STORED AS TEXTFILE")
 
     println("after create table")
 
+    val now = System.currentTimeMillis()
+    println(s"(Consumer) Current unix time is: $now")
     topicdstream.foreachRDD {rdd => 
       rdd.foreach { record =>
         import ssql.implicits._
         //.value() returns deserialized value column
         val sc = SparkContext.getOrCreate()
         val value = record.value()
+        println(value)
         
         val time = record.timestamp()
 
-        //parallelize value into rdd
-        val messagedf = sc.parallelize(List(value)).toDF()
-    // Creates a temporary view using the DataFrame
-    messagedf.createOrReplaceTempView("csmessages")
+        
+        //try {
+          //RDD[String] to RDD[Case Class] to DF
+        val messagedf = sc.parallelize(List(value.split(",")))
+        .map(x=>Transaction(x(0).toString, x(1).toString, x(2).toString, x(3).toString,
+         x(4).toString,x(5).toString, x(6).toString, x(7).toString, x(8).toString, x(9).toString,
+        x(10).toString,x(11).toString, x(12).toString, x(13).toString, x(14).toString))
+        .toDF()
+      // Creates a temporary view using the DataFrame
+      messagedf.show()
+      messagedf.createOrReplaceTempView("csmessages")
       
       //Insert continuous streams into Hive table
       ssql.sql("INSERT INTO TABLE mainhive SELECT * FROM csmessages")
@@ -102,8 +111,9 @@ object ClickstreamConsumerStreaming {
       ssql.sql("SELECT * FROM csmessages")
       println(s"========= $time =========")
       messagesqueryDF.show()
-    }
-    }
+    //} catch {case e: NullPointerException=>println("message not added to table")} 
+  }
+  }
 
     ssc.start()
     ssc.awaitTermination()
@@ -111,7 +121,9 @@ object ClickstreamConsumerStreaming {
   }
 }
 /** Case class for converting RDD to DataFrame */
-//case class Record(recordtime: String,eventid: String,url: String,ip: String)
+case class Transaction(order_id: String,customer_id: String,customer_name: String,product_id: 
+  String,product_name: String,product_category: String,price: String,payment_type:String,qty:String,datetime:String,
+   city:String, country:String, ecommerce_webname:String, payment_txn_id:String, payment_txn_success:String)
 // val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
 
 // val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](

@@ -3,7 +3,7 @@
 .vscode
 .bsp
 .idea
-dataset-offline
+dataset-online
 metastore_db
 project
 spark-warehouse
