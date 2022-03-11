@@ -5,9 +5,25 @@ import org.apache.spark.sql.SparkSession
 import java.util.Random
 import scala.collection.mutable.ListBuffer
 
-// Trend One will show a larger amount of online grocery orders from North America than any other country.
+// Trend Three will show a large amount of Electronic Orders in the United States between 10 p.m. and 2 a.m.
 // Our return string will be in the following format:
-// "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city,website,pay_id,success"
+/* 0- Order ID
+/  1 - Customer ID
+/  2 - Customer Name
+/  3 - Product ID
+/  4 - Product Name
+/  5 - Product Category
+/  6 - Payment Type
+/  7 - QTY
+/  8 - Price
+/  9 - Datetime
+/  10 - Country
+/  11 - City
+/  12 - Website
+/  13 - Transaction ID
+/  14 - Transaction Success
+/  15 - Transaction fail reason
+ */
 
 object trend3 {
 
@@ -23,8 +39,8 @@ object trend3 {
     val splitT = inputTransaction.split(",")
     var resultString = ""
       resultString = splitT(0) + "," + splitT(1) + "," + splitT(2) + "," + splitT(3) + "," + splitT(4) + "," + splitT(5) + "," + splitT(6) + "," +
-        splitT(7) + "," + (splitT(8).toInt*3).toString + "," + trans.getRandomDate() + " " + getTimeBetween() + "," + splitT(10) + "," + "United States" + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14) + "," + splitT(15)
-      resultString
+        (splitT(7).toInt*3).toString + "," + splitT(8) + "," + trans.getRandomDate() + " " + getTimeBetween() + "," + "United States" + "," + splitT(11) + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14) + "," + splitT(15)
+    resultString
   }
 
   def getTimeBetween(): String ={
@@ -41,9 +57,6 @@ object trend3 {
     resultStr
   }
 
-  //This is the main driver of Trend1 that will return a vector of transaction strings.
-  // For this trend I only want to look at grocery orders, so I createInitalTransactions using only 'Grocery'
-  // the counter is integrated to ensure that I will have enough data entry points for Crypto/US to show a clear trend.
   def getTrend3(spark: SparkSession, returnAmount: Int): Vector[String]={
     var orderCounter = 100000
     var orderID = trendTag+orderCounter.toString
