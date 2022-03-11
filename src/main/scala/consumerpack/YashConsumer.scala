@@ -44,20 +44,33 @@ object YashConsumer extends App {
     table.createOrReplaceTempView("t1")
 
     //failed transactions
-    spark.sql("select order_id, payment_txn_id, product_name, price, product_category, city, country from t1 where payment_txn_success = 'N'").show()
+    val ft = spark.sql("select order_id, payment_txn_id, product_name, price, product_category, city, country from t1 where payment_txn_success = 'N'")
+    ft.show()
 
     //failed transactions by location
-    spark.sql("select order_id, payment_txn_id, product_name, price, city, country from t1 where payment_txn_success = 'N' order by city desc, country desc").show()
+    val ftLoc = spark.sql("select order_id, payment_txn_id, product_name, price, city, country from t1 where payment_txn_success = 'N' order by city desc, country desc")
+    ftLoc.show()
 
     //failed transactions by price
-    spark.sql("select order_id, payment_txn_id, product_name, price from t1 where payment_txn_success = 'N' order by price desc")
+    val ftPrice = spark.sql("select order_id, payment_txn_id, product_name, price from t1 where payment_txn_success = 'N' order by price desc")
+    ftPrice.show()
 
     //failed transactions by category
-    spark.sql("select order_id, payment_txn_id, product_name, product_category from t1 where payment_txn_success = 'N' order by product_category desc").show()
+    val ftCat = spark.sql("select order_id, payment_txn_id, product_name, product_category from t1 where payment_txn_success = 'N' order by product_category desc")
+    ftCat.show()
 
     //count of each failure reason -- CANT DO ON SAMPLE DATA WITHOUT COL failure_reason
-    //spark.sql("select failure_reason, count(payment_txn_id) as quantity from t1 where payment_txt_success = 'N' group by failure_reason").show()
+    //val frCount = spark.sql("select failure_reason, count(payment_txn_id) as quantity from t1 where payment_txt_success = 'N' group by failure_reason")
+    //frCount.show()
 
     //count of successful transactions vs failure transactions
-    spark.sql("select payment_txn_success, count(payment_txn_id) as quantity from t1 group by payment_txn_success").show()
+    val sVf = spark.sql("select payment_txn_success, count(payment_txn_id) as quantity from t1 group by payment_txn_success")
+    sVf.show()
+    
+    //adding mysql connectivity
+    //creates a new table within db selected, with table titled as "All_Sales"
+    val prop = new Properties()
+    prop.setProperty("user", %root%)
+    prop.setProperty("password", %dhayal%)
+    writeData.write.jdbc("jdbc:mysql://localhost:3306/NEED_DB_HERE", "All_Sales", prop)
 }
