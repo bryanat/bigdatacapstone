@@ -40,7 +40,7 @@ object ClickstreamKafkaProducer extends App{
   // Create a DStream that will connect to hostname:port, like localhost:9999
   val ssc = MainContext.getStreamingContext()
   val dstream = ssc.textFileStream("file:\\C:/Users/joyce/IdeaProjects/bigdatacapstone/dstream1")
-  //Producer team will stream their line by line stream data to socketTextStream("ec2-3-81-9-55.compute-1.amazonaws.com", 9092)
+  //Producer team will stream their line by line stream data to socketTextStream("44.195.89.83", 9092)
   
 
 

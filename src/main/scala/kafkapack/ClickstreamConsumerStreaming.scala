@@ -50,7 +50,7 @@ object ClickstreamConsumerStreaming {
      )
 
     //topics has to be Array type, not Strings
-    //val topics = Set(topic)
+    val topics = Set(topic)
     //val ssc = MainContext.getStreamingContext()
     val topicdstream = KafkaUtils.createDirectStream[String, String](
       // StreamingContext below, get current running StreamingContext imported from context package
@@ -82,33 +82,62 @@ object ClickstreamConsumerStreaming {
     val now = System.currentTimeMillis()
     println(s"(Consumer) Current unix time is: $now")
     topicdstream.foreachRDD {rdd => 
+      
+      //val ssql = SparkSession.builder.config(rdd.sparkContext.getConf).getOrCreate()
+      
       rdd.foreach { record =>
-        import ssql.implicits._
-        //.value() returns deserialized value column
-        val sc = SparkContext.getOrCreate()
-        val value = record.value()
-        println(value)
         
-        val time = record.timestamp()
+        //get new spark session 
+        //val sc = SparkContext.getOrCreate()
+        val ssql2 = SparkSession
+        .builder
+        .config(sparkConf)
+        .config("spark.sql.warehouse.dir", warehouseLocation)
+        .enableHiveSupport()
+        .getOrCreate()
+        ssql2.newSession()
 
+        //import ssql2.implicits._
+        //get new spark context
+        //val sc = SparkContext.getOrCreate()
+        //.value() returns deserialized value column
+        val value = record.value() 
+        val time = record.timestamp()
+        val v = value.split(",")
+  
         
         //try {
           //RDD[String] to RDD[Case Class] to DF
-        val messagedf = sc.parallelize(List(value.split(",")))
-        .map(x=>Transaction(x(0).toString, x(1).toString, x(2).toString, x(3).toString,
-         x(4).toString,x(5).toString, x(6).toString, x(7).toString, x(8).toString, x(9).toString,
-        x(10).toString,x(11).toString, x(12).toString, x(13).toString, x(14).toString))
-        .toDF()
+        // val messagedf = sc.parallelize(List(value.split(",")))
+        // .map(x=>Transaction(x(0).toString, x(1).toString, x(2).toString, x(3).toString,
+        //  x(4).toString,x(5).toString, x(6).toString, x(7).toString, x(8).toString, x(9).toString,
+        // x(10).toString,x(11).toString, x(12).toString, x(13).toString, x(14).toString))
+        // .toDF()
       // Creates a temporary view using the DataFrame
-      messagedf.show()
-      messagedf.createOrReplaceTempView("csmessages")
-      
+      // messagedf.show()
+      // messagedf.createOrReplaceTempView("csmessages")
+      val v1 = v(0)
+      val v2 = v(1)
+      val v3 = v(2)
+      val v4 = v(3)
+      val v5 = v(4)
+      val v6 = v(5)
+      val v7 = v(6)
+      val v8 = v(7)
+      val v9 = v(8)
+      val v10 = v(9)
+      val v11 = v(10)
+      val v12 = v(11)
+      val v13 = v(12)
+      val v14 = v(13)
+      val v15 = v(14)
       //Insert continuous streams into Hive table
-      ssql.sql("INSERT INTO TABLE mainhive SELECT * FROM csmessages")
+      //ssql.sql("INSERT INTO TABLE mainhive SELECT * FROM csmessages")
+      ssql2.sql(s"INSERT INTO TABLE mainhive VALUES ('$v1', '$v2', '$v3', '$v4','$v5','$v6','$v7','$v8','$v9','$v10','$v11','$v12','$v13','$v14','$v15')")
 
       // Select the parsed messages from the table using SQL and print it (since it runs on drive display few records)
       val messagesqueryDF =
-      ssql.sql("SELECT * FROM csmessages")
+      ssql2.sql("SELECT * FROM csmessages")
       println(s"========= $time =========")
       messagesqueryDF.show()
     //} catch {case e: NullPointerException=>println("message not added to table")} 
