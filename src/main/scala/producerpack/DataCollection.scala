@@ -19,6 +19,7 @@ class DataCollection {
     val returnVector = productListScala.toVector
     returnVector
   }
+
   //getCityCountryList will return the following Rows in a Vector: [city, country]
   def getCityCountryList(spark: SparkSession): Vector[Row] ={
     val df = spark.read.csv("dataset-online/citylist.csv")
@@ -64,133 +65,12 @@ class DataCollection {
     returnVector
   }
 
-  //getComputersList will return a vector with ONLY the rows that contain data about computer sales.
-  def getComputersList(spark: SparkSession): Vector[Row] ={
+  def getCategoryList(spark:SparkSession, category: String): Vector[Row] ={
+
     val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
-
     for (i <- 0 until productVector.length-1){
-      if (productVector(i).get(2).toString == "Computers"){
-        productListBuffer += productVector(i)
-      }
-    }
-    val productList = productListBuffer.toList
-    val resultVector = productList.toVector
-    resultVector
-  }
-
-  //getClothingList will return a vector with ONLY the rows that contain data about clothing sales.
-  def getClothingList(spark: SparkSession): Vector[Row] ={
-    val productVector = getProductDataList(spark)
-    val productListBuffer = ListBuffer[Row]()
-
-    for (i <- 0 until productVector.length-1){
-      if (productVector(i).get(2).toString == "Clothing"){
-        productListBuffer += productVector(i)
-      }
-    }
-    val productList = productListBuffer.toList
-    val resultVector = productList.toVector
-    resultVector
-  }
-
-  //getHomeGardenList will return a vector with ONLY the rows that contain data about Home & Garden sales.
-  def getHomeGardenList(spark: SparkSession): Vector[Row] ={
-    val productVector = getProductDataList(spark)
-    val productListBuffer = ListBuffer[Row]()
-
-    for (i <- 0 until productVector.length-1){
-      if (productVector(i).get(2).toString == "Home & Garden"){
-        productListBuffer += productVector(i)
-      }
-    }
-    val productList = productListBuffer.toList
-    val resultVector = productList.toVector
-    resultVector
-  }
-
-  //getGroceryList will return a vector with ONLY the rows that contain data about Grocery sales.
-  def getGroceryList(spark: SparkSession): Vector[Row] ={
-    val productVector = getProductDataList(spark)
-    val productListBuffer = ListBuffer[Row]()
-
-    for (i <- 0 until productVector.length-1){
-      if (productVector(i).get(2).toString == "Grocery"){
-        productListBuffer += productVector(i)
-      }
-    }
-    val productList = productListBuffer.toList
-    val resultVector = productList.toVector
-    resultVector
-  }
-
-  //getSportsList will return a vector with ONLY the rows that contain data about Sports sales.
-  def getSportsList(spark: SparkSession): Vector[Row] ={
-    val productVector = getProductDataList(spark)
-    val productListBuffer = ListBuffer[Row]()
-
-    for (i <- 0 until productVector.length-1){
-      if (productVector(i).get(2).toString == "Sports"){
-        productListBuffer += productVector(i)
-      }
-    }
-    val productList = productListBuffer.toList
-    val resultVector = productList.toVector
-    resultVector
-  }
-
-  //getAutomotiveList will return a vector with ONLY the rows that contain data about Automotive sales.
-  def getAutomotiveList(spark: SparkSession): Vector[Row] ={
-    val productVector = getProductDataList(spark)
-    val productListBuffer = ListBuffer[Row]()
-
-    for (i <- 0 until productVector.length-1){
-      if (productVector(i).get(2).toString == "Automotive"){
-        productListBuffer += productVector(i)
-      }
-    }
-    val productList = productListBuffer.toList
-    val resultVector = productList.toVector
-    resultVector
-  }
-
-  //getElectronicsList will return a vector with ONLY the rows that contain data about electronics sales.
-  def getElectronicsList(spark: SparkSession): Vector[Row] ={
-    val productVector = getProductDataList(spark)
-    val productListBuffer = ListBuffer[Row]()
-
-    for (i <- 0 until productVector.length-1){
-      if (productVector(i).get(2).toString == "Electronics"){
-        productListBuffer += productVector(i)
-      }
-    }
-    val productList = productListBuffer.toList
-    val resultVector = productList.toVector
-    resultVector
-  }
-
-  //getShoesList will return a vector with ONLY the rows that contain data about shoe sales.
-  def getShoesList(spark: SparkSession): Vector[Row] ={
-    val productVector = getProductDataList(spark)
-    val productListBuffer = ListBuffer[Row]()
-
-    for (i <- 0 until productVector.length-1){
-      if (productVector(i).get(2).toString == "Shoes"){
-        productListBuffer += productVector(i)
-      }
-    }
-    val productList = productListBuffer.toList
-    val resultVector = productList.toVector
-    resultVector
-  }
-
-  //getBooksList will return a vector with ONLY the rows that contain data about Book sales.
-  def getBooksList(spark: SparkSession): Vector[Row] ={
-    val productVector = getProductDataList(spark)
-    val productListBuffer = ListBuffer[Row]()
-
-    for (i <- 0 until productVector.length-1){
-      if (productVector(i).get(2).toString == "Books"){
+      if (productVector(i).get(2).toString == category){
         productListBuffer += productVector(i)
       }
     }
