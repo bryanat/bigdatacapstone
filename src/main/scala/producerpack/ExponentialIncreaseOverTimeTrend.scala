@@ -58,7 +58,7 @@ object ExponentialIncreaseOverTimeTrend {
 
           val country = rs.getRandomLocation(places,spark)
 
-          resultVector += s"TGA${orderID.toString},$cus$prod$pay,$qty,$price,${printDate(curDate)},$country$web${payID.toString},Y,$fail"
+          resultVector += s"TGA${orderID.toString},$cus$prod$pay$qty,$price,${printDate(curDate)},$country$web${payID.toString},Y,$fail"
         } else {
           //introduce bad data roughly 5% of the time.
           //get a random customer
