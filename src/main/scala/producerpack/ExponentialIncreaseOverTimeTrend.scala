@@ -17,9 +17,10 @@ object ExponentialIncreaseOverTimeTrend {
     .getOrCreate()
   spark.sparkContext.setLogLevel("ERROR")
   //we will used Camerons DataCollection object to get our data.
-  def createTrend(dataPoints:Int, pAmntVar:Int, baseAmount:Int, priceVar:Double):Vector[String] = {
+  def createTrend(dataPoints:Int, pAmntVar:Int, baseAmount:Int, startDate:ListBuffer[Int]):Vector[String] = {
     //I will try and
-    var resultVector = Vector[String]()
+    val resultVector = ListBuffer[String]()
+    val rs = new RandomSelections
     //get the data from object
     val collector = new DataCollection
     val customerData = collector.getCustomersList(spark)
@@ -27,22 +28,75 @@ object ExponentialIncreaseOverTimeTrend {
     val failReasons = collector.getfailReasonsList(spark)
     val websites = collector.getWebsiteList(spark)
     val paymentTypes = collector.getPaymentList(spark)
-    val stepAmount:Double =  10/dataPoints
+    val places = collector.getCityCountryList(spark)
+    val stepAmount:Double =  10/dataPoints.toDouble
+    println(stepAmount)
+    val exCo =0.1
     //i think i can finally get to doing the actual thing
-    for(i<-0 until dataPoints) {
-        //we will loop through until we have
-    }
+    var pntsDone = 0
+    var orderID = 1736672
+    var payID = 1823640
+    var curDate = startDate
+    while(pntsDone < dataPoints) {
+      //amount of purchase for the day
+      val varience = Random.nextInt(pAmntVar)
+      val purchases = baseAmount + varience
+      for(i<-0 to purchases) {
+        if(pntsDone % 20 == 0){
+          //introduce bad data roughly 5% of the time.
+          //get a random customer
+          val cus = rs.getRandomCustomerID(customerData,spark)
+          val ogString = rs.getRandomProduct(productData,spark)
+          val prod = ogString._1
+          val fail = rs.getRandomFail(failReasons, spark, "N")
+          val web = rs.getRandomWebsite(websites, spark)
+          val pay = rs.getRandomPayment(paymentTypes,spark)
+          val qty = Random.nextInt(10) +1.toString
+          //hey rounding sucks in scala
 
-    resultVector
+          val price = BigDecimal(ogString._2.toDouble*generateChangeCoefficient(2,stepAmount)).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble.toString()
+
+          val country = rs.getRandomLocation(places,spark)
+
+          resultVector += s"TGA${orderID.toString},$cus$prod$pay,$qty,$price,${printDate(curDate)},$country$web${payID.toString},Y,$fail"
+        } else {
+          //introduce bad data roughly 5% of the time.
+          //get a random customer
+          val cus = rs.getRandomCustomerID(customerData,spark)
+          val ogString = rs.getRandomProduct(productData,spark)
+          val prod = ogString._1
+          val fail = rs.getRandomFail(failReasons, spark, "N")
+          val web = rs.getRandomWebsite(websites, spark)
+          val pay = rs.getRandomPayment(paymentTypes,spark)
+          val qty = Random.nextInt(10) +1.toString
+          //hey rounding sucks in scala
+
+          val price = BigDecimal(ogString._2.toDouble*generateChangeCoefficient(2,stepAmount)).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble.toString()
+
+          val country = rs.getRandomLocation(places,spark)
+
+          resultVector += s"TGA${orderID.toString},$cus$prod$pay$qty,$price,${printDate(curDate)},$country$web${payID.toString},Y,100"
+        }
+        orderID +=5
+        payID += 1
+        pntsDone += 1
+      }
+      curDate = increaseDate(curDate)
+    }
+    //shuffle and return the final vector
+    resultVector += stepAmount.toString
+    resultVector.toVector
+
+
   }
-  def generateChangeCoefficient(ex:Double,baseInt:Int): Double ={
+  def generateChangeCoefficient(ex:Double,baseStep:Double): Double ={
     //it will take
-    ex*Math.pow(2,baseInt)
+    ex*Math.pow(2,baseStep)
   }
 
   def increaseDate(date:ListBuffer[Int]):ListBuffer[Int]={
     //date will come in MM, DD, YYYY
-    //check specail months, 2 and 12. leap years arent considered
+    //check special months, 2 and 12. leap years arent considered
     date(0) match {
       case 2 =>
         if(date(1) == 28) {
@@ -61,7 +115,7 @@ object ExponentialIncreaseOverTimeTrend {
         }
       case _ =>
     }
-    //now that specail months are out of the way...
+    //now that special months are out of the way...
     if(date(0) < 7){
       println("In the first 7 months")
       date(0)%2 match {
@@ -101,5 +155,8 @@ object ExponentialIncreaseOverTimeTrend {
     }
     date(1) += 1
     date
+  }
+  def printDate(date: ListBuffer[Int]):String = {
+    date(0).toString + "-" + date(1).toString + "-" + date(2).toString
   }
 }
