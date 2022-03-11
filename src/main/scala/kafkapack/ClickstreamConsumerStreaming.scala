@@ -1,14 +1,13 @@
 package kafkapack
 //import _root_.kafka.serializer.StringDecoder
-import org.apache.spark.streaming._
+//import org.apache.spark.streaming._
 //import org.apache.spark.streaming.kafka._
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.streaming.{ Seconds, StreamingContext, Time }
-import org.apache.spark.sql.SparkSession
+import org.apache.spark._
 import org.apache.spark.sql._
+import org.apache.spark.streaming._
 import scala.collection.JavaConverters._
 import org.apache.kafka.common.serialization.StringDeserializer 
 import org.apache.spark.streaming.kafka010._
@@ -16,28 +15,25 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.TaskContext
+import contextpack._
+
 
 object ClickstreamConsumerStreaming {
 
   def consumerKafka(args: Array[String]) {
 
-    // if (args.length < 2) {
-    //   System.err.println(s"""
-    //     |Usage: ClickstreamSparkstreaming <brokers> <topics> 
-    //     |  <brokers> is a list of one or more Kafka brokers
-    //     |  <brokers> is a list of one or more Kafka topics to consume from
-    //     |
-    //     """.stripMargin)
-    //   System.exit(1)
-    // }
 
-
+    System.setProperty("hadoop.home.dir", "C:\\hadoop")
     //val Array(brokers, topics) = args
     val topic = Set(args(0))
     val brokers = args(1)
-    val sparkConf = new SparkConf().setAppName("DirectKafkaClickstreams")
-    // Create context with 10-second batch intervals
-    val ssc = new StreamingContext(sparkConf, Seconds(10))
+    val sparkConf = new SparkConf()
+      .set("spark.sql.warehouse.dir", "hdfs://namenode/sql/metadata/hive")
+      .set("spark.sql.catalogImplementation","hive")
+      .setMaster("local[*]")
+      .setAppName("p3")
+    val sc = new SparkContext(sparkConf)
+    val ssc  = new StreamingContext(sc, Seconds(2))
 
     // Create direct Kafka stream with brokers and topics
     //val topicsSet = topics.split(",").toSet
@@ -46,7 +42,7 @@ object ClickstreamConsumerStreaming {
     "bootstrap.servers" -> brokers,
     "key.deserializer" -> classOf[StringDeserializer],
     "value.deserializer" -> classOf[StringDeserializer],
-    "group.id" -> "use_a_separate_group_id_for_each_stream",
+    "group.id" -> "trojan_horse",
     "auto.offset.reset" -> "latest",
     "enable.auto.commit" -> (false: java.lang.Boolean)
      )
@@ -64,45 +60,28 @@ object ClickstreamConsumerStreaming {
     
     
     
-    
-    
-    
-    
-    
-    // val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
-
-
-
-    
-    // val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
-    //   ssc, kafkaParams, topicsSet)
-
-    // val lines = messages.map(_._2)
-    
-    val warehouseLocation = "file:${system:user.dir}/spark-warehouse"
-    val spark = SparkSession
+    val warehouseLocation = "file:${system:user.dir}/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
+    val ssql = SparkSession
       .builder
       .config(sparkConf)
+      //.config("spark.master", "local")
       .config("spark.sql.warehouse.dir", warehouseLocation)
+      //.config("spark.sql.catalogImplementation","hive")
       .enableHiveSupport()
       .getOrCreate()
    
     // Drop the table if it already exists 
-    spark.sql("DROP TABLE IF EXISTS csmessages_hive_table")
+    ssql.sql("DROP TABLE IF EXISTS mainhive")
+    println("after deletion")
     // Create the table to store your streams 
-    spark.sql("CREATE TABLE csmessages_hive_table (order_id STRING, customer_id STRING, product_id STRING, product_name STRING" +
-      "product_category STRING, payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
-      "ecommerce_webname STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) STORED AS TEXTFILE")
-// Convert RDDs of the lines DStream to DataFrame and run a SQL query
+    ssql.sql("CREATE TABLE mainhive(order_id STRING, customer_id STRING, product_id STRING, product_name STRING, product_category STRING, payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, ecommerce_webname STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) STORED AS TEXTFILE")
+    //ssql.sql("CREATE TABLE mainhive(order STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE")
 
+    println("after create table")
 
-
-
-
-
-topicdstream.foreachRDD {rdd => 
+    topicdstream.foreachRDD {rdd => 
       rdd.foreach { record =>
-        import spark.implicits._
+        import ssql.implicits._
         //.value() returns deserialized value column
         val sc = SparkContext.getOrCreate()
         val value = record.value()
@@ -112,44 +91,29 @@ topicdstream.foreachRDD {rdd =>
         //parallelize value into rdd
         val messagedf = sc.parallelize(List(value)).toDF()
     // Creates a temporary view using the DataFrame
-      messagedf.createOrReplaceTempView("csmessages")
+    messagedf.createOrReplaceTempView("csmessages")
       
       //Insert continuous streams into Hive table
-      spark.sql("INSERT INTO TABLE csmessages_hive_table SELECT * FROM csmessages")
+      ssql.sql("INSERT INTO TABLE mainhive SELECT * FROM csmessages")
 
       // Select the parsed messages from the table using SQL and print it (since it runs on drive display few records)
       val messagesqueryDF =
-      spark.sql("SELECT * FROM csmessages")
+      ssql.sql("SELECT * FROM csmessages")
       println(s"========= $time =========")
       messagesqueryDF.show()
     }
     }
 
-
-    // lines.foreachRDD { (rdd: RDD[String], time: Time) =>
-      
-    // import spark.implicits._
-    //   // Convert RDD[String] to RDD[case class] to DataFrame
- 
-    //  val messagesDataFrame = rdd.map(_.split(",")).map(w => Record(w(0), w(1), w(2), w(3))).toDF()
-      
-    //   // Creates a temporary view using the DataFrame
-    //   messagesDataFrame.createOrReplaceTempView("csmessages")
-      
-    //   //Insert continuous streams into Hive table
-    //   spark.sql("INSERT INTO TABLE csmessages_hive_table SELECT * FROM csmessages")
-
-    //   // Select the parsed messages from the table using SQL and print it (since it runs on drive display few records)
-    //   val messagesqueryDataFrame =
-    //   spark.sql("SELECT * FROM csmessages")
-    //   println(s"========= $time =========")
-    //   messagesqueryDataFrame.show()
-    // }
-  // Start the computation
     ssc.start()
     ssc.awaitTermination()
 
   }
 }
 /** Case class for converting RDD to DataFrame */
-case class Record(recordtime: String,eventid: String,url: String,ip: String)
+//case class Record(recordtime: String,eventid: String,url: String,ip: String)
+// val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
+
+// val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
+//   ssc, kafkaParams, topicsSet)
+
+// val lines = messages.map(_._2)

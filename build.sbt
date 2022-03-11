@@ -1,4 +1,3 @@
-import AssemblyKeys._ 
 
 scalaVersion := "2.11.12"
 //scalaVersion := "2.10.4"
@@ -46,11 +45,15 @@ libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.4.8"
 
 
 
-Kafka
+//Kafka
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
 libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
 libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.4.1"
-libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka_2.10" % "1.6.3"
+//libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka_2.10" % "2.4.1"
+
+
+//Akka
+//libraryDependencies += "org.apache.bahir" %% "spark-streaming-akka" % "2.4.0-SNAPSHOT"
 
 
 
