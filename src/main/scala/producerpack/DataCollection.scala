@@ -19,6 +19,13 @@ class DataCollection {
     val returnVector = productListScala.toVector
     returnVector
   }
+  def getPricesList(spark: SparkSession): Vector[Row] ={
+    val df = spark.read.csv("dataset-online/prices.csv")
+    val productList = df.collectAsList()
+    val productListScala = productList.asScala.toList
+    val returnVector = productListScala.toVector
+    returnVector
+  }
 
   //getCityCountryList will return the following Rows in a Vector: [city, country]
   def getCityCountryList(spark: SparkSession): Vector[Row] ={
@@ -65,18 +72,21 @@ class DataCollection {
     returnVector
   }
 
-  def getCategoryList(spark:SparkSession, category: String): Vector[Row] ={
+  def getCategoryList(spark:SparkSession, category: String): (Vector[Row], Vector[Int]) ={
 
     val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
+    var indexKeeper = ListBuffer(0)
     for (i <- 0 until productVector.length-1){
       if (productVector(i).get(2).toString == category){
         productListBuffer += productVector(i)
+        indexKeeper += i
       }
     }
     val productList = productListBuffer.toList
     val resultVector = productList.toVector
-    resultVector
+    val indexVector = indexKeeper.toVector
+    (resultVector, indexVector)
   }
 
   //We will collect all of our prices into a list, convert the list into a list of doubles, apply the max function, and then return the result.
