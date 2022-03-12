@@ -1,7 +1,6 @@
 package producerpack
 
 import org.apache.spark.sql.SparkSession
-import producerpack.DataCollection
 import scala.util.Random
 
 import scala.collection.mutable.ListBuffer
