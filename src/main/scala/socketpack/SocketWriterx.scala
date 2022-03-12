@@ -1,6 +1,5 @@
-package producerpack
+package socketpack
 
-import org.apache.spark.sql.SparkSession
 import java.util.Random
 import java.util.Date
 
@@ -11,39 +10,7 @@ import java.io._
 // Our return string will be in the following format:
 // "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city,website,pay_id,success"
 
-object TrendPrintOutSocket {
-
-  System.setProperty("hadoop.home.dir", "c:/winutils")
-  val spark = SparkSession
-    .builder()
-    .appName("project1")
-    .config("spark.master", "local")
-    .enableHiveSupport()
-    .getOrCreate()
-  spark.sparkContext.setLogLevel("ERROR")
-
-  val trendTag = "TR1"
-  val rs = new RandomSelections
-  val dc = new DataCollection
-
-  //Set up the data that we will be using
-  var locationVector = dc.getCityCountryList(spark)
-  var customerVector = dc.getCustomersList(spark)
-  var failureVector = dc.getfailReasonsList(spark)
-  var websiteVector = dc.getWebsiteList(spark)
-  var electronicVector = dc.getElectronicsList(spark)
-  val random = new Random()
-
-  var groceryVector = dc.getGroceryList(spark)
-
-
-
-  def createInitialTransaction(orderID: String): String={
-    val initialString = orderID+ "," + rs.getRandomCustomerID(spark)+rs.getRandomProduct(spark, "Grocery")+rs.getRandomPayment(spark)+random.nextInt(25)+","+
-      "10-02-2017,"+rs.getRandomLocation(spark)+rs.getRandomWebsite(spark)+"pay_id,"+"success"
-    initialString
-  }
-
+object TrendPrintToSocket22 {
 
   def main(args: Array[String]): Unit = {
 
@@ -51,34 +18,24 @@ object TrendPrintOutSocket {
     var clientSocket = new Socket
     var socketAddress = new InetSocketAddress("localhost", 6666)
     var clientSocketConnect = clientSocket.connect(socketAddress)
-    //var out = new PrintWriter(clientSocket.getOutputStream(), true);
-    var in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    
+    var out = new OutputStreamWriter(clientSocket.getOutputStream());
+    //var in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-
-    var orderCounter = 100000
-    var orderID = trendTag+orderCounter.toString
-    // for (i <- 0 to 10) {
-
-    println("this runs")
-
+    println("starting infinite loop...")
     while (true) {
-      println("looping...")
-      println(in.readLine())
 
-      //Tcp.Write(createInitialTransaction(orderID))
-      //OutObject.out.println(createInitialTransaction(orderID))
-  //    println(createInitialTransaction(orderID))
+      var randomnum = new Random()
+      var randomnumstring = randomnum.toString()
+      println("looping... " + randomnumstring )
       
       // this line below stream the strings of text you see in the console, the same strings are streamed in through the socket
-//      out.println(createInitialTransaction(orderID))
-
-
-      orderCounter = orderCounter+1
-      orderID = trendTag+orderCounter.toString
+      out.write("HELLOXZOPXOZOEPOPXOPXNENX")
 
       }
 
-      in.close();
+      //in.close();
+      out.close();
       clientSocket.close();
       serverSocket.close();
 
