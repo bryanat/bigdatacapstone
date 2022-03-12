@@ -43,8 +43,19 @@ object ConsumerStreaming {
     println(s"(Consumer) Current unix time is: $now")
 
     
+    val results = topicdstream.map(record=>Tuple2(record.key(), record.value()))
+    val lines = results.map(_._2)
+    lines.foreachRDD {rdd => 
+      val testrdd = rdd.collect()
+      println(testrdd.mkString)
+      
+    }
+
+    ssc.start()             // Start the computation
+    ssc.awaitTermination()  // Wait for the computation to terminate
     
-    
+
+    def temp(): Unit = {
      var prevrdd =SparkContext.getOrCreate.emptyRDD[String]
     // //windowStream method
     //  val windowStream = topicdstream.window(Minutes(1))
@@ -67,7 +78,7 @@ object ConsumerStreaming {
         val value = record.value()
         //parallelize value into rdd
         prevrdd = sc.parallelize(List(value)).union(prevrdd)
-        prevrdd.coalesce(1).saveAsTextFile("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/data3"+sc.applicationId+"/"+ System.currentTimeMillis())
+        prevrdd.coalesce(1).saveAsTextFile("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/data"+sc.applicationId+"/"+ System.currentTimeMillis())
       //   val filepath = "hdfs://namenode_ip:port/data/"+sc.applicationId+"/"+ System.currentTimeMillis()
       //   prevrdd.coalesce(1).saveAsTextFile(filepath)
       //   val fs = FileSystem.get(sc.hadoopConfiguration)
@@ -87,6 +98,7 @@ object ConsumerStreaming {
     ssc.awaitTermination()  // Wait for the computation to terminate
     
     //array.toList
+    }
   }
   
 }
