@@ -10,7 +10,7 @@ import java.io._
 // Our return string will be in the following format:
 // "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city,website,pay_id,success"
 
-object TrendPrintToSocket33 {
+object SocketReaderx {
 
   def main(args: Array[String]): Unit = {
 
@@ -20,9 +20,9 @@ object TrendPrintToSocket33 {
     var socketAddress = new InetSocketAddress("localhost", 6666)
     var clientSocketConnect = clientSocket.connect(socketAddress)
     
-    //var out = new OutputStreamWriter(clientSocket.getOutputStream());
-    var in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-    in.readLine()
+    //var out = new OutputStreamWriter(clientSocket.getOutputStream())
+    var in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+    
 
     println("starting infinite loop...")
     while (true) {
@@ -33,6 +33,8 @@ object TrendPrintToSocket33 {
       
       // this line below stream the strings of text you see in the console, the same strings are streamed in through the socket
       // in.readLine()
+
+      println(in.readLine())
 
       }
 

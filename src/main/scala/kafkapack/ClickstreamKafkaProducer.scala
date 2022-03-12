@@ -28,7 +28,7 @@ object ClickstreamKafkaProducer extends App{
   // Create a DStream that will connect to hostname:port, like localhost:9999
   val ssc = MainContext.getStreamingContext()
   //Producer team will stream their line by line stream data to socketTextStream("ec2-3-81-9-55.compute-1.amazonaws.com", 9092)
-  val dstream = ssc.socketTextStream("3.81.9.55", 9092)
+  val dstream = ssc.socketTextStream("localhost", 6666)
 
    val props = new HashMap[String, Object]()
   props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
