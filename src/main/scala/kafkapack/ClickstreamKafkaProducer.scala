@@ -74,8 +74,8 @@ object ClickstreamKafkaProducer extends App{
       
       records.foreach({message => 
         println("(Producer) inside partitioned record is running")
-        val metadata = kafkasink.value.testsend(topic, message)
-        println(metadata.topic())
+        // val metadata = kafkasink.value.testsend(topic, message)
+        // println(metadata.topic())
         kafkasink.value.send(topic, message)
         println(message)
         //System.out.println("sent per second: " + events * 1000 / (System.currentTimeMillis() - now));
@@ -89,20 +89,6 @@ object ClickstreamKafkaProducer extends App{
   // }.toList
   //metadata.foreach(metadata=>println(metadata.value())
   
-  //val config = new ProducerConfig(props)
-  // val producer = new KafkaProducer[String, String](props)
-  // val t = System.currentTimeMillis()
-  // for (nEvents <- Range(0, events)) {
-  //   val runtime = new Date().getTime();
-  //   val ip = "192.168.2." + rnd.nextInt(255);
-  //   val url = "www.amazon" + rnd.nextInt(255) + ".com";
-  //   val msg = runtime + "," + nEvents + "," + url + "," + ip;
-  //   val data = new ProducerRecord[String, String](topic, ip, msg);
-  //   producer.send(data);
-  // }
-  
-  // System.out.println("sent per second: " + events * 1000 / (System.currentTimeMillis() - t));
-  // producer.close();
 }
   
 }
