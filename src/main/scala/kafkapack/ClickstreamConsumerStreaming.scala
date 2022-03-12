@@ -111,6 +111,8 @@ object ClickstreamConsumerStreaming {
         //println(rowRDD.collect().mkString)
         val df = ssql.createDataFrame(rowRDD, schema)
         df.show()
+        df.persist()
+        df.write.mode("append").insertInto("newhive")
 
         // val df = rdd.map{x=>
         //   println(x)
@@ -121,8 +123,8 @@ object ClickstreamConsumerStreaming {
           //for Correlation Matrix sampled data
           //messagedf.write.mode("append").insertInto("mainhive")
           // Creates a tempor view using the DataFrame
-          df.createOrReplaceTempView("csmessages")
-          ssql.sql("INSERT INTO TABLE newhive SELECT * FROM csmessages")
+          //df.createOrReplaceTempView("csmessages")
+          //ssql.sql("INSERT INTO TABLE newhive SELECT * FROM csmessages")
           val messagesqueryDF = ssql.sql("SELECT * FROM newhive").show()
           println(s"========= $now =========")
       }
