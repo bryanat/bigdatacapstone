@@ -3,9 +3,6 @@ package producerpack
 import scala.collection.mutable.Stack
 import scala.collection.mutable.ListBuffer
 import contextpack.MainContext
-import org.apache.kafka.clients.producer._
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
-import org.apache.spark.sql._
 
 
 class TrendThread(data:Vector[String]) extends Runnable{
@@ -14,14 +11,13 @@ class TrendThread(data:Vector[String]) extends Runnable{
   val dat = data
 
   override def run(): Unit = {
-    println( Thread.currentThread().getName() + " is running a thread!")
     dat.foreach(p => println(p))
   }
 }
 
 class TrendMaker {
   //this value stores the maximum number of threads we want running at once
-  val threadCount = 4
+  val threadCount = 3
   //stores the threads that arent running
   var waitingThreads = Stack[Thread]()
   //stores the running threads
@@ -35,13 +31,11 @@ class TrendMaker {
   def startTreads():Unit= {
     //this starts the threads by first running through the currently running threads adn removing the dead ones.
     Thread.sleep(1000)
-    println(runningThreads.length)
     while (runningThreads.length > 0){
       //if there is a running thread, then we want toi leave it alone. otherwise, we need to stop it
       //this can be removed
       if(!runningThreads(runningThreads.length-1).isAlive){
         runningThreads.remove(runningThreads.length-1)
-        println("Remaining threads in running " +  runningThreads.length.toString)
       }
     }
 
@@ -51,5 +45,4 @@ class TrendMaker {
     }
     runningThreads.foreach(p => {if (!p.isAlive) p.start()})
   }
-  println("Remaining threads in running " +  runningThreads.length.toString)
 }
