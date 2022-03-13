@@ -18,14 +18,14 @@ class SocketServerHandler(port: Int) {
   var clientSocket = serverSocket.accept()
   var out = new PrintWriter(clientSocket.getOutputStream(), true)
   var in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
-  var greeting: String = in.readLine()
-  println(greeting)
-  if ("hello server".equals(greeting)) {
-    out.println("hello client")
-  } else {
-    out.println("unrecognised greeting")
-  }
-  println("runndijfgniajsnfiawhat")
+  // var greeting: String = in.readLine()
+  // println(greeting)
+  // if ("hello server".equals(greeting)) {
+  //   out.println("hello client")
+  // } else {
+  //   out.println("unrecognised greeting")
+  // }
+  // println("runndijfgniajsnfiawhat")
 
   while (true) {
     var randomnum = new Random()
@@ -34,7 +34,7 @@ class SocketServerHandler(port: Int) {
     
     // in.lines()
     // in.readLine()
-
+    
     out.println("XPHEOXXNAJSNAINSDI")
     Thread.sleep(300)
   }
