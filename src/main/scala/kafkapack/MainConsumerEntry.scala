@@ -12,7 +12,7 @@ object MainConsumerEntry {
         ClickstreamConsumerStreaming.consumerKafka(Array("trojanhorse","localhost:9092"))
         ////cannot save to a variable: no output operation so nothing to execute error
         //val consumer = ConsumerStreaming2("topic1")
-     
+        //TestHDFSPath.writeToHDFS()
 
     }
 }
