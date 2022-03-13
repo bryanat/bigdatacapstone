@@ -25,10 +25,9 @@ object ClickstreamConsumerStreaming {
 
   def consumerKafka(args: Array[String]) {
 
-    val warehouseLocation = "file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
-
-    System.setProperty("hadoop.home.dir", "C:\\hadoop")
-    //val Array(brokers, topics) = args
+    //val warehouseLocation = "file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
+    val warehouseLocation = "hdfs://44.195.89.83:50070/user/hive/warehouse"
+    
     val topic = Set(args(0))
     val brokers = args(1)
     val sparkConf = new SparkConf()
@@ -39,8 +38,7 @@ object ClickstreamConsumerStreaming {
     val sc = new SparkContext(sparkConf)
     val ssc  = new StreamingContext(sc, Seconds(2))
     ssc.sparkContext.setLogLevel("ERROR")
-
-    
+  
      val kafkaParams = Map[String, Object](
     "bootstrap.servers" -> brokers,
     "key.deserializer" -> classOf[StringDeserializer],
@@ -50,7 +48,7 @@ object ClickstreamConsumerStreaming {
     "enable.auto.commit" -> (false: java.lang.Boolean)
      )
 
-    //topics are Array/Set type, not Strings
+    //subscribe to kafka: topics are Array/Set type, not Strings
     val topics = Set(topic)
     val topicdstream = KafkaUtils.createDirectStream[String, String](
       ssc,
@@ -59,59 +57,57 @@ object ClickstreamConsumerStreaming {
     )
     
     
-    
-    
     val ssql = SparkSession
       .builder
       .config(sparkConf)
+      .config("spark.executor.memory", "48120M") 
       .config("spark.sql.warehouse.dir", warehouseLocation)
       .enableHiveSupport()
       .getOrCreate()
-   
-    // Drop the main table if it already exists 
-    ssql.sql("DROP TABLE IF EXISTS newhive")
-    // Create the main table to store your streams 
-    ssql.sql("CREATE TABLE newhive(order_id STRING, customer_id STRING, customer_name STRING, product_id STRING, " +
-      "product_name STRING, product_category STRING, payment_type STRING, qty STRING, price STRING," +
-      "datetime STRING, country STRING, city STRING, ecommerce_website_name STRING, payment_txn_id STRING, " +
-      "payment_txn_success STRING, failure_reason STRING) STORED AS TEXTFILE")
-    
+      
+      // Drop the main table if it already exists 
+      ssql.sql("DROP TABLE IF EXISTS newhive")
+      // Create the main table to store your streams 
+      ssql.sql("CREATE TABLE IF NOT EXISTS newhive(order_id STRING, customer_id STRING," +
+        " customer_name STRING, product_id STRING, product_name STRING, product_category STRING, " +
+        "payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
+        "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) " +
+        " ROW FORMAT DELIMITED FIELDS TERMINATED BY ','STORED AS TEXTFILE")
     val now = System.currentTimeMillis() 
     println(s"(Consumer) Current unix time is: $now")
-
+    
     //deserialize the messages from kafka
     val results = topicdstream.map(record=>Tuple2(record.key(), record.value()))
     //gets the value column
     val lines = results.map(_._2)
-
-
-
+    
+    
+    
     //creates the schema for rdds
     val schemaString = "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city," +
-      "ecommerce_website_name,payment_txn_id,payment_txn_sucess,failure_reason"
-    val schema = StructType(schemaString.split(",").map(fieldName => StructField(fieldName, StringType, true)))
-   
-   
+    "ecommerce_website_name,payment_txn_id,payment_txn_success,failure_reason"
+    val schema = StructType(schemaString.split(",", -1).map(fieldName => StructField(fieldName, StringType, true)))
+    
+    
     lines.foreachRDD {rdd => 
-      //lines.transform {rdd =>
-   //when rdds are streamed in...
-    if (rdd!=null) {
-      try {
-        val ssql = SparkSession.builder.config(rdd.sparkContext.getConf).getOrCreate()
-        import ssql.implicits._
-        
-        //val msgReceiveTime = System.currentTimeMillis()
-        //println(rdd.collect().mkString)
-
-        //samples from rdd for testing purposes
-        //val samplerdd = rdd.sample(false, 0.05, 123)
-        //apply filter on specific columns, 
-        val rowRDD = rdd.map(_.split(",")).map(e ⇒ Row(e(0), e(1), e(2), e(3), e(4), e(5), e(6), e(7),
-         e(8), e(9), e(10), e(11), e(12), e(13), e(14), e(15)))
-        //println(rowRDD.collect().mkString)
+        //when rdds are streamed in...
+        if (rdd!=null) {
+          try {
+            val ssql = SparkSession.builder.config(rdd.sparkContext.getConf).getOrCreate()
+            import ssql.implicits._
+            
+            //val msgReceiveTime = System.currentTimeMillis()
+            //println(rdd.collect().mkString)
+            
+            //samples from rdd for testing purposes
+            //val samplerdd = rdd.sample(false, 0.05, 123)
+            //apply filter on specific columns,     
+        val rowRDD = rdd.map(_.split(",")).map(e ⇒ Row(e(0), e(1), e(2), e(3), e(4), e(5), e(6), e(7), e(8), e(9), e(10), e(11), e(12), e(13), e(14), e(15)))
+            //rowRDD.cache()
+            //println(rowRDD.collect().mkString)
+        rowRDD.filter(row=> row.length==16)
         val df = ssql.createDataFrame(rowRDD, schema)
-        df.show()
-        df.persist()
+        //df.show()
         df.write.mode("append").insertInto("newhive")
 
         // val df = rdd.map{x=>
@@ -123,14 +119,15 @@ object ClickstreamConsumerStreaming {
           //for Correlation Matrix sampled data
           //messagedf.write.mode("append").insertInto("mainhive")
           // Creates a tempor view using the DataFrame
-          //df.createOrReplaceTempView("csmessages")
-          //ssql.sql("INSERT INTO TABLE newhive SELECT * FROM csmessages")
+          //df.createOrReplaceTempView("messages")
+          //ssql.sql("INSERT INTO TABLE newhive SELECT * FROM messages")
           val messagesqueryDF = ssql.sql("SELECT * FROM newhive").show()
           println(s"========= $now =========")
       }
       catch {
-      case e: AnalysisException=>println("message not recieved")
-      case e: NumberFormatException=>println("bad data in quantity or price")}
+      //case e: AnalysisException=>println("column number mismatch")
+      case e: NumberFormatException=>println("bad data in quantity or price") 
+      case e: ArrayIndexOutOfBoundsException=>println("missing or extra column")}
     }
     }
     
@@ -205,9 +202,9 @@ object ClickstreamConsumerStreaming {
   }
 }
 /** Case class for converting RDD to DataFrame */
-case class Transaction(order_id: String,customer_id: String,customer_name: String,product_id: 
-  String,product_name: String,product_category: String,price: String,payment_type:String,qty:String,datetime:String,
-  city:String, country:String, ecommerce_webname:String, payment_txn_id:String, payment_txn_success:String)
+// case class Transaction(order_id: String,customer_id: String,customer_name: String,product_id: 
+//   String,product_name: String,product_category: String,price: String,payment_type:String,qty:String,datetime:String,
+//   city:String, country:String, ecommerce_webname:String, payment_txn_id:String, payment_txn_success:String)
   // val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
   
 // val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
