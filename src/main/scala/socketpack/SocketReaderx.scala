@@ -14,45 +14,36 @@ object SocketReaderx {
 
   def main(args: Array[String]): Unit = {
 
-    ////only need to create a socket server once per port (but multiple client sockets can exist per port)
-    //var serverSocket = new ServerSocket(6666);
+    //// only need to create a socket server once per port (but multiple client sockets can exist per port)
+    // var serverSocket = new ServerSocket(6666);
     var clientSocket = new Socket
     var socketAddress = new InetSocketAddress("localhost", 6666)
     var clientSocketConnect = clientSocket.connect(socketAddress)
-    
-    //var out = new OutputStreamWriter(clientSocket.getOutputStream())
+
+    // var out = new OutputStreamWriter(clientSocket.getOutputStream())
     var in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
-    
 
     println("starting infinite loop...")
     while (true) {
 
       var randomnum = new Random()
       var randomnumstring = randomnum.toString()
-      println("looping... " + randomnumstring )
-      
+      println("looping... " + randomnumstring)
+
       // this line below stream the strings of text you see in the console, the same strings are streamed in through the socket
       // in.readLine()
 
       println(in.readLine())
 
-      }
+    }
 
-      //in.close();
-      //out.close();
-      clientSocket.close();
+    // in.close();
+    // out.close();
+    clientSocket.close();
 
-}
+  }
 
-
-
-
-
-
-
-
-
-    // ALL OF THE COMMENTED BELOW IS JUST FOR TESTING DIFFERENT METHODS OF DataCollection AND RandomSelections
+  // ALL OF THE COMMENTED BELOW IS JUST FOR TESTING DIFFERENT METHODS OF DataCollection AND RandomSelections
 //    val test = dc.getGroceryList(spark)
 //    val test2 = dc.getSportsList(spark)
 //    test.foreach(println)
@@ -76,6 +67,4 @@ object SocketReaderx {
 
 //    println(customerVector(49))
 //    println(customerVector(49).get(1))
-  }
-
-
+}

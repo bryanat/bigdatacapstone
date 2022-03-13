@@ -10,12 +10,10 @@ import java.io._
 // Our return string will be in the following format:
 // "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city,website,pay_id,success"
 
-object SocketWriterx {
+object SocketXClientX {
 
   def main(args: Array[String]): Unit = {
 
-    var serverSocket = new ServerSocket(6666);
-    println("A1")
     var clientSocket = new Socket
     println("A2")
     var socketAddress = new InetSocketAddress("localhost", 6666)
@@ -59,7 +57,6 @@ object SocketWriterx {
     // in.close();
     out.close();
     clientSocket.close();
-    serverSocket.close();
 
   }
 
