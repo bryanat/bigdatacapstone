@@ -26,6 +26,7 @@ class Transactions {
   val automotiveList = dc.getCategoryList(spark, "Automotive")
   val shoeList = dc.getCategoryList(spark, "Shoes")
   val booksList = dc.getCategoryList(spark, "Books")
+  val highEndList = dc.filterByPriceAbove(spark, 750)
   val customerList = dc.getCustomersList(spark)
   val paymentList = dc.getPaymentList(spark)
   val locationList = dc.getCityCountryList(spark)
@@ -47,6 +48,7 @@ class Transactions {
       case "Electronics" => sendVector = electronicList
       case "Shoes" => sendVector = shoeList
       case "Books" => sendVector = booksList
+      case "highEnd" => sendVector = highEndList
     }
     val (randomProduct,price) = rs.getRandomProduct(sendVector, spark)
     val initialString = orderID+ "," + rs.getRandomCustomerID(customerList, spark)+ randomProduct + rs.getRandomPayment(paymentList, spark)+random.nextInt(25)+","+

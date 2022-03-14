@@ -7,7 +7,23 @@ import scala.collection.mutable.ListBuffer
 
 // Trend One will show a larger amount of online grocery orders from North America than any other country.
 // Our return string will be in the following format:
-// "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city,website,pay_id,success"
+/* 0- Order ID
+/  1 - Customer ID
+/  2 - Customer Name
+/  3 - Product ID
+/  4 - Product Name
+/  5 - Product Category
+/  6 - Payment Type
+/  7 - QTY
+/  8 - Price
+/  9 - Datetime
+/  10 - Country
+/  11 - City
+/  12 - Website
+/  13 - Transaction ID
+/  14 - Transaction Success
+/  15 - Transaction fail reason
+ */
 
 object trend4 {
 
@@ -16,26 +32,6 @@ object trend4 {
   val trans = new Transactions
   val random = new Random()
 
-  //here we will inject our randomly created string with information that we need to create a trend
-  //in this case, every third transaction will be updated to contain 'Crypto' as payment type and 'United States' as the country
-  // We receive a comma separated string, split it by ",", use the array to create a new string, and return.
-  /* 0- Order ID
- /  1 - Customer ID
- /  2 - Customer Name
- /  3 - Product ID
- /  4 - Product Name
- /  5 - Product Category
- /  6 - Payment Type
- /  7 - QTY
- /  8 - Price
- /  9 - Datetime
- /  10 - Country
- /  11 - City
- /  12 - Website
- /  13 - Transaction ID
- /  14 - Transaction Success
- /  15 - Transaction fail reason
-  */
 
   def manipulateDate(inputTransaction: String, date: String): String = {
     val splitT = inputTransaction.split(",")
@@ -44,6 +40,7 @@ object trend4 {
       splitT(7) + "," + splitT(8) + ","  + date + "," + splitT(10) + "," + splitT(11) + "," + splitT(12) + ","+ splitT(13) + "," + splitT(14) + "," + splitT(15)
     return resultString
   }
+
   def manipulateDateAndPrice(inputTransaction: String, date: String): String = {
     val splitT = inputTransaction.split(",")
     var resultString = ""

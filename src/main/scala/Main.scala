@@ -21,8 +21,7 @@ import contextpack._
 
 object Main {
 
-  val ryProducerTest = new RYProducerTest
-  val ryConsumerTest = new RYConsumer
+  
 
   def main(args: Array[String]) = {
     System.setProperty("hadoop.home.dir", "C:\\winutils")
@@ -38,8 +37,10 @@ object Main {
     MainProducer.startMainProducer()
 
     ////Consumer Main
-    MainConsumer.startMainConsumer()    
-    ryConsumerTest.queryConsumer()
+    // MainConsumer.startMainConsumer()    
+    // ryConsumerTest.queryConsumer()
+    //val ryProducerTest = new RYProducerTest
+    //val ryConsumerTest = new RYConsumer
     //ryProducerTest.producerTest()
     //ryConsumerTest.consumerTest()
   }
