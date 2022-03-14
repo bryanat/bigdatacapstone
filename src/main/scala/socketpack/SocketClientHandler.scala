@@ -16,10 +16,8 @@ class SocketClientHandler(ip: String, port: Int) {
   var in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
   // }
 
-  def sendMessage(msg: String): String = {
+  def sendMessage(msg: String): Unit = {
     out.println(msg)
-    var resp: String = in.readLine()
-    return resp
   }
 
   def stopConnection(): Unit = {

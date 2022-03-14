@@ -39,9 +39,6 @@ object QueryStatic {
 
 
 
-
-    val df_electronics = df.main.where(df_main("product_category") == "Electronics")
-
     ssql.sql("SELECT * FROM hivetable WHERE product_category='Electronics'").show()
 
 

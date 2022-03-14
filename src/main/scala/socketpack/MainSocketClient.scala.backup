@@ -1,0 +1,23 @@
+package socketpack
+
+import java.net._
+import java.io._
+
+object MainSocketClient {
+  // def main(args: Array[String]): Unit = {
+  println("MainSocketClient is running...")
+  
+  var clientSocketC = new Socket("localhost", 6666)
+  var outC = new PrintWriter(clientSocketC.getOutputStream(), true)
+  var inC = new BufferedReader(new InputStreamReader(clientSocketC.getInputStream()))
+
+  def sendOverSocket(data: String) = {
+    outC.println(data)
+  }
+
+
+
+    // assertEquals("hello client", response);
+
+}
+
