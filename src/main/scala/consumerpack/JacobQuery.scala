@@ -3,20 +3,21 @@ package consumerpack
 import org.apache.spark._
 import org.apache.spark.sql._
 
-object QueryStatic {
+import consumerpack._
 
-  def main(args: Array[String]): Unit = {
 
-  val warehouseLocation = "${system:user.dir}/spark-warehouse"
-    System.setProperty("hadoop.home.dir", "C:\\winutils")
+object JacobQuery {
 
-  val sparkConf = new SparkConf()
+val warehouseLocation = "${system:user.dir}/spark-warehouse"
+System.setProperty("hadoop.home.dir", "C:\\winutils")
+
+val sparkConf = new SparkConf()
       .set("spark.sql.warehouse.dir", warehouseLocation)
       .set("spark.sql.catalogImplementation","hive")
       .setMaster("local[*]")
       .setAppName("p3")
 
-  val ssql = SparkSession
+val ssql = SparkSession
       .builder
       .config(sparkConf)
       .config("spark.executor.memory", "48120M") 
@@ -24,9 +25,7 @@ object QueryStatic {
       .enableHiveSupport()
       .getOrCreate()
 
-  /*
-    
-  // Drop the table if it already exists 
+// Drop the table if it already exists 
     ssql.sql("DROP TABLE IF EXISTS hivetable")
     // Create the table to store your streams 
     ssql.sql("CREATE TABLE hivetable (order_id STRING, customer_id STRING, customer_name STRING, product_id STRING, product_name STRING, " +
@@ -43,8 +42,5 @@ object QueryStatic {
     // val df_electronics = df.main.where(df_main("product_category") == "Electronics")
 
     df_main.show()
-    */
-    
-    JacobQuery
-  }
+
 }
