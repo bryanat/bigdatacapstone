@@ -1,14 +1,5 @@
 package producerpack
 
-<<<<<<< HEAD
-object ExponentialIncreaseOverTimeTrend {
-  //we will used Camerons DataCollection object to get our data.
-  def createTrend(product: Vector[String], dataPoints:Int):Vector[String] = {
-    //I will try and
-    var resultVector = Vector[String]()
-    
-    return resultVector
-=======
 import org.apache.spark.sql.SparkSession
 import scala.util.Random
 
@@ -163,6 +154,5 @@ object ExponentialIncreaseOverTimeTrend {
   }
   def printDate(date: ListBuffer[Int]):String = {
     date(0).toString + "-" + date(1).toString + "-" + date(2).toString
->>>>>>> refs/remotes/origin/kafka/bryan
   }
 }

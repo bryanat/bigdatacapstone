@@ -21,21 +21,11 @@ import contextpack._
 
 object Main {
 
-<<<<<<< HEAD
-  val ryProducerTest = new RYProducerTest
-  val ryConsumerTest = new RYConsumer
-
-  def main(args: Array[String]) = {
-    System.setProperty("hadoop.home.dir", "C:\\winutils")
-
-    println("Main app started")
-=======
   
 
   def main(args: Array[String]) = {
     println("Main app started")
     System.setProperty("hadoop.home.dir", "C:\\winutils")
->>>>>>> refs/remotes/origin/kafka/bryan
     //System.setProperty("hadoop.home.dir", "C://hadoop")
 
     ////Kakfa Main
@@ -46,15 +36,10 @@ object Main {
     MainProducer.startMainProducer()
 
     ////Consumer Main
-<<<<<<< HEAD
-    MainConsumer.startMainConsumer()    
-    ryConsumerTest.queryConsumer()
-=======
     // MainConsumer.startMainConsumer()    
     // ryConsumerTest.queryConsumer()
     //val ryProducerTest = new RYProducerTest
     //val ryConsumerTest = new RYConsumer
->>>>>>> refs/remotes/origin/kafka/bryan
     //ryProducerTest.producerTest()
     //ryConsumerTest.consumerTest()
   }

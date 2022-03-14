@@ -1,12 +1,5 @@
 package producerpack
 
-<<<<<<< HEAD
-object MainProducer {
-
-  def startMainProducer(): Unit = {
-    println("Main Producer started...")
-  }
-=======
 import org.apache.spark.sql.SparkSession
 
 import scala.collection.mutable.ListBuffer
@@ -78,5 +71,4 @@ object MainProducer {
       println("All threads complete.")
     }
 
->>>>>>> refs/remotes/origin/kafka/bryan
 }
