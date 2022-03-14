@@ -20,18 +20,29 @@ import consumerpack._
 import contextpack._
 
 object Main {
+
+  
+
   def main(args: Array[String]) = {
+    System.setProperty("hadoop.home.dir", "C:\\winutils")
+
     println("Main app started")
     //System.setProperty("hadoop.home.dir", "C://hadoop")
-    
-    // Kafka main
-//    MainKafka.startMainKafka()
-    //SparkStreamingContext.startSparkStreamingContext()
-    
-    // Producer main
+
+    ////Kakfa Main
+    //MainConsumerEntry.main() //need two terminals "sbt run" for Kafka entry points
+    //MainProducerEntry.main() //need two terminals "sbt run" for Kafka entry points
+
+    ////Producer Main
     MainProducer.startMainProducer()
 
-    // Consumer main
-    //MainConsumer.startMainConsumer()
+    ////Consumer Main
+    // MainConsumer.startMainConsumer()    
+    // ryConsumerTest.queryConsumer()
+    //val ryProducerTest = new RYProducerTest
+    //val ryConsumerTest = new RYConsumer
+    //ryProducerTest.producerTest()
+    //ryConsumerTest.consumerTest()
   }
+
 }
