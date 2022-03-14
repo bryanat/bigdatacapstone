@@ -33,7 +33,7 @@ object trend8 {
   val random = new Random()
 
   //here we will inject our randomly created string with information that we need to create a trend
-  //in this case, every third transaction will be updated to contain 'Crypto' as payment type and 'United States' as the country
+
   // We receive a comma separated string, split it by ",", use the array to create a new string, and return.
 
   def manipulateTransactionTrend8(inputTransaction: String): String = {

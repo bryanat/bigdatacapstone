@@ -5,7 +5,7 @@ import org.apache.spark.sql.SparkSession
 import java.util.Random
 import scala.collection.mutable.ListBuffer
 
-// Trend One will show a larger amount of online grocery orders from North America than any other country.
+// Trend Four will show a larger amount of online grocery orders from North America than any other country.
 // Our return string will be in the following format:
 /* 0- Order ID
 /  1 - Customer ID
