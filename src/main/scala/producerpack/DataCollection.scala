@@ -144,5 +144,4 @@ class DataCollection {
     val resultVector = resultList.toVector
     resultVector
   }
-
 }

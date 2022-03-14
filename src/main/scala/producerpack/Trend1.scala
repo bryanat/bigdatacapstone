@@ -66,4 +66,3 @@ object trend1 {
     resultVector
   }
 }
-

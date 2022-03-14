@@ -1,4 +1,5 @@
 package consumerpack
+import kafkapack._
 
 object MainConsumer {
 
