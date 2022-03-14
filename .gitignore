@@ -7,4 +7,10 @@ dataset-offline
 metastore_db
 project
 spark-warehouse
+<<<<<<< HEAD
 target
+=======
+target
+null
+null/Coursier
+>>>>>>> refs/remotes/origin/kafka/bryan

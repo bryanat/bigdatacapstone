@@ -7,7 +7,11 @@ DinersClub
 JCB
 NYCE
 STAR
+<<<<<<< HEAD
 UnionPay 
+=======
+UnionPay
+>>>>>>> refs/remotes/origin/kafka/bryan
 PrepaidCard
 Bitcoin
 Crypto

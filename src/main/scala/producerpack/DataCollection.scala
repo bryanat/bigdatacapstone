@@ -19,6 +19,10 @@ class DataCollection {
     val returnVector = productListScala.toVector
     returnVector
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/origin/kafka/bryan
   //getCityCountryList will return the following Rows in a Vector: [city, country]
   def getCityCountryList(spark: SparkSession): Vector[Row] ={
     val df = spark.read.csv("dataset-online/citylist.csv")
@@ -64,6 +68,7 @@ class DataCollection {
     returnVector
   }
 
+<<<<<<< HEAD
   //getComputersList will return a vector with ONLY the rows that contain data about computer sales.
   def getComputersList(spark: SparkSession): Vector[Row] ={
     val productVector = getProductDataList(spark)
@@ -191,6 +196,14 @@ class DataCollection {
 
     for (i <- 0 until productVector.length-1){
       if (productVector(i).get(2).toString == "Books"){
+=======
+  def getCategoryList(spark:SparkSession, category: String): Vector[Row] ={
+
+    val productVector = getProductDataList(spark)
+    val productListBuffer = ListBuffer[Row]()
+    for (i <- 0 until productVector.length-1){
+      if (productVector(i).get(2).toString == category){
+>>>>>>> refs/remotes/origin/kafka/bryan
         productListBuffer += productVector(i)
       }
     }
@@ -231,9 +244,15 @@ class DataCollection {
       listOfPrices += tempPrice
     }
 
+<<<<<<< HEAD
     for (i <- 0 to productVector.length - 2) {
       if (listOfPrices(i).toDouble > filter){
         indexKeeper += i
+=======
+    for (i <- 1 to productVector.length - 2) {
+      if (listOfPrices(i).toDouble > filter){
+        indexKeeper += i-1
+>>>>>>> refs/remotes/origin/kafka/bryan
       }
       indexKeeper.foreach(x => resultList += productVector(x))
     }
@@ -255,13 +274,24 @@ class DataCollection {
     var indexKeeper = ListBuffer[Int]()
     var resultList = ListBuffer[Row]()
 
+<<<<<<< HEAD
     for (i <- 0 to productVector.length - 2) {
       if (listOfPrices(i).toDouble < filter){
         indexKeeper += i
+=======
+    for (i <- 1 to productVector.length - 2) {
+      if (listOfPrices(i).toDouble < filter){
+        indexKeeper += i-1
+>>>>>>> refs/remotes/origin/kafka/bryan
       }
       indexKeeper.foreach(x => resultList += productVector(x))
     }
     val resultVector = resultList.toVector
     resultVector
   }
+<<<<<<< HEAD
 }
+=======
+
+}
+>>>>>>> refs/remotes/origin/kafka/bryan

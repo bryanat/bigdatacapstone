@@ -1,6 +1,10 @@
 package producerpack
 
+<<<<<<< HEAD
 import org.apache.spark.sql.SparkSession
+=======
+import org.apache.spark.sql.{Row, SparkSession}
+>>>>>>> refs/remotes/origin/kafka/bryan
 
 import java.util.Random
 
@@ -10,6 +14,7 @@ import java.util.Random
 class RandomSelections {
 
   val rs = new Random()
+<<<<<<< HEAD
   val dc = new DataCollection
 
   //getRandomCustomerID: Will return a string of both CustomerID&CustomerName
@@ -17,10 +22,18 @@ class RandomSelections {
     val customerList = dc.getCustomersList(spark)
     val randomNum = rs.nextInt(customerList.length-1)
     val randomResult = customerList(randomNum)
+=======
+
+  //getRandomCustomerID: Will return a string of both CustomerID&CustomerName
+  def getRandomCustomerID(vector: Vector[Row], spark: SparkSession): String ={
+    val randomNum = rs.nextInt(vector.length-1)
+    val randomResult = vector(randomNum)
+>>>>>>> refs/remotes/origin/kafka/bryan
     val resultString = randomResult(0).toString + "," + randomResult(1).toString + ","
     resultString
   }
   // getRandomWebsite: Will return a string of only a random domain (URL)
+<<<<<<< HEAD
   def getRandomWebsite(spark: SparkSession): String ={
     val websiteList = dc.getWebsiteList(spark)
     val randomNum = rs.nextInt(websiteList.length-1)
@@ -32,10 +45,22 @@ class RandomSelections {
     val paymentList = dc.getPaymentList(spark)
     val randomNum = rs.nextInt(paymentList.length-1)
     val randomResult = paymentList(randomNum)
+=======
+  def getRandomWebsite(vector: Vector[Row], spark: SparkSession): String ={
+    val randomNum = rs.nextInt(vector.length-1)
+    val randomResult = vector(randomNum)
+    val resultString = randomResult(1).toString + ","
+    resultString
+  }
+  def getRandomPayment(vector: Vector[Row], spark: SparkSession): String ={
+    val randomNum = rs.nextInt(vector.length-1)
+    val randomResult = vector(randomNum)
+>>>>>>> refs/remotes/origin/kafka/bryan
     val resultString = randomResult(0).toString + ","
     resultString
   }
 
+<<<<<<< HEAD
   def getRandomLocation(spark: SparkSession): String ={
     val locationList = dc.getCityCountryList(spark)
     val randomNum = rs.nextInt(locationList.length-1)
@@ -129,3 +154,39 @@ class RandomSelections {
     resultString
   }
 }
+=======
+  def getRandomLocation(vector: Vector[Row], spark: SparkSession): String ={
+    val randomNum = rs.nextInt(vector.length-1)
+    val randomResult = vector(randomNum)
+    val resultString = randomResult(0).toString + "," + randomResult(1).toString + ","
+    resultString
+  }
+  def getRandomFail(vector: Vector[Row], spark: SparkSession, checkFail: String): String ={
+    if (checkFail.equals("Y")){
+      return "100"
+    }
+    val randomNum = rs.nextInt(vector.length-1)
+    val randomResult = vector(randomNum)
+    var resultString = randomResult(0).toString
+    if (resultString.equals("100")){
+      resultString = "101"
+    }
+    resultString
+  }
+  // getRandomProduct: Will return a string of a random product selected from ProductData
+  def getRandomProduct(vector: Vector[Row], spark: SparkSession): (String,String) ={
+    val randomNum = rs.nextInt(vector.length-1)
+    val randomResult = vector(randomNum)
+    val resultString = randomResult(0).toString + "," + randomResult(1).toString + "," + randomResult(2).toString + ","
+    val price = randomResult(3).toString
+    (resultString,price)
+  }
+  // getRandomCategory: Will return a string of a random Category
+  def getRandomCategory(vector: Vector[Row], spark: SparkSession): String ={
+    val randomNum = rs.nextInt(vector.length-1)
+    val randomResult = vector(randomNum)
+    val resultString = randomResult(2).toString
+    resultString
+  }
+}
+>>>>>>> refs/remotes/origin/kafka/bryan
