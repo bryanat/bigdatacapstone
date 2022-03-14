@@ -4,14 +4,40 @@ import scala.collection.mutable.Stack
 import scala.collection.mutable.ListBuffer
 import contextpack.MainContext
 
+import java.net._
+import java.io._
+import java.util.Random
+
 
 class TrendThread(data:Vector[String]) extends Runnable{
   //this class is going to be used to make the threads to send data to the producer.
   //this is going to have a few functions.
   val dat = data
 
+  var serverSocket = new ServerSocket(6666)
+  // this .accept() method is key
+  var clientSocket = serverSocket.accept()
+  var out = new PrintWriter(clientSocket.getOutputStream(), true)
+  var in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+
+
+  // while (true) {
+  //   var randomnum = new Random()
+  //   var randomnumstring = randomnum.toString()
+  //   println("looping... " + randomnumstring)
+    
+  //   // in.lines()
+  //   // in.readLine()
+    
+  //   out.println("XPHEOXXNAJSNAINSDI")
+    
+  //   Thread.sleep(300)
+  // }
+
   override def run(): Unit = {
-    dat.foreach(p => println(p))
+    // dat.foreach(p => println(p))
+    dat.foreach(p => {out.println(p); Thread.sleep(300)})
+
   }
 }
 
