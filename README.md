@@ -11,3 +11,6 @@
 - ### Stage 2.1 - Query
 - ### Stage 2.2 - ML
 - ### Stage 2.3 - Viz
+
+![](dataset-online/readme-images/agile-weekly-sprint.png)
+![](dataset-online/readme-images/agile-working-board.png)
