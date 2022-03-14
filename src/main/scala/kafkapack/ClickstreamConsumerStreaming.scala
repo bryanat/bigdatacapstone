@@ -4,6 +4,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark._
 import org.apache.spark.sql._
+import org.apache.spark.sql.functions.udf
 import org.apache.spark.streaming._
 import scala.collection.JavaConverters._
 import org.apache.kafka.common.serialization.StringDeserializer 
@@ -18,15 +19,14 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 
 
-
 object ClickstreamConsumerStreaming {
 
 
 
   def consumerKafka(args: Array[String]) {
 
-    //val warehouseLocation = "file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
-    val warehouseLocation = "hdfs://44.195.89.83:50070/user/hive/warehouse"
+    val warehouseLocation = "file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
+    //val warehouseLocation = "hdfs://44.195.89.83:50070/user/hive/warehouse"
     
     val topic = Set(args(0))
     val brokers = args(1)
@@ -55,8 +55,7 @@ object ClickstreamConsumerStreaming {
       PreferConsistent,
       Subscribe[String, String](topic, kafkaParams)
     )
-    
-    
+
     val ssql = SparkSession
       .builder
       .config(sparkConf)
@@ -71,8 +70,10 @@ object ClickstreamConsumerStreaming {
       ssql.sql("CREATE TABLE IF NOT EXISTS newhive(order_id STRING, customer_id STRING," +
         " customer_name STRING, product_id STRING, product_name STRING, product_category STRING, " +
         "payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
-        "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) " +
-        " ROW FORMAT DELIMITED FIELDS TERMINATED BY ','STORED AS TEXTFILE")
+        "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING, timestamp STRING) " +
+       // " ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE" +
+        " ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe' WITH SERDEPROPERTIES('serialization.encoding'='ISO-8859-1')" +
+        "STORED AS TEXTFILE")
     val now = System.currentTimeMillis() 
     println(s"(Consumer) Current unix time is: $now")
     
@@ -82,6 +83,7 @@ object ClickstreamConsumerStreaming {
     val lines = results.map(_._2)
     
     
+
     
     //creates the schema for rdds
     val schemaString = "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city," +
@@ -89,12 +91,22 @@ object ClickstreamConsumerStreaming {
     val schema = StructType(schemaString.split(",", -1).map(fieldName => StructField(fieldName, StringType, true)))
     
     
-    lines.foreachRDD {rdd => 
+
+
+    //BAD DATA FILTERS: 
+      //1. DUPLICATES: remove duplicates w/o creating a new table ("insert overwrite table sample1 select distinct * from sample1")
+      //2. MISSING/EXTRA COLUMNS: take care of the arrayindexoutofbounds exception 
+      //3. WRONG DATATYPE: filter in hive query with where statement
+      //4. NULL FIELDS: filter in hive query with where statement
+
+
+      lines.foreachRDD {rdd => 
         //when rdds are streamed in...
         if (rdd!=null) {
           try {
             val ssql = SparkSession.builder.config(rdd.sparkContext.getConf).getOrCreate()
             import ssql.implicits._
+            val currenttimeudf = udf(()=>System.currentTimeMillis())
             
             //val msgReceiveTime = System.currentTimeMillis()
             //println(rdd.collect().mkString)
@@ -103,12 +115,12 @@ object ClickstreamConsumerStreaming {
             //val samplerdd = rdd.sample(false, 0.05, 123)
             //apply filter on specific columns,     
         val rowRDD = rdd.map(_.split(",")).map(e ⇒ Row(e(0), e(1), e(2), e(3), e(4), e(5), e(6), e(7), e(8), e(9), e(10), e(11), e(12), e(13), e(14), e(15)))
-            //rowRDD.cache()
-            //println(rowRDD.collect().mkString)
-        rowRDD.filter(row=> row.length==16)
-        val df = ssql.createDataFrame(rowRDD, schema)
+       // val filteredRDD = rowRDD.filter(row=>if(row.length==16) true else false)
+        val df = ssql.createDataFrame(rowRDD, schema).withColumn("timestamp", currenttimeudf())
+        //val gooddf = df.filter(r=>r.length==16)
         //df.show()
-        df.write.mode("append").insertInto("newhive")
+  
+        df.filter(row=>row.length==17).write.mode("append").insertInto("newhive")
 
         // val df = rdd.map{x=>
         //   println(x)
@@ -122,14 +134,16 @@ object ClickstreamConsumerStreaming {
           //df.createOrReplaceTempView("messages")
           //ssql.sql("INSERT INTO TABLE newhive SELECT * FROM messages")
           val messagesqueryDF = ssql.sql("SELECT * FROM newhive").show()
-          println(s"========= $now =========")
-      }
-      catch {
-      //case e: AnalysisException=>println("column number mismatch")
-      case e: NumberFormatException=>println("bad data in quantity or price") 
-      case e: ArrayIndexOutOfBoundsException=>println("missing or extra column")}
-    }
-    }
+          //println(s"========= $now=========")
+      
+        }
+        catch {
+          //case e: AnalysisException=>println("column number mismatch")
+          case e: NumberFormatException=>println("bad data in quantity or price") 
+          case e: ArrayIndexOutOfBoundsException=>println("missing or extra column")}
+        }
+        }
+      
     
     
     

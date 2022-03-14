@@ -3,7 +3,9 @@ import kafkapack._
 
 object MainConsumer {
   
-  def startMainConsumer(): Unit = {
-    println("Main Consumer started...")      
+  def  main(args:Array[String]): Unit = {
+    println("Main Consumer started...")  
+    SelectHive.select()
+
   }
 }
