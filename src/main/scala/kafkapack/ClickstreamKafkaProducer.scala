@@ -28,11 +28,7 @@ object ClickstreamKafkaProducer extends App{
   // Create a DStream that will connect to hostname:port, like localhost:9999
   val ssc = MainContext.getStreamingContext()
   //Producer team will stream their line by line stream data to socketTextStream("ec2-3-81-9-55.compute-1.amazonaws.com", 9092)
-<<<<<<< HEAD
   val dstream = ssc.socketTextStream("localhost", 6666)
-=======
-  val dstream = ssc.socketTextStream("3.81.9.55", 9092)
->>>>>>> producer/master
 
    val props = new HashMap[String, Object]()
   props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
@@ -70,26 +66,9 @@ object ClickstreamKafkaProducer extends App{
     })
     })
   })
-<<<<<<< HEAD
 
   ssc.start()
   ssc.awaitTermination()
-=======
-  //val config = new ProducerConfig(props)
-  // val producer = new KafkaProducer[String, String](props)
-  // val t = System.currentTimeMillis()
-  // for (nEvents <- Range(0, events)) {
-  //   val runtime = new Date().getTime();
-  //   val ip = "192.168.2." + rnd.nextInt(255);
-  //   val url = "www.amazon" + rnd.nextInt(255) + ".com";
-  //   val msg = runtime + "," + nEvents + "," + url + "," + ip;
-  //   val data = new ProducerRecord[String, String](topic, ip, msg);
-  //   producer.send(data);
-  // }
-
-  // System.out.println("sent per second: " + events * 1000 / (System.currentTimeMillis() - t));
-  // producer.close();
->>>>>>> producer/master
 }
   
 }
