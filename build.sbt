@@ -9,43 +9,33 @@ libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.13
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.7"
-<<<<<<< HEAD
-//Spark
-dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
-dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7"
-dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.7"
-
-=======
 
 //Spark
->>>>>>> refs/remotes/origin/kafka/bryan
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
 libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-hive" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.4.8"
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % "2.4.8"
-<<<<<<< HEAD
 libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8"
 
 // https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-kafka
 libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka" % "1.6.3"
 
-=======
-
 //Spark + Kafka integration spark-streaming-kafka only supports max Scala version 2.11
 libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka" % "1.6.3"
 libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8"
->>>>>>> refs/remotes/origin/kafka/bryan
+
+//Spark + Kafka integration
+libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8"
+libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka" % "1.6.3"
 
 // Kafka
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
 libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
 libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.4.1"
-<<<<<<< HEAD
 // Spark + Kafka dep spark-streaming-kafka only supports max Scala version 2.11
 libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka" % "1.6.3"
-=======
 
 // Akka
 // https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor
@@ -58,16 +48,3 @@ libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.32"          
 libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "2.0.7"             //for kafka integration - does not explicitly list Alpakka(?)
 libraryDependencies += "com.lightbend.akka" %% "akka-stream-alpakka-text" % "2.0.2"     //text file integration
 libraryDependencies += "com.lightbend.akka" %% "alpakka" % "1.0-M2"
-
-
-
-
->>>>>>> refs/remotes/origin/kafka/bryan
-
-// Circe (Serializer)
-// libraryDependencies += "io.circe" %% "circe-core" % "0.14.1"
-// libraryDependencies += "io.circe" %% "circe-generic" % "0.14.1"
-// libraryDependencies += "io.circe" %% "circe-parser" % "0.14.1"
-
-// https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-kafka-0-10
-

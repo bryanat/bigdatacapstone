@@ -19,6 +19,7 @@ class DataCollection {
     val returnVector = productListScala.toVector
     returnVector
   }
+
   //getCityCountryList will return the following Rows in a Vector: [city, country]
   def getCityCountryList(spark: SparkSession): Vector[Row] ={
     val df = spark.read.csv("dataset-online/citylist.csv")
