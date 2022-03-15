@@ -72,6 +72,9 @@ lazy val df_ComputerPayTypeCount = df_Computer
 // write queries output out to CSV file
 // write.mode(Append) - loop for new data to write to CSV every 30 seconds
 
+
+df_ComputerPayTypeCount.write.format("csv").mode("append").saveAsTable("ComputerPaymentTypes")
+
 // query to find popular computer purchase by year
 
 lazy val dfPopPurchComputer = df_Computer
@@ -79,11 +82,16 @@ lazy val dfPopPurchComputer = df_Computer
   .groupBy("product_name").count()
   .orderBy(count("product_name"))
 
-dfPopPurchComputer.orderBy(desc("count")).show()
+// dfPopPurchComputer.orderBy(desc("count")).show()
 
-// popularity of Hostess Snowballs over time (annual)
+// popularity of Hostess Snowballs over time (annual) - possible unionall select query
+
+// lazy val dfSnowball = df_main
+//   .select("")
 
 // query to find the count of payment_type crypto over time where country equals United States
+
+
 
 // query to find maximum instances in ecommmerce websites in United States
 // query to find maximum instances in ecommmerce websites in United States
