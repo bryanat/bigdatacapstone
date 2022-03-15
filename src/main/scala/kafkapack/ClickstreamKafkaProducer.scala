@@ -22,11 +22,10 @@ object ClickstreamKafkaProducer extends App{
   val ip = args(2)
   val port = args(3).toInt
 
-  
   val ssc = MainContext.getStreamingContext()
-  val dstream = ssc.textFileStream("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dstream1")
+  // val dstream = ssc.textFileStream("/home/bryanat/gitclonecleanbigdata/bigdatacapstone/spark-warehouse")
   //Producer team will stream their line by line stream data to socketTextStream("44.195.89.83", 9092)
-  //val dstream = ssc.socketTextStream(ip, port)
+  val dstream = ssc.socketTextStream(ip, port)
   
   val props = new HashMap[String, Object]()
   props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
@@ -44,40 +43,22 @@ object ClickstreamKafkaProducer extends App{
   val now = System.currentTimeMillis()
   println(s"(Producer) Current unix time is: $now")
   
-
   //send the producer message with respect to a particular topic 
   dstream.foreachRDD ({ rdd =>
-    println("(Producer) inside rdd is running")
+
     rdd.foreachPartition ({ records =>
       
       records.foreach({message => 
-        // val metadata = kafkasink.value.testsend(topic, message)
-        // println(metadata.topic())
         kafkasink.value.send(topic, message)
         println(message)
+        // val metadata = kafkasink.value.testsend(topic, message)
+        // println(metadata.topic())
         // println(s"Sent to topic $topic: $message")
         //System.out.println("sent per second: " + events * 1000 / (System.currentTimeMillis() - now));
     })
     })
   })
   ssc.start()             // Start the computation
-  ssc.awaitTermination()  // Wait for the computation to terminate
-  
+  ssc.awaitTermination()  // Wait for the computation to terminate 
+}  
 }
-  
-}
-
-
-  
-
-// val rnd = new Random()
-// val props = new Properties()
-// props.put("metadata.broker.list", brokers)
-// //props.put("serializer.class", "kafka.serializer.StringEncoder")
-//  props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
-//  props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
-// props.put("producer.type", "async")
-// val metadata: List[Future[RecordMetadata]] = records.map { record => {
-//   kafkasink.value.send(topic, record)
-// }.toList
-//metadata.foreach(metadata=>println(metadata.value())
