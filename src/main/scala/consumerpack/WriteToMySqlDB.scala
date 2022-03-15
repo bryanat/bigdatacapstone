@@ -3,10 +3,11 @@ import org.apache.spark._
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 import java.sql.{Connection, DriverManager, SQLException}
+import java.util.Properties
 
 import consumerpack._
 
-object WriteToMySqlDB {
+object WriteToMySqlDB extends App {
 val warehouseLocation = "${system:user.dir}/spark-warehouse"
 System.setProperty("hadoop.home.dir", "C:\\winutils")
 
@@ -41,10 +42,10 @@ val ssql = SparkSession
 
     // val url = "jdbc:mysql://localhost:3306/p3"
 
-    // val prop = new Properties()
-    // prop.put("user","root")
-    // prop.put("password","RiffRaff68#$")
-    // Class.forName("com.mysql.jdbc.Driver")
+    val prop = new Properties()
+    prop.put("user","root")
+    prop.put("password","RiffRaff68#$")
+    Class.forName("com.mysql.jdbc.Driver")
 
     // ssql.table("hivetable").write.jdbc("jdbc:mysql://localhost:3306/p3", "hivetable", prop)
 
