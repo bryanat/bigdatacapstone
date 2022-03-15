@@ -14,7 +14,7 @@ class KafkaSink(createProducer: ()=>KafkaProducer[String, String]) extends Seria
   lazy val producer = createProducer()
 
   //sends the producer record
-  def send(topic: String, message: String): Future[RecordMetadata]= producer.send(new ProducerRecord(topic, message))
+  def send(topic: String, message: String): Unit= producer.send(new ProducerRecord(topic, message))
   def testsend(topic: String, message: String): RecordMetadata = producer.send(new ProducerRecord(topic, message)).get()
 
 }
