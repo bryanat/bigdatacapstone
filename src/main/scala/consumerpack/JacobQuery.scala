@@ -37,15 +37,15 @@ val ssql = SparkSession
 
     // val df_main = ssql.read.option("multiline","true").parquet("dataset-offline/")
 
-    val dfTest = ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")
+    // val dfTest = ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")
     
     val df_main = ssql.sql("SELECT * FROM hivetable")
 
     // Need to declare df variable
-    val df_electronics = df_main.where(df_main("product_category") === "Electronics") //Alternative query
+    // val df_electronics = df_main.where(df_main("product_category") === "Electronics") //Alternative query
     // val df_electronics = df_main.where("product_category == Electronics")
 
-//     df_main.show()
+    df_main.show()
 
 // df_electronics.show()
 
@@ -71,9 +71,7 @@ lazy val df_ComputerPayTypeCount = df_Computer
 
 // write queries output out to CSV file
 // write.mode(Append) - loop for new data to write to CSV every 30 seconds
-
-
-df_ComputerPayTypeCount.repartition(1).write.format("csv").mode("append").saveAsTable("ComputerPaymentTypes")
+// df_ComputerPayTypeCount.repartition(1).write.format("csv").mode("append").saveAsTable("ComputerPaymentTypes")
 
 // query to find popular computer purchase by year
 
