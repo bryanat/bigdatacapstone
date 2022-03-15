@@ -69,7 +69,7 @@ class DataCollection {
 
     val productVector = getProductDataList(spark)
     val productListBuffer = ListBuffer[Row]()
-    for (i <- 0 until productVector.length-1){
+    for (i <- 0 until productVector.length-10){
       if (productVector(i).get(2).toString == category){
         productListBuffer += productVector(i)
       }
