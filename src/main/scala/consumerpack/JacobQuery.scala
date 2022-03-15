@@ -38,12 +38,14 @@ val ssql = SparkSession
 
     ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")
     
-    val df_main = ssql.sql("SELECT * FROM hivetable")
+    val df_main = ssql.sql("SELECT * FROM hivetable").cache()
 
     // Need to declare df variable
-    // val df_electronics = df.main.where(df_main("product_category") == "Electronics")
+    val df_electronics = df_main.where(df_main("product_category") === "Electronics")
 
-    df_main.show()
+//     df_main.show()
+
+df_electronics.show()
 
 //     query to find the count of computer related purchases over time from earliest to year 2022
 //     Will need regex to pull yearly numbers
