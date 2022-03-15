@@ -39,7 +39,6 @@ object ClickstreamKafkaProducer extends App{
   // props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "60000")
   // props.put(ProducerConfig.BATCH_SIZE_CONFIG, "49152")
 
-
   //create an instance of broadcast Kafka producer
   val kafkasink = ssc.sparkContext.broadcast(KafkaSink(props))
   val now = System.currentTimeMillis()
@@ -50,14 +49,13 @@ object ClickstreamKafkaProducer extends App{
   dstream.foreachRDD ({ rdd =>
     println("(Producer) inside rdd is running")
     rdd.foreachPartition ({ records =>
-      println("(Producer) inside record partition is running")
       
       records.foreach({message => 
-        println("(Producer) inside partitioned record is running")
         // val metadata = kafkasink.value.testsend(topic, message)
         // println(metadata.topic())
         kafkasink.value.send(topic, message)
         println(message)
+        // println(s"Sent to topic $topic: $message")
         //System.out.println("sent per second: " + events * 1000 / (System.currentTimeMillis() - now));
     })
     })

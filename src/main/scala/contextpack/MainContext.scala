@@ -34,7 +34,7 @@ object MainContext {
   // Spark Streaming Context for Spark Streaming API
   def getStreamingContext(): StreamingContext = {
     // Spark StreamingContext (ssc) is main entrypoint for Spark Streaming API, built on top of SparkContext (sc)
-    val ssc  = new StreamingContext(getSparkContext(), Seconds(2))
+    val ssc  = new StreamingContext(getSparkContext(), Milliseconds(300))
     // Spark log level set to not print INFO adn WARN lines, accessed through the SparkContext (sc) "The associated SparkContext [sc beneath ssc] can be accessed using ssc.sparkContext ~= sc"
     ssc.sparkContext.setLogLevel("ERROR")
     ssc

@@ -20,12 +20,18 @@ import consumerpack._
 import contextpack._
 import socketpack._
 
+import socketpack.SocketServerPart
+
 object Main {
+
   def main(args: Array[String]) = {
     println("Main app started")
+    System.setProperty("hadoop.home.dir", "C:\\winutils")
     //System.setProperty("hadoop.home.dir", "C://hadoop")
 
     ////Kakfa Main
+    //MainConsumerEntry.main() //need two terminals "sbt run" for Kafka entry points
+    //MainProducerEntry.main() //need two terminals "sbt run" for Kafka entry points
 
     ///Socket Main
     SocketServerPart
@@ -33,7 +39,12 @@ object Main {
     ////Producer Main
     MainProducer.startMainProducer()
     ////Consumer Main
-
+    // MainConsumer.startMainConsumer()    
+    // ryConsumerTest.queryConsumer()
+    //val ryProducerTest = new RYProducerTest
+    //val ryConsumerTest = new RYConsumer
+    //ryProducerTest.producerTest()
+    //ryConsumerTest.consumerTest()
   }
 
 }
