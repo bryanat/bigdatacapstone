@@ -35,7 +35,6 @@ object YashConsumer {
 
 object YashConsumer extends App {
     System.setProperty("hadoop.home.dir", "c:/winutils")
-    Class.forName("com.mysql.jdbc.Driver").newInstance
 
     val spark = SparkSession
       .builder()
@@ -44,12 +43,12 @@ object YashConsumer extends App {
       .enableHiveSupport()
       .getOrCreate()
 
-
+/*
     val table = spark.read.option("header", "true").csv("dataset-online/samplecsv.csv")
     //table.show();
     table.createOrReplaceTempView("t1")
     spark.sql("create table if not exists t2 as select * from t1");
-
+*/
     //-----
 
     val warehouseLocation = "${system:user.dir}/spark-warehouse"
@@ -84,20 +83,19 @@ object YashConsumer extends App {
     //Thread.sleep(60000*10);
 
 
-    //adding mysql connectivity
-    //creates a new table within db selected, with table titled as "All_Sales"
-    val prop = new Properties()
-    val driver = "com.mysql.cj.jdbc.Driver"
-    val url = "jdbc:mysql://localhost:3306/proj3"
-    val username = "root"
-    val password = "dhayal"
 
-    Class.forName(driver)
-    var connection:Connection = DriverManager.getConnection(url, username, password)
+    //adding mysql connectivity - IT WORKS!!!! Just gotta make sure you're using jdk 1.8
+    //creates a new table within db selected, with table titled as "hivetable"
+    val prop=new Properties()
+    prop.put("user","root")
+    prop.put("password","dhayal")
+    Class.forName("com.mysql.jdbc.Driver")
 
-    import org.apache.spark.sql.SaveMode
+    val reading = ssql.read.jdbc("jdbc:mysql://localhost:3306/", "proj0.accounts", prop)
+    reading.show()
 
-    spark.table("hivetable").write.jdbc(url,"hivetable", prop)
+    ssql.table("hivetable").write.jdbc("jdbc:mysql://localhost:3306/proj3", "hivetable", prop)
+
 
 
     /*
