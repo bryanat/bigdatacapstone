@@ -14,38 +14,21 @@ import contextpack._
 object ClickstreamKafkaProducer extends App{
 
   def producerKafka(args: Array[String]): Unit = {
+
+  ///////if producer streaming does not register data, check dstream path and make sure the files are newly modified/////////////////////
   
   val topic = args(0)
   val brokers = args(1)
+  val ip = args(2)
+  val port = args(3).toInt
 
-  // val TCP_IP = "localhost"
-  // val TCP_PORT = 40123
-  // val MESSAGE = "Test data Test data Test data"
-
-  // s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  // s.connect((TCP_IP, TCP_PORT))
-  // s.send(MESSAGE)
-  // s.close()
-    
-
-  // val rnd = new Random()
-  // val props = new Properties()
-  // props.put("metadata.broker.list", brokers)
-  // //props.put("serializer.class", "kafka.serializer.StringEncoder")
-  //  props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
-  //  props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
-  // props.put("producer.type", "async")
- 
-
-  // Create a DStream that will connect to hostname:port, like localhost:9999
-  val ssc = MainContext.getStreamingContext()
-  val dstream = ssc.textFileStream("file:\\C:/Users/joyce/IdeaProjects/bigdatacapstone/dstream1")
-  //Producer team will stream their line by line stream data to socketTextStream("44.195.89.83", 9092)
   
-
-
-
-   val props = new HashMap[String, Object]()
+  val ssc = MainContext.getStreamingContext()
+  val dstream = ssc.textFileStream("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dstream1")
+  //Producer team will stream their line by line stream data to socketTextStream("44.195.89.83", 9092)
+  //val dstream = ssc.socketTextStream(ip, port)
+  
+  val props = new HashMap[String, Object]()
   props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
   props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
   props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
@@ -61,14 +44,11 @@ object ClickstreamKafkaProducer extends App{
   val kafkasink = ssc.sparkContext.broadcast(KafkaSink(props))
   val now = System.currentTimeMillis()
   println(s"(Producer) Current unix time is: $now")
-
+  
 
   //send the producer message with respect to a particular topic 
   dstream.foreachRDD ({ rdd =>
     println("(Producer) inside rdd is running")
-      //  kafkasink.value.send(topic, "tebbles")
-      //  val metadata = kafkasink.value.testsend(topic, "tebbles")
-      //   println(metadata.topic())
     rdd.foreachPartition ({ records =>
       println("(Producer) inside record partition is running")
       
@@ -84,12 +64,22 @@ object ClickstreamKafkaProducer extends App{
   })
   ssc.start()             // Start the computation
   ssc.awaitTermination()  // Wait for the computation to terminate
-  // val metadata: List[Future[RecordMetadata]] = records.map { record => {
-  //   kafkasink.value.send(topic, record)
-  // }.toList
-  //metadata.foreach(metadata=>println(metadata.value())
   
 }
   
 }
 
+
+  
+
+// val rnd = new Random()
+// val props = new Properties()
+// props.put("metadata.broker.list", brokers)
+// //props.put("serializer.class", "kafka.serializer.StringEncoder")
+//  props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+//  props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+// props.put("producer.type", "async")
+// val metadata: List[Future[RecordMetadata]] = records.map { record => {
+//   kafkasink.value.send(topic, record)
+// }.toList
+//metadata.foreach(metadata=>println(metadata.value())

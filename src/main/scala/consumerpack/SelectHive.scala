@@ -6,7 +6,9 @@ import org.apache.spark.sql._
 object SelectHive {
     def select(): Unit = {
 
-    val warehouseLocation = "file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/spark-warehouse"
+    //val warehouseLocation = "file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/spark-warehouse"
+    val warehouseLocation = "hdfs://44.195.89.83:9000//remotedir"
+
 
     val sparkConf = new SparkConf()
       .set("spark.sql.warehouse.dir", warehouseLocation)
@@ -23,7 +25,7 @@ object SelectHive {
       .getOrCreate()
 
 
-      ssql.sql("SELECT * FROM newhive").show()
+      ssql.sql("SELECT * FROM hivetable").show()
     }
   
 }

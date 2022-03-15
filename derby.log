@@ -1,8 +1,8 @@
 ----------------------------------------------------------------
-Sun Mar 13 20:28:57 CDT 2022:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-017f-860a-ee32-00006e537900 
-on database directory C:\Users\joyce\IdeaProjects\bigdatacapstone\metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@568a0b96 
-Loaded from file:/C:/Users/joyce/IdeaProjects/bigdatacapstone/target/bg-jobs/sbt_3b36391b/target/6a358f49/d4f190b2/derby-10.12.1.1.jar
+Mon Mar 14 20:08:21 CDT 2022:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-017f-8b1e-6e49-00003d613278 
+on database directory C:\Users\joyce\IdeaProjects\bigdatacapstone\metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@6f660518 
+Loaded from file:/C:/Users/joyce/IdeaProjects/bigdatacapstone/target/bg-jobs/sbt_211f6148/target/6a358f49/d4f190b2/derby-10.12.1.1.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_321-b07
 user.dir=C:\Users\joyce\IdeaProjects\bigdatacapstone
