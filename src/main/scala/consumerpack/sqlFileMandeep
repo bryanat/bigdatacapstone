@@ -1,19 +1,19 @@
-3.Most Popular Month for Purchases
+3.Most Popular Month for Purchases (the special dates)eg black Friday,Monday cyber deals,christmas sales
+ (No hard coded value changes based on dates ie. X% increase on 11/30/2021)
 4. Popular product categories/avg price per product
 
- 3. Select extract(month from datetime)as month,extract(year from datetime)as year,
-            count(payment_txn_Id) from Table_Name where payment_txn_success='y' group by payment_txn_id
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+ 3. Select extract(month from datetime)as month,
+            count(payment_txn_success)as payment_Count from Table_Name where payment_txn_success='y' group by month
 
-3.SELECT extract(month from datetime)as month,extract(year from datetime)as year,
-         max(payment_txn_Id)as total_txn_id
-         FROM(SELECT month,year,COUNT(payment_txn_Id)  AS payment_count from  Table_Name where payment_txn_success='y'
-         GROUP BY year,month,payment_txn_Id
-         ORDER BY year, payment_count DESC);
+    Select Max(payment_txn_success) from Table_Name
+
+
 ----------------------------------------------------------------------------------------------
 4.SELECT extract(month from datetime)as month,extract(year from datetime)as year,
-         Max(product_categories), AVG(price)
+         Max(product_count)
          FROM (SELECT month,year, product categories, COUNT(product_categories)  AS product_count
          FROM Table_Name where payment_txn_success='y'
          GROUP BY year,month, product_categories
          ORDER BY year,month, product_count DESC)
+
+ 4.1 Select avg(price) from Table_Name
