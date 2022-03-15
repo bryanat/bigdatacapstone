@@ -45,6 +45,8 @@ object QueryStatic {
     df_main.show()
     */
     
-    JacobQuery
+    JacobQuery //call object in JacobQuery.scala
+
+
   }
 }

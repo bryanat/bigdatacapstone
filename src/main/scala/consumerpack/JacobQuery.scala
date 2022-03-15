@@ -25,6 +25,8 @@ val ssql = SparkSession
       .enableHiveSupport()
       .getOrCreate()
 
+      ssql.sparkContext.setLogLevel("ERROR")
+
 // Drop the table if it already exists 
     ssql.sql("DROP TABLE IF EXISTS hivetable")
     // Create the table to store your streams 
@@ -42,5 +44,18 @@ val ssql = SparkSession
     // val df_electronics = df.main.where(df_main("product_category") == "Electronics")
 
     df_main.show()
+
+//     query to find the count of computer related purchases over time from earliest to year 2022
+//     Will need regex to pull yearly numbers
+
+// query to find popular computer purchase by year
+// regex
+
+// popularity of Hostess Snowballs over time (annual)
+
+// query to find the count of payment_type crypto over time where country equals United States
+
+// query to find maximum instances in ecommmerce websites in United States
+// query to find maximum instances in ecommmerce websites in United States
 
 }
