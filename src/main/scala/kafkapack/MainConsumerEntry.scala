@@ -3,7 +3,8 @@ package kafkapack
 object MainConsumerEntry {
 
   
-    def main(args: Array[String]): Unit = {
+    // def main(args: Array[String]): Unit = {
+    def oldMain(): Unit = {
         println("MainConsumerEntry started...")
     
          ///////////// other teams topic, other team's broker address, our team's hive table location //////////////////////////////////

@@ -24,7 +24,8 @@ import socketpack.SocketServerPart
 
 object Main {
 
-  def main(args: Array[String]) = {
+  // def main(args: Array[String]): Unit = {
+  def oldMain(): Unit = {
     println("Main app started")
     System.setProperty("hadoop.home.dir", "C:\\winutils")
     //System.setProperty("hadoop.home.dir", "C://hadoop")

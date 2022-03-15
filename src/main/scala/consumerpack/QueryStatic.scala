@@ -5,7 +5,8 @@ import org.apache.spark.sql._
 
 object QueryStatic {
 
-  def main(args: Array[String]): Unit = {
+  // def main(args: Array[String]): Unit = {
+  def oldMain(): Unit = {
 
   val warehouseLocation = "file:${system:user.dir}/spark-warehouse"
 

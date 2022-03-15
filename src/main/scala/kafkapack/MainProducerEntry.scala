@@ -2,7 +2,8 @@ package kafkapack
 
 object MainProducerEntry {
   
-    def main(args: Array[String]): Unit = {
+    // def main(args: Array[String]): Unit = {
+    def oldMain(): Unit = {
         println("MainProducerEntry started...")
         
         //////////////our team's topic, our team's broker address, our teams' socket ip and port/////////////////

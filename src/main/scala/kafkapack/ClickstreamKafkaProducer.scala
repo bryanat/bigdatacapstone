@@ -11,7 +11,7 @@ import contextpack._
 
 
 
-object ClickstreamKafkaProducer extends App{
+object ClickstreamKafkaProducer {
 
   def producerKafka(args: Array[String]): Unit = {
 
