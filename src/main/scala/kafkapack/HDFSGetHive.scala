@@ -7,7 +7,8 @@ import scala.collection.immutable.Stream
 object HDFSGetHive {
    def getFileFromHDFS(): Unit = {
     val hdfs = FileSystem.get(new URI("hdfs://44.195.89.83:9000"), new Configuration()) 
-    val path = new Path("/tmpfiles/sample-of-final-data.csv")
+   //  val path = new Path("/tmpfiles/sample-of-final-data.csv")
+    val path = new Path("hdfs://44.195.89.83:9000//remotedir")
     val stream = hdfs.open(path)
 
     
