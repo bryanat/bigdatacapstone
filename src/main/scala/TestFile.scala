@@ -7,6 +7,7 @@ import consumerpack._
 
 object TestFile extends App {
   val spark = SparkSession
+ // val spark=QueryStatic.ssql
     .builder
     .appName("hello hive")
     .config("spark.master", "local")
@@ -19,10 +20,16 @@ object TestFile extends App {
     System.setProperty("hadoop.home.dir", "C:\\winutils")
 
     println("Main app started")
-    MainConsumer.startMainConsumer(spark)
+    //MainConsumer.startMainConsumer(spark)
     //MainConsumer.Query1(spark)
-  mandeepConsumer.popularProduct(spark)
-  mandeepConsumer.popularMonth(spark)
+  //QueryStatic.popularProduct()
+  //QueryStatic.popularMonth()
+  //testProducer.producerTest()
+ // mandeepConsumer.consumerTestEX()
+  //mandeepConsumer.popularProduct(spark)
+  //mandeepConsumer.popularMonth(spark)
+
+
 
 
 
