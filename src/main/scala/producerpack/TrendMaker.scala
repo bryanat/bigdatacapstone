@@ -8,33 +8,21 @@ import java.net._
 import java.io._
 import java.util.Random
 
-import socketpack.SocketWorking
+import socketpack.SocketServerPart
 
 class TrendThread(data:Vector[String]) extends Runnable{
-  //this class is going to be used to make the threads to send data to the producer.
-  //this is going to have a few functions.
-  println("heqqq")
+  
   val dat = data
 
-  println("hexxx")
-  var socketForThread = new SocketWorking
-  println("hezzz")
-  var out = socketForThread.out
-  println("hekkk")
-
   override def run(): Unit = {
+    var clientSocket = SocketServerPart.serverSocket.accept()
+    var out = new PrintWriter(clientSocket.getOutputStream(), true)
+    var in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
     // dat.foreach(p => println(p))
     dat.foreach(p => {
       out.println(p)
       println(p)
-      //MainSocketClient.sendOverSocket(p)
-      // println(p)
-      // // outC.println(p); 
-      // // outS.println(p); 
-      // var randomnum = new Random()
-      // var randomnumstring = randomnum.toString()
-      // println("looping... " + randomnumstring)
-      Thread.sleep(300)
+      Thread.sleep(150)
     })
 
   }
@@ -63,7 +51,6 @@ class TrendMaker {
         runningThreads.remove(runningThreads.length-1)
       }
     }
-
     //add the new threads to running threads
     while(waitingThreads.nonEmpty && runningThreads.length < threadCount){
       runningThreads += waitingThreads.pop()

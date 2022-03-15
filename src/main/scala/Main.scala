@@ -19,11 +19,9 @@ import consumerpack._
 // Spark Contexts
 import contextpack._
 
-import socketpack.SocketWorkingServerpart
+import socketpack.SocketServerPart
 
 object Main {
-
-  
 
   def main(args: Array[String]) = {
     println("Main app started")
@@ -34,8 +32,9 @@ object Main {
     //MainConsumerEntry.main() //need two terminals "sbt run" for Kafka entry points
     //MainProducerEntry.main() //need two terminals "sbt run" for Kafka entry points
 
-    SocketWorkingServerpart
-
+    ////Socket Main
+    SocketServerPart
+    
     ////Producer Main
     MainProducer.startMainProducer()
 
