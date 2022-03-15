@@ -18,7 +18,7 @@ class TrendThread(data:Vector[String]) extends Runnable{
     var clientSocket = SocketServerPart.serverSocket.accept()
     var out = new PrintWriter(clientSocket.getOutputStream(), true)
     var in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
-    // dat.foreach(p => println(p))
+
     dat.foreach(p => {
       out.println(p)
       println(p)
@@ -30,7 +30,7 @@ class TrendThread(data:Vector[String]) extends Runnable{
 
 class TrendMaker {
   //this value stores the maximum number of threads we want running at once
-  val threadCount = 3
+  val threadCount = 5
   //stores the threads that arent running
   var waitingThreads = Stack[Thread]()
   //stores the running threads
@@ -57,5 +57,7 @@ class TrendMaker {
       runningThreads += waitingThreads.pop()
     }
     runningThreads.foreach(p => {if (!p.isAlive) p.start()})
+    // Main thread waits for all threads to finish then reruns again (joins to run again)
+    //runningThreads(threadCount-1).join()
   }
 }
