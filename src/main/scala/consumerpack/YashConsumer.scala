@@ -3,9 +3,11 @@ package consumerpack
 import scala.collection.JavaConverters._
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization._
-import java.util.Properties
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.SparkConf
 
+import java.util.Properties
+import java.sql.{Connection, DriverManager}
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql._
 
 /*
@@ -33,16 +35,72 @@ object YashConsumer {
 
 object YashConsumer extends App {
     System.setProperty("hadoop.home.dir", "c:/winutils")
+    Class.forName("com.mysql.jdbc.Driver").newInstance
+
     val spark = SparkSession
       .builder()
       .appName("project1")
       .config("spark.master", "local")
+      .enableHiveSupport()
       .getOrCreate()
+
 
     val table = spark.read.option("header", "true").csv("dataset-online/samplecsv.csv")
     //table.show();
     table.createOrReplaceTempView("t1")
+    spark.sql("create table if not exists t2 as select * from t1");
 
+    //-----
+
+    val warehouseLocation = "${system:user.dir}/spark-warehouse"
+
+    val sparkConf = new SparkConf()
+      .set("spark.sql.warehouse.dir", warehouseLocation)
+      .set("spark.sql.catalogImplementation","hive")
+      .setMaster("local[*]")
+      .setAppName("p3")
+
+    val ssql = SparkSession
+      .builder
+      .config(sparkConf)
+      .config("spark.executor.memory", "48120M")
+      .config("spark.sql.warehouse.dir", warehouseLocation)
+      .enableHiveSupport()
+      .getOrCreate()
+
+    // Drop the table if it already exists
+    ssql.sql("DROP TABLE IF EXISTS hivetable")
+    // Create the table to store your streams
+    ssql.sql("CREATE TABLE hivetable (order_id STRING, customer_id STRING, customer_name STRING, product_id STRING, product_name STRING, " +
+      "product_category STRING, payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
+      "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE")
+
+    // val df_main = ssql.read.option("multiline","true").parquet("dataset-offline/")
+
+    ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")
+
+    val table2 = ssql.sql("SELECT * FROM hivetable")
+
+    //Thread.sleep(60000*10);
+
+
+    //adding mysql connectivity
+    //creates a new table within db selected, with table titled as "All_Sales"
+    val prop = new Properties()
+    val driver = "com.mysql.cj.jdbc.Driver"
+    val url = "jdbc:mysql://localhost:3306/proj3"
+    val username = "root"
+    val password = "dhayal"
+
+    Class.forName(driver)
+    var connection:Connection = DriverManager.getConnection(url, username, password)
+
+    import org.apache.spark.sql.SaveMode
+
+    spark.table("hivetable").write.jdbc(url,"hivetable", prop)
+
+
+    /*
     //failed transactions
     val ft = spark.sql("select order_id, payment_txn_id, product_name, price, product_category, city, country from t1 where payment_txn_success = 'N'")
     ft.show()
@@ -66,11 +124,6 @@ object YashConsumer extends App {
     //count of successful transactions vs failure transactions
     val sVf = spark.sql("select payment_txn_success, count(payment_txn_id) as quantity from t1 group by payment_txn_success")
     sVf.show()
-    
-    //adding mysql connectivity
-    //creates a new table within db selected, with table titled as "All_Sales"
-    val prop = new Properties()
-    prop.setProperty("user", "root")
-    prop.setProperty("password", "dhayal")
-    table.write.jdbc("jdbc:mysql://localhost:3306/NEED_DB_HERE", "All_Sales", prop)
+    */
+
 }

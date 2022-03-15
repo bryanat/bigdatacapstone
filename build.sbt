@@ -5,6 +5,8 @@ name := "P3"
 organization := "rev"
 version := "1.0"
 
+libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.28"
+
 //Spark
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7"
