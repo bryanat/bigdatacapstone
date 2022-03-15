@@ -13,11 +13,15 @@ import socketpack.SocketWorking
 class TrendThread(data:Vector[String]) extends Runnable{
   //this class is going to be used to make the threads to send data to the producer.
   //this is going to have a few functions.
+  println("heqqq")
   val dat = data
 
+  println("hexxx")
   var socketForThread = new SocketWorking
+  println("hezzz")
   var out = socketForThread.out
-  
+  println("hekkk")
+
   override def run(): Unit = {
     // dat.foreach(p => println(p))
     dat.foreach(p => {

@@ -48,7 +48,9 @@ object ClickstreamKafkaProducer extends App{
   //send the producer message with respect to a particular topic 
   dstream.foreachRDD ({ rdd =>
     println("(Producer) inside rdd is running")
+    println(rdd)
     rdd.foreachPartition ({ records =>
+      println(records)
       println("(Producer) inside record partition is running")
       // val metadata: List[Future[RecordMetadata]] = records.map { record => {
       //   kafkasink.value.send(topic, record)
@@ -57,6 +59,7 @@ object ClickstreamKafkaProducer extends App{
       
 
       records.foreach({message => 
+        println(message)
       println("(Producer) inside partitioned record is running")
         val metadata = kafkasink.value.testsend(topic, message)
         println(metadata.topic())
