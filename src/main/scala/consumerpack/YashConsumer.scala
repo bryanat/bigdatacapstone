@@ -10,8 +10,7 @@ import org.apache.spark.sql._
 
 /*
 object YashConsumer {
-    // def main(args: Array[String]): Unit = {
-    def oldMain(): Unit = {
+    def main(args: Array[String]) = {
 
         val props = new Properties()
         props.put("bootstrap.servers", "SERVER DETAILS HERE")
@@ -32,11 +31,7 @@ object YashConsumer {
 }
  */
 
-object YashConsumer {
-
-  // def main(args: Array[String]): Unit = {
-  def oldMain(): Unit = {
-  
+object YashConsumer extends App {
   System.setProperty("hadoop.home.dir", "c:/winutils")
   val spark = SparkSession
     .builder()
@@ -84,5 +79,4 @@ object YashConsumer {
       "select payment_txn_success, count(payment_txn_id) as quantity from t1 group by payment_txn_success"
     )
     .show()
-}
 }

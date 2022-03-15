@@ -28,8 +28,7 @@ object ExponentialIncreaseOverTimeTrend {
     val websites = collector.getWebsiteList(spark)
     val paymentTypes = collector.getPaymentList(spark)
     val places = collector.getCityCountryList(spark)
-    var stepAmount:Double =  2/dataPoints.toDouble
-    var curStep:Double = stepAmount
+    val stepAmount:Double =  10/dataPoints.toDouble
     val exCo =0.1
     //i think i can finally get to doing the actual thing
     var pntsDone = 0
@@ -53,7 +52,7 @@ object ExponentialIncreaseOverTimeTrend {
           val qty = Random.nextInt(10) +1.toString
           //hey rounding sucks in scala
 
-          val price = BigDecimal(ogString._2.toDouble*generateChangeCoefficient(exCo,stepAmount)).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble.toString()
+          val price = BigDecimal(ogString._2.toDouble*generateChangeCoefficient(2,stepAmount)).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble.toString()
 
           val country = rs.getRandomLocation(places,spark)
 
@@ -69,9 +68,8 @@ object ExponentialIncreaseOverTimeTrend {
           val pay = rs.getRandomPayment(paymentTypes,spark)
           val qty = Random.nextInt(10) +1.toString
           //hey rounding sucks in scala
-          val testing:Double = ogString._2.toDouble*generateChangeCoefficient(exCo,curStep).asInstanceOf[Double]
-          val t2 = generateChangeCoefficient(exCo,stepAmount).asInstanceOf[Double]
-          val price = BigDecimal(testing).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble.toString
+
+          val price = BigDecimal(ogString._2.toDouble*generateChangeCoefficient(2,stepAmount)).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble.toString()
 
           val country = rs.getRandomLocation(places,spark)
 
@@ -80,7 +78,6 @@ object ExponentialIncreaseOverTimeTrend {
         orderID +=5
         payID += 1
         pntsDone += 1
-        curStep += stepAmount
       }
       curDate = increaseDate(curDate)
     }

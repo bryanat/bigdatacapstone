@@ -10,9 +10,9 @@ object Sampling {
     def stratifiedSampling(starttime: String, endtime: String, file: String): Unit={
         val df = ssql.sql("SELECT product_id, qty, price, datetime, payment_txn_sucess " +
           "FROM csmessages_hive_table").toDF("product_id", "qty", "price", "datetime", "payment_txn_sucess")
-        //fractions is a map that specifies the percentage of each category we sample, for example:
-        val fractions = Map("computers"-> 0.7,"books"-> 0.2, "clothing"->0.5)
-        //123 is the seed: if you want the same sample next time, use 123 again; if you want a different sample, use another seed: 456, 1234, 78, for example 
+        //fractions is a map that specifies which percentage of classA fire to classG fire you want; it picks a percentage of sample for each key
+        val fractions = Map("A"-> 0.01,"B"-> 0.05, "C"->0.1, "D"->0.2, "E"-> 0.4, "F"->0.5, "G"->0.8)
+        //123 is the seed: if you want the same sample next time, use 123 again; if you want a different sample, use another seed: 456, 1234, 78, anything works. 
         val sample = df.stat.sampleBy("product_category", fractions, 123)
         sample.write.parquet(file)
     }
