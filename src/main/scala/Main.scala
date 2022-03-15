@@ -18,12 +18,14 @@ import producerpack._
 import consumerpack._
 // Spark Contexts
 import contextpack._
+import socketpack._
 
 import socketpack.SocketServerPart
 
 object Main {
 
-  def main(args: Array[String]) = {
+  // def main(args: Array[String]): Unit = {
+  def oldMain(): Unit = {
     println("Main app started")
     System.setProperty("hadoop.home.dir", "C:\\winutils")
     //System.setProperty("hadoop.home.dir", "C://hadoop")
@@ -32,12 +34,11 @@ object Main {
     //MainConsumerEntry.main() //need two terminals "sbt run" for Kafka entry points
     //MainProducerEntry.main() //need two terminals "sbt run" for Kafka entry points
 
-    ////Socket Main
+    ///Socket Main
     SocketServerPart
-    
+
     ////Producer Main
     MainProducer.startMainProducer()
-
     ////Consumer Main
     // MainConsumer.startMainConsumer()    
     // ryConsumerTest.queryConsumer()

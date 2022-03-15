@@ -11,19 +11,23 @@ import contextpack._
 
 
 
-object ClickstreamKafkaProducer extends App{
+object ClickstreamKafkaProducer {
 
   def producerKafka(args: Array[String]): Unit = {
+
+  ///////if producer streaming does not register data, check dstream path and make sure the files are newly modified/////////////////////
   
   val topic = args(0)
   val brokers = args(1)
+  val ip = args(2)
+  val port = args(3).toInt
 
-  // Create a DStream that will connect to hostname:port, like localhost:9999
   val ssc = MainContext.getStreamingContext()
-  val dstream = ssc.textFileStream("file:\\C:/Users/joyce/IdeaProjects/bigdatacapstone/dstream1")
+  // val dstream = ssc.textFileStream("/home/bryanat/gitclonecleanbigdata/bigdatacapstone/spark-warehouse")
   //Producer team will stream their line by line stream data to socketTextStream("44.195.89.83", 9092)
-
-   val props = new HashMap[String, Object]()
+  val dstream = ssc.socketTextStream(ip, port)
+  
+  val props = new HashMap[String, Object]()
   props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
   props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
   props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
@@ -38,32 +42,23 @@ object ClickstreamKafkaProducer extends App{
   val kafkasink = ssc.sparkContext.broadcast(KafkaSink(props))
   val now = System.currentTimeMillis()
   println(s"(Producer) Current unix time is: $now")
-
+  
   //send the producer message with respect to a particular topic 
   dstream.foreachRDD ({ rdd =>
-      // kafkasink.value.send(topic, "tebbles")
-      // val metadata = kafkasink.value.testsend(topic, "tebbles")
-      // println(metadata.topic())
+
     rdd.foreachPartition ({ records =>
       
       records.foreach({message => 
-        // val metadata = kafkasink.value.testsend(topic, message)
-        // println(metadata.topic())
         kafkasink.value.send(topic, message)
         println(message)
+        // val metadata = kafkasink.value.testsend(topic, message)
+        // println(metadata.topic())
         // println(s"Sent to topic $topic: $message")
         //System.out.println("sent per second: " + events * 1000 / (System.currentTimeMillis() - now));
     })
     })
   })
   ssc.start()             // Start the computation
-  ssc.awaitTermination()  // Wait for the computation to terminate
-  // val metadata: List[Future[RecordMetadata]] = records.map { record => {
-  //   kafkasink.value.send(topic, record)
-  // }.toList
-  //metadata.foreach(metadata=>println(metadata.value())
-  
+  ssc.awaitTermination()  // Wait for the computation to terminate 
+}  
 }
-  
-}
-

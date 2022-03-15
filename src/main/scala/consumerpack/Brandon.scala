@@ -5,8 +5,13 @@ import org.apache.spark.sql.functions.{col, round}
 import org.apache.spark.sql.types._
 
 
-object Brandon extends App {
+object Brandon {
 //Initiate Spark Session
+
+  // def main(args: Array[String]): Unit = {
+  def oldMain(): Unit = {
+
+
    System.setProperty("hadoop.home.dir", "c:/hadoop")
    val spark = SparkSession
      .builder()
@@ -76,3 +81,4 @@ GROUP BY customer_id, ecommerce_website_name, country
 
 
  }
+}

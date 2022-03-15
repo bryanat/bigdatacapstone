@@ -4,6 +4,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark._
 import org.apache.spark.sql._
+import org.apache.spark.sql.functions.udf
 import org.apache.spark.streaming._
 import scala.collection.JavaConverters._
 import org.apache.kafka.common.serialization.StringDeserializer 
@@ -21,15 +22,12 @@ import org.apache.spark.sql.types.{StringType, StructField, StructType}
 
 object ClickstreamConsumerStreaming {
 
-
-
   def consumerKafka(args: Array[String]) {
 
-    //val warehouseLocation = "file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/spark-warehouse"//"hdfs://namenode/sql/metadata/hive"
-    val warehouseLocation = "hdfs://44.195.89.83:50070/user/hive/warehouse"
-    
+    //////if data does not load into hive table, delete spark-warehouse and metastore_db and try again///////////////////
     val topic = Set(args(0))
     val brokers = args(1)
+    val warehouseLocation = args(2)
     val sparkConf = new SparkConf()
       .set("spark.sql.warehouse.dir", warehouseLocation)
       .set("spark.sql.catalogImplementation","hive")
@@ -66,13 +64,16 @@ object ClickstreamConsumerStreaming {
       .getOrCreate()
       
       // Drop the main table if it already exists 
-      ssql.sql("DROP TABLE IF EXISTS newhive")
+    ssql.sql("DROP TABLE IF EXISTS hivetable")
       // Create the main table to store your streams 
-      ssql.sql("CREATE TABLE IF NOT EXISTS newhive(order_id STRING, customer_id STRING," +
+    ssql.sql("CREATE TABLE IF NOT EXISTS hivetable(order_id STRING, customer_id STRING," +
         " customer_name STRING, product_id STRING, product_name STRING, product_category STRING, " +
         "payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
-        "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) " +
+        "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING, timestamp STRING) " +
         " ROW FORMAT DELIMITED FIELDS TERMINATED BY ','STORED AS TEXTFILE")
+
+    ssql.sql("DROP TABLE IF EXISTS baddata")
+     ssql.sql("CREATE TABLE IF NOT EXISTS baddata(order_id STRING, timestamp STRING) STORED AS TEXTFILE")
     val now = System.currentTimeMillis() 
     println(s"(Consumer) Current unix time is: $now")
     
@@ -87,14 +88,16 @@ object ClickstreamConsumerStreaming {
     val schemaString = "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city," +
     "ecommerce_website_name,payment_txn_id,payment_txn_success,failure_reason"
     val schema = StructType(schemaString.split(",", -1).map(fieldName => StructField(fieldName, StringType, true)))
-    
-    
-    lines.foreachRDD {rdd => 
+    val schemabadString = "order_id"
+    val schemabad = StructType(schemabadString.split(",", -1).map(fieldName=>StructField(fieldName, StringType, true)))
+
+    lines.foreachRDD {rdd =>
         //when rdds are streamed in...
         if (rdd!=null) {
           try {
             val ssql = SparkSession.builder.config(rdd.sparkContext.getConf).getOrCreate()
             import ssql.implicits._
+            val currenttimeudf = udf(()=>System.currentTimeMillis())
             
             //val msgReceiveTime = System.currentTimeMillis()
             //println(rdd.collect().mkString)
@@ -102,37 +105,57 @@ object ClickstreamConsumerStreaming {
             //samples from rdd for testing purposes
             //val samplerdd = rdd.sample(false, 0.05, 123)
             //apply filter on specific columns,     
-        val rowRDD = rdd.map(_.split(",")).map(e ⇒ Row(e(0), e(1), e(2), e(3), e(4), e(5), e(6), e(7), e(8), e(9), e(10), e(11), e(12), e(13), e(14), e(15)))
-            //rowRDD.cache()
-            //println(rowRDD.collect().mkString)
-        rowRDD.filter(row=> row.length==16)
-        val df = ssql.createDataFrame(rowRDD, schema)
-        //df.show()
-        df.write.mode("append").insertInto("newhive")
-
-        // val df = rdd.map{x=>
-        //   println(x)
-        //   Transaction(x(0).toString, x(1).toString, x(2).toString, x(3).toString,
-        // x(4).toString,x(5).toString, x(6).toString, x(7).toString, x(8).toString, x(9).toString,
-        //   x(10).toString,x(11).toString, x(12).toString, x(13).toString, x(14).toString)}
-        //   .toDF("order_id","customer_id", "customer_name" )
-          //for Correlation Matrix sampled data
-          //messagedf.write.mode("append").insertInto("mainhive")
-          // Creates a tempor view using the DataFrame
-          //df.createOrReplaceTempView("messages")
-          //ssql.sql("INSERT INTO TABLE newhive SELECT * FROM messages")
-          val messagesqueryDF = ssql.sql("SELECT * FROM newhive").show()
-          println(s"========= $now =========")
+            val rowRDD = rdd.map(_.split(","))
+            val goodRDD = rowRDD.filter(row=>row.length==16) 
+            //records with extra or missing columns will be filtered out 
+            val badRDD= rowRDD.filter(row=>row.length!=16).map(e=>Row(e(0)))
+            val baddf = ssql.createDataFrame(badRDD, schemabad).withColumn("timestamp", currenttimeudf())
+            //order IDs of bad data is inserted into the bad data table
+            baddf.write.mode("append").insertInto("baddata") 
+            ssql.sql("SELECT * FROM baddata").show()
+            //good data is inserted into the main hive table
+            val finalRDD = goodRDD.map(e ⇒ Row(e(0), e(1), e(2), e(3), e(4), e(5), e(6), e(7), e(8), e(9), e(10), e(11), e(12), e(13), e(14), e(15)))
+            val df = ssql.createDataFrame(finalRDD, schema).withColumn("timestamp", currenttimeudf())
+            df.write.mode("append").insertInto("hivetable")
+            ssql.sql("SELECT * FROM hivetable").show()
+        
       }
-      catch {
-      //case e: AnalysisException=>println("column number mismatch")
-      case e: NumberFormatException=>println("bad data in quantity or price") 
-      case e: ArrayIndexOutOfBoundsException=>println("missing or extra column")}
+        catch {
+          //case e: AnalysisException=>println("column number mismatch")
+          //case e: NumberFormatException=>println("bad data in quantity or price") 
+          case e: ArrayIndexOutOfBoundsException=>println("missing or extra column")}
+        }
     }
-    }
-    
-    
-    
+      ssc.start()
+      ssc.awaitTermination()
+
+  }
+}
+
+/** Case class for converting RDD to DataFrame */
+// case class Transaction(order_id: String,customer_id: String,customer_name: String,product_id: 
+  //   String,product_name: String,product_category: String,price: String,payment_type:String,qty:String,datetime:String,
+//   city:String, country:String, ecommerce_webname:String, payment_txn_id:String, payment_txn_success:String)
+  // val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
+  
+// val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
+  //   ssc, kafkaParams, topicsSet)
+  
+  // val lines = messages.map(_._2)
+  
+  //val testrdd = rdd.saveAsTextFile("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/data"+sc.applicationId+"/"+ System.currentTimeMillis())
+
+  // val df = rdd.map{x=>
+    //   println(x)
+    //   Transaction(x(0).toString, x(1).toString, x(2).toString, x(3).toString,
+    // x(4).toString,x(5).toString, x(6).toString, x(7).toString, x(8).toString, x(9).toString,
+    //   x(10).toString,x(11).toString, x(12).toString, x(13).toString, x(14).toString)}
+    //   .toDF("order_id","customer_id", "customer_name" )
+    //for Correlation Matrix sampled data
+    //messagedf.write.mode("append").insertInto("mainhive")
+    // Creates a tempor view using the DataFrame
+    //df.createOrReplaceTempView("messages")
+    //ssql.sql("INSERT INTO TABLE hivetable SELECT * FROM messages")
     // topicdstream.foreachRDD {rdd => 
       //   rdd.foreach { record =>
         //get new spark session 
@@ -195,21 +218,3 @@ object ClickstreamConsumerStreaming {
         //} catch {case e: NullPointerException=>println("message not added to table")} 
         // }
         // }
-        
-    ssc.start()
-    ssc.awaitTermination()
-
-  }
-}
-/** Case class for converting RDD to DataFrame */
-// case class Transaction(order_id: String,customer_id: String,customer_name: String,product_id: 
-//   String,product_name: String,product_category: String,price: String,payment_type:String,qty:String,datetime:String,
-//   city:String, country:String, ecommerce_webname:String, payment_txn_id:String, payment_txn_success:String)
-  // val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
-  
-// val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
-  //   ssc, kafkaParams, topicsSet)
-  
-  // val lines = messages.map(_._2)
-  
-  //val testrdd = rdd.saveAsTextFile("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/data"+sc.applicationId+"/"+ System.currentTimeMillis())

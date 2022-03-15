@@ -60,11 +60,13 @@ object MainProducer {
       tm.loadData(t8)
       tm.loadData(t9)
       println("Data loaded into threads. Would you like to start the treads?")
-      val cont = readLine("Y/N: ")
-      if(cont.toLowerCase == "n"){
-        return
-      }
+      ////take out readLine when put on ec2 
+      // val cont = readLine("Y/N: ")
+      // if(cont.toLowerCase == "n"){
+      //   return
+      // }
       tm.startTreads()
+      println("Waiting on Kafka Producer .socketTextStream() to connect...")
       while(tm.waitingThreads.length > 0){
         tm.startTreads()
       }
