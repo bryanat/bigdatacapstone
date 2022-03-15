@@ -5,10 +5,10 @@ import org.apache.spark.sql._
 
 object QueryStatic {
 
-  def main(args: Array[String]): Unit = {
+  // def main(args: Array[String]): Unit = {
+  def oldMain(): Unit = {
 
-  val warehouseLocation = "${system:user.dir}/spark-warehouse"
-    System.setProperty("hadoop.home.dir", "C:\\winutils")
+  val warehouseLocation = "file:${system:user.dir}/spark-warehouse"
 
   val sparkConf = new SparkConf()
       .set("spark.sql.warehouse.dir", warehouseLocation)
@@ -24,28 +24,24 @@ object QueryStatic {
       .enableHiveSupport()
       .getOrCreate()
 
-  /*
+  // // Drop the table if it already exists 
+  //   ssql.sql("DROP TABLE IF EXISTS hivetable")
+  //   // Create the table to store your streams 
+  //   ssql.sql("CREATE TABLE hivetable (order_id STRING, customer_id STRING, customer_name STRING, product_id STRING, product_name STRING, " +
+  //     "product_category STRING, payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
+  //     "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE")
+
+  //   // val df_main = ssql.read.option("multiline","true").parquet("dataset-offline/")
+
+  //   ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")
     
-  // Drop the table if it already exists 
-    ssql.sql("DROP TABLE IF EXISTS hivetable")
-    // Create the table to store your streams 
-    ssql.sql("CREATE TABLE hivetable (order_id STRING, customer_id STRING, customer_name STRING, product_id STRING, product_name STRING, " +
-      "product_category STRING, payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
-      "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE")
+    val df_main = ssql.sql("SELECT * FROM hivetable").show(500)
 
-    // val df_main = ssql.read.option("multiline","true").parquet("dataset-offline/")
 
-    ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")
-    
-    val df_main = ssql.sql("SELECT * FROM hivetable")
 
-    // Need to declare df variable
-    // val df_electronics = df.main.where(df_main("product_category") == "Electronics")
 
-    df_main.show()
-    */
-    
-    JacobQuery //call object in JacobQuery.scala
+    // ssql.sql("SELECT * FROM hivetable WHERE product_category='Electronics'").show()
+
 
 
   }

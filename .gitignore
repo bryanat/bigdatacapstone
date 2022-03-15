@@ -10,3 +10,4 @@ spark-warehouse
 target
 null
 null/Coursier
+derby.log
