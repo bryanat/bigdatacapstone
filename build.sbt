@@ -28,6 +28,12 @@ libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
 libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.4.1"
 // Spark + Kafka dep spark-streaming-kafka only supports max Scala version 2.11
 
+// Hadoop
+libraryDependencies ++= Seq(
+  "org.apache.hadoop" % "hadoop-client" % "2.7.7",
+//Save to CSV file
+  "com.github.mrpowers" %% "spark-daria" % "0.39.0")
+
 // Circe (Serializer)
 // libraryDependencies += "io.circe" %% "circe-core" % "0.14.1"
 // libraryDependencies += "io.circe" %% "circe-generic" % "0.14.1"
