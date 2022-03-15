@@ -7,7 +7,7 @@ import org.apache.spark.sql.functions._
 import consumerpack._
 
 
-object JacobQuery {
+object JacobQuery extends App {
 
 val warehouseLocation = "${system:user.dir}/spark-warehouse"
 System.setProperty("hadoop.home.dir", "C:\\winutils")
@@ -37,7 +37,7 @@ val ssql = SparkSession
 
     // val df_main = ssql.read.option("multiline","true").parquet("dataset-offline/")
 
-    ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")
+    val dfTest = ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")
     
     val df_main = ssql.sql("SELECT * FROM hivetable")
 
@@ -69,13 +69,17 @@ lazy val df_ComputerPayTypeCount = df_Computer
 
 // df_ComputerPayTypeCount.show()
 
-// Computer related purchases in 
-
 // write queries output out to CSV file
 // write.mode(Append) - loop for new data to write to CSV every 30 seconds
 
 // query to find popular computer purchase by year
-// regex
+
+lazy val dfPopPurchComputer = df_Computer
+  .select("product_name")
+  .groupBy("product_name").count()
+  .orderBy(count("product_name"))
+
+dfPopPurchComputer.orderBy(desc("count")).show()
 
 // popularity of Hostess Snowballs over time (annual)
 

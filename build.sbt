@@ -48,3 +48,7 @@ libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.32"          
 libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "2.0.7"             //for kafka integration - does not explicitly list Alpakka(?)
 libraryDependencies += "com.lightbend.akka" %% "akka-stream-alpakka-text" % "2.0.2"     //text file integration
 libraryDependencies += "com.lightbend.akka" %% "alpakka" % "1.0-M2"
+
+
+// MySql
+libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.28"
