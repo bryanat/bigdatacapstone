@@ -2,6 +2,7 @@ package consumerpack
 
 import org.apache.spark._
 import org.apache.spark.sql._
+import org.apache.spark.sql.functions._
 
 import consumerpack._
 
@@ -38,17 +39,40 @@ val ssql = SparkSession
 
     ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")
     
-    val df_main = ssql.sql("SELECT * FROM hivetable").cache()
+    val df_main = ssql.sql("SELECT * FROM hivetable")
 
     // Need to declare df variable
-    val df_electronics = df_main.where(df_main("product_category") === "Electronics")
+    val df_electronics = df_main.where(df_main("product_category") === "Electronics") //Alternative query
+    // val df_electronics = df_main.where("product_category == Electronics")
 
 //     df_main.show()
 
-df_electronics.show()
+// df_electronics.show()
 
 //     query to find the count of computer related purchases over time from earliest to year 2022
 //     Will need regex to pull yearly numbers
+
+// filters out Computers-related purchases and then orders these purchases by datetime
+val df_Computer = (
+  df_main
+  .where(df_main("product_category") === "Computers")
+  // .where(df_main("product_category") === "Computers" && df_main("datetime") === "2001-11-26" ) //Alternative query
+  .orderBy(asc("datetime"))
+).persist()
+
+// df_Computer.show()
+
+// finds the count of all payment types from 2000-2024
+lazy val df_ComputerPayTypeCount = df_Computer
+  .select("payment_type")
+  .groupBy("payment_type").count()
+
+// df_ComputerPayTypeCount.show()
+
+// Computer related purchases in 
+
+// write queries output out to CSV file
+// write.mode(Append) - loop for new data to write to CSV every 30 seconds
 
 // query to find popular computer purchase by year
 // regex
