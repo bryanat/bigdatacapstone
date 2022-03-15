@@ -73,7 +73,7 @@ lazy val df_ComputerPayTypeCount = df_Computer
 // write.mode(Append) - loop for new data to write to CSV every 30 seconds
 
 
-df_ComputerPayTypeCount.write.format("csv").mode("append").saveAsTable("ComputerPaymentTypes")
+df_ComputerPayTypeCount.repartition(1).write.format("csv").mode("append").saveAsTable("ComputerPaymentTypes")
 
 // query to find popular computer purchase by year
 
