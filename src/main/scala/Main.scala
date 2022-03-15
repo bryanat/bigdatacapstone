@@ -18,6 +18,7 @@ import producerpack._
 import consumerpack._
 // Spark Contexts
 import contextpack._
+import socketpack._
 
 object Main {
   def main(args: Array[String]) = {
@@ -26,8 +27,11 @@ object Main {
 
     ////Kakfa Main
 
-    ////Producer Main
+    ///Socket Main
+    SocketServerPart
 
+    ////Producer Main
+    MainProducer.startMainProducer()
     ////Consumer Main
 
   }
