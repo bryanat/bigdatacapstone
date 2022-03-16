@@ -82,7 +82,7 @@ from hivetable
 group by product_name, price, datetime 
 order by product_name asc, datetime asc);
 
--- Popular cities/countries by most purchases
+-- Popular cities by most purchases
 create or replace view pop_cities as (
 select city, country, count(payment_txn_id) as purchase_count 
 from hivetable 
@@ -90,6 +90,7 @@ where payment_txn_success = 'Y'
 group by city 
 order by purchase_count desc, city asc, country asc);
 
+-- Popular countries by most purchases
 create or replace view pop_countries as (
 select country, count(payment_txn_id) as purchase_count 
 from hivetable 
