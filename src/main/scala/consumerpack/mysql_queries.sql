@@ -1,13 +1,7 @@
 -- Yash's queries
--- All failed payments
-create or replace view ft as (
-select order_id, payment_txn_id, product_name, price, product_category, city, country 
-from hivetable 
-where payment_txn_success = 'N');
-
--- failed transactions by city, country
+-- All failed transactions by city, country
 create or replace view ft_l as (
-select order_id, payment_txn_id, product_name, price, city, country 
+select order_id, payment_txn_id, product_name, price, product_category, city, country 
 from hivetable 
 where payment_txn_success = 'N' 
 order by country asc, city asc);
