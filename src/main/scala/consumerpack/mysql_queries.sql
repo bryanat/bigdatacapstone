@@ -23,3 +23,10 @@ select month,year,product_category,MAX(product_count),AVG_price from
  --Most Popular Dates For Purchases--    
 SELECT extract(DAY from datetime)as day,extract(MONTH from datetime)as month,extract(YEAR from datetime)as year,Count(*) from hivetable WHERE payment_txn_success = 'Y' 
 GROUP BY day,month,year ORDER BY Count(*) DESC LIMIT 10;
+
+--Queries Ryan Y--
+--5. change in price/cost ("sale") for products by timeframe--
+spark.sql("select product_name, price as sale, DateTime from hivetable group by product_name, price, DateTime order by DateTime asc")
+--6. popular cities/countries by most purchases--
+spark.sql(s"select city, count(payment_txn_id) as purchase_count from hivetable where payment_txn_success = 'Y' group by city order by purchase_count desc")
+spark.sql(s"select country, count(payment_txn_id) as purchase_count from hivetable where payment_txn_success = 'Y' group by country order by purchase_count desc")
