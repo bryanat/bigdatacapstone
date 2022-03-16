@@ -56,14 +56,14 @@ ORDER BY avg_price_person desc);
 -- Queries Mandeep--
 -- Display popular product categories and average price per product categories group by product_category
 create or replace view pop_cat_avg_price as (
-select month, year, product_category, MAX(product_count), AVG_price 
+select product_category, MAX(product_count), AVG_price 
 from (
 	SELECT extract(MONTH from datetime) as month, extract(YEAR from datetime) as year, product_category, COUNT(product_category) as product_count,round(AVG(price),2) as AVG_price 
     FROM hivetable
     WHERE payment_txn_success = 'Y' 
     GROUP BY month, year, product_category
     ) as hivetable1
-group by month, year, product_category, AVG_price 
+group by product_category, AVG_price 
 order by MAX(product_count) DESC, AVG_price DESC);
 
  -- Most Popular Dates For Purchases--
