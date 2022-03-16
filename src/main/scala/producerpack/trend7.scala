@@ -16,7 +16,7 @@ object trend7 {
   //here we will inject our randomly created string with information that we need to create a trend
 
   // We receive a comma separated string, split it by ",", use the array to create a new string, and return.
-  def manipulateTransactionTrend1(inputTransaction: String): String = {
+  def manipulateTransactionTrend7(inputTransaction: String): String = {
     val splitT = inputTransaction.split(",")
     var resultString = ""
    // if (counter == 1) {
