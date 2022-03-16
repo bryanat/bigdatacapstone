@@ -65,7 +65,7 @@ create or replace view pop_cat_avg_price as (
 select month, year, product_category, MAX(product_count), AVG_price 
 from (
 	SELECT extract(MONTH from datetime) as month, extract(YEAR from datetime) as year, product_category, COUNT(product_category) as product_count,round(AVG(price),2) as AVG_price 
-    FROM hivetable 
+    FROM hivetable
     WHERE payment_txn_success = 'Y' 
     GROUP BY month, year, product_category
     ) as hivetable1
