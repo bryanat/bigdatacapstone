@@ -67,14 +67,11 @@ group by product_category, AVG_price
 order by MAX(product_count) DESC, AVG_price DESC);
 
  -- Most Popular Dates For Purchases--
- create or replace view pop_date as (
-SELECT extract(DAY from datetime) as day, extract(MONTH from datetime) as month, extract(YEAR from datetime) as year, Count(*) as quantity 
-from hivetable 
-WHERE payment_txn_success = 'Y' 
-GROUP BY day, month, year 
-ORDER BY quantity DESC LIMIT 10);
-
-
+  create or replace view pop_date as(SELECT datetime,Count(*) 
+     from hivetable 
+     WHERE payment_txn_success = 'Y' 
+     GROUP BY datetime ORDER BY Count(*) DESC LIMIT 10);
+      
 -- Queries Ryan Y
 -- Change in price for products by timeframe
 create or replace view prod_price_change as (
