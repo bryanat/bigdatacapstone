@@ -72,7 +72,8 @@ order by MAX(product_count) DESC, AVG_price DESC);
  from hivetable 
  WHERE payment_txn_success = 'Y' 
  GROUP BY datetime ORDER BY Count(*) DESC LIMIT 10);
-      
+
+
 -- Queries Ryan Y
 -- Change in price for products by timeframe
 create or replace view prod_price_change as (
