@@ -36,21 +36,6 @@ object YashConsumer {
 object YashConsumer extends App {
     System.setProperty("hadoop.home.dir", "c:/winutils")
 
-    val spark = SparkSession
-      .builder()
-      .appName("project1")
-      .config("spark.master", "local")
-      .enableHiveSupport()
-      .getOrCreate()
-
-/*
-    val table = spark.read.option("header", "true").csv("dataset-online/samplecsv.csv")
-    //table.show();
-    table.createOrReplaceTempView("t1")
-    spark.sql("create table if not exists t2 as select * from t1");
-*/
-    //-----
-
     val warehouseLocation = "${system:user.dir}/spark-warehouse"
 
     val sparkConf = new SparkConf()
@@ -74,16 +59,13 @@ object YashConsumer extends App {
       "product_category STRING, payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
       "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE")
 
-    // val df_main = ssql.read.option("multiline","true").parquet("dataset-offline/")
-
-    ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/data-snapshot-20220316-1200.csv' OVERWRITE INTO TABLE hivetable")
+    ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/data-snapshot-20220316-10k3.txt' OVERWRITE INTO TABLE hivetable")
 
     val table2 = ssql.sql("SELECT * FROM hivetable")
     table2.show()
-    ssql.sql("select * from hivetable where payment_txn_success != 'Y' and payment_txn_success != 'N'").show()
+    //ssql.sql("select * from hivetable where payment_txn_success != 'Y' and payment_txn_success != 'N'").show()
 
     //Thread.sleep(60000*10);
-
 
     //adding mysql connectivity - IT WORKS!!!! Just gotta make sure you're using jdk 1.8
     //creates a new table within db selected, with table titled as "hivetable"
