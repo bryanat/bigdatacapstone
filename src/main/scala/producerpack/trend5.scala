@@ -38,7 +38,7 @@ object trend5 {
     var resultList = ListBuffer("")
     for (i <- 0 to returnAmount) {
       val tempString = trans.createInitialTransaction(rs, spark, orderID,  "All")
-      val resultString = manipulateTransactionTrend1(tempString, repeatCounter)
+      val resultString = manipulateTransactionTrend5(tempString, repeatCounter)
       orderCounter = orderCounter+1
       orderID = trendTag+orderCounter.toString
       repeatCounter = repeatCounter + 1
