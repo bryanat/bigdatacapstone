@@ -22,7 +22,7 @@ import org.apache.spark.sql.types.{StringType, StructField, StructType}
 
 object ClickstreamConsumerStreaming {
 
-  def consumerKafka(args: Array[String]) {
+  def consumerKafka(args: Array[String]): Unit = {
 
     //////if data does not load into hive table, delete spark-warehouse and metastore_db and try again///////////////////
     val topic = Set(args(0))
