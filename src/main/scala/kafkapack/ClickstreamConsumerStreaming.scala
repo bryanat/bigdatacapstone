@@ -36,6 +36,7 @@ object ClickstreamConsumerStreaming {
       .set("spark.sql.catalogImplementation","hive")
       .setMaster("local[*]")
       .setAppName("p3")
+      //.set("spark.sql.legacy.allowCreatingManagedTableUsingNonemptyLocation","true")
     val sc = new SparkContext(sparkConf)
     val ssc  = new StreamingContext(sc, Seconds(2))
     ssc.sparkContext.setLogLevel("ERROR")
@@ -47,7 +48,7 @@ object ClickstreamConsumerStreaming {
     "group.id" -> "trojan_horse",
     "auto.offset.reset" -> "latest",
     "enable.auto.commit" -> (false: java.lang.Boolean)
-     )
+    )
 
     //subscribe to kafka: topics are Array/Set type, not Strings
     val topics = Set(topic)
@@ -63,20 +64,22 @@ object ClickstreamConsumerStreaming {
       .config(sparkConf)
       .config("spark.executor.memory", "48120M") 
       .config("spark.sql.warehouse.dir", warehouseLocation)
+      .config("spark.hadoop.dfs.client.use.datanode.hostname", "true")
+      .config("spark.hadoop.dfs.datanode.use.datanode.hostname", "true")
       .enableHiveSupport()
       .getOrCreate()
       
       // Drop the main table if it already exists 
-    ssql.sql("DROP TABLE IF EXISTS hivetable")
+    ssql.sql("DROP TABLE IF EXISTS hivetable1 PURGE")
       // Create the main table to store your streams 
-    ssql.sql("CREATE TABLE IF NOT EXISTS hivetable(order_id STRING, customer_id STRING," +
+    ssql.sql("CREATE TABLE IF NOT EXISTS hivetable1(order_id STRING, customer_id STRING," +
         " customer_name STRING, product_id STRING, product_name STRING, product_category STRING, " +
         "payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
         "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING, timestamp STRING) " +
         " ROW FORMAT DELIMITED FIELDS TERMINATED BY ','STORED AS TEXTFILE")
 
-    ssql.sql("DROP TABLE IF EXISTS baddata")
-     ssql.sql("CREATE TABLE IF NOT EXISTS baddata(order_id STRING, timestamp STRING) STORED AS TEXTFILE")
+    ssql.sql("DROP TABLE IF EXISTS baddata1 PURGE")
+     ssql.sql("CREATE TABLE IF NOT EXISTS baddata1(order_id STRING, timestamp STRING) STORED AS TEXTFILE")
     val now = System.currentTimeMillis() 
     println(s"(Consumer) Current unix time is: $now")
     
@@ -114,13 +117,13 @@ object ClickstreamConsumerStreaming {
             val badRDD= rowRDD.filter(row=>row.length!=16).map(e=>Row(e(0)))
             val baddf = ssql.createDataFrame(badRDD, schemabad).withColumn("timestamp", currenttimeudf())
             //order IDs of bad data is inserted into the bad data table
-            baddf.write.mode("append").insertInto("baddata") 
-            ssql.sql("SELECT * FROM baddata").show()
+            baddf.write.option("path", warehouseLocation).mode("append").insertInto("baddata1") 
+            ssql.sql("SELECT * FROM baddata1").show()
             //good data is inserted into the main hive table
             val finalRDD = goodRDD.map(e ⇒ Row(e(0), e(1), e(2), e(3), e(4), e(5), e(6), e(7), e(8), e(9), e(10), e(11), e(12), e(13), e(14), e(15)))
             val df = ssql.createDataFrame(finalRDD, schema).withColumn("timestamp", currenttimeudf())
-            df.write.mode("append").insertInto("hivetable")
-            ssql.sql("SELECT * FROM hivetable").show()
+            df.write.option("path", warehouseLocation).mode("append").insertInto("hivetable1")
+            ssql.sql("SELECT * FROM hivetable1").show()
         
       }
         catch {
@@ -158,7 +161,7 @@ object ClickstreamConsumerStreaming {
     //messagedf.write.mode("append").insertInto("mainhive")
     // Creates a tempor view using the DataFrame
     //df.createOrReplaceTempView("messages")
-    //ssql.sql("INSERT INTO TABLE hivetable SELECT * FROM messages")
+    //ssql.sql("INSERT INTO TABLE hivetable1 SELECT * FROM messages")
     // topicdstream.foreachRDD {rdd => 
       //   rdd.foreach { record =>
         //get new spark session 

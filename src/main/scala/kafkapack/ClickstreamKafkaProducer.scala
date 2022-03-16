@@ -24,9 +24,8 @@ object ClickstreamKafkaProducer extends App{
 
   
   val ssc = MainContext.getStreamingContext()
-  val dstream = ssc.textFileStream("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dstream1")
-  //Producer team will stream their line by line stream data to socketTextStream("44.195.89.83", 9092)
-  //val dstream = ssc.socketTextStream(ip, port)
+  val dstream = ssc.textFileStream("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/dstream")
+ // val dstream = ssc.socketTextStream(ip, port)
   
   val props = new HashMap[String, Object]()
   props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
@@ -36,8 +35,8 @@ object ClickstreamKafkaProducer extends App{
   props.put(ProducerConfig.RETRIES_CONFIG, "3")
   props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true")
   props.put(ProducerConfig.ACKS_CONFIG, "all")
-  // props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "60000")
-  // props.put(ProducerConfig.BATCH_SIZE_CONFIG, "49152")
+  props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "60000")
+  props.put(ProducerConfig.BATCH_SIZE_CONFIG, "49152")
 
   //create an instance of broadcast Kafka producer
   val kafkasink = ssc.sparkContext.broadcast(KafkaSink(props))
