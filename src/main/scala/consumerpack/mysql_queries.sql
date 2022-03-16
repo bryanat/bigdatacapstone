@@ -44,18 +44,24 @@ group by payment_txn_success);
 
 -- Brandon Queries
 -- Most Common payment Methods 
-SELECT payment_type, COUNT(payment_txn_id) as count FROM hivetable GROUP BY payment_type ORDER BY count DESC;
+create or replace view common_payment as (
+SELECT payment_type, COUNT(payment_txn_id) as count 
+FROM hivetable 
+GROUP BY payment_type 
+ORDER BY count DESC);
 
 -- Avg purchase cost per person, grouped by ecommerce site
+create or replace view avg_cost_ecommerce as (
 SELECT ecommerce_website_name, round(AVG(price),2) as avg_price_person 
 FROM hivetable 
 WHERE payment_txn_success = 'Y' 
 GROUP BY ecommerce_website_name 
-ORDER BY avg_price_person desc;
+ORDER BY avg_price_person desc);
 
 
 -- Queries Mandeep--
--- Display popular product categories and average price per product categories group by product_category--
+-- Display popular product categories and average price per product categories group by product_category
+create or replace view pop_cat_avg_price as (
 select month, year, product_category, MAX(product_count), AVG_price 
 from (
 	SELECT extract(MONTH from datetime) as month, extract(YEAR from datetime) as year, product_category, COUNT(product_category) as product_count,round(AVG(price),2) as AVG_price 
@@ -64,11 +70,36 @@ from (
     GROUP BY month, year, product_category
     ) as hivetable1
 group by month, year, product_category, AVG_price 
-order by MAX(product_count) DESC;
+order by MAX(product_count) DESC, AVG_price DESC);
 
- -- Most Popular Dates For Purchases--    
+ -- Most Popular Dates For Purchases--
+ create or replace view pop_date as (
 SELECT extract(DAY from datetime) as day, extract(MONTH from datetime) as month, extract(YEAR from datetime) as year, Count(*) as quantity 
 from hivetable 
 WHERE payment_txn_success = 'Y' 
 GROUP BY day, month, year 
-ORDER BY quantity DESC LIMIT 10;
+ORDER BY quantity DESC LIMIT 10);
+
+
+-- Queries Ryan Y
+-- Change in price for products by timeframe
+create or replace view prod_price_change as (
+select product_name, price as sale, datetime
+from hivetable 
+group by product_name, price, datetime 
+order by product_name asc, datetime asc);
+
+-- Popular cities/countries by most purchases
+create or replace view pop_cities as (
+select city, country, count(payment_txn_id) as purchase_count 
+from hivetable 
+where payment_txn_success = 'Y' 
+group by city 
+order by purchase_count desc, city asc, country asc);
+
+create or replace view pop_countries as (
+select country, count(payment_txn_id) as purchase_count 
+from hivetable 
+where payment_txn_success = 'Y' 
+group by country 
+order by purchase_count desc);
