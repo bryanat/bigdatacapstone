@@ -76,14 +76,13 @@ object YashConsumer extends App {
 
     // val df_main = ssql.read.option("multiline","true").parquet("dataset-offline/")
 
-    ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")
+    ssql.sql("LOAD DATA LOCAL INPATH 'dataset-online/data-snapshot-20220316-1200.csv' OVERWRITE INTO TABLE hivetable")
 
     val table2 = ssql.sql("SELECT * FROM hivetable")
     table2.show()
     ssql.sql("select * from hivetable where payment_txn_success != 'Y' and payment_txn_success != 'N'").show()
 
     //Thread.sleep(60000*10);
-
 
 
     //adding mysql connectivity - IT WORKS!!!! Just gotta make sure you're using jdk 1.8
@@ -94,7 +93,7 @@ object YashConsumer extends App {
     Class.forName("com.mysql.jdbc.Driver")
 
     //load table into mysql
-    //ssql.table("hivetable").write.jdbc("jdbc:mysql://localhost:3306/proj3", "hivetable", prop)
+    ssql.table("hivetable").write.jdbc("jdbc:mysql://localhost:3306/proj3", "hivetable", prop)
 
     /*
     //testing on reading an existing mysql into spark df
