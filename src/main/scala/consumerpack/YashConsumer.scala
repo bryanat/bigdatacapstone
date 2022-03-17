@@ -67,7 +67,7 @@ object YashConsumer extends App {
 
     //Thread.sleep(60000*10);
 
-    //adding mysql connectivity - IT WORKS!!!! Just gotta make sure you're using jdk 1.8
+    //adding mysql connectivity - IT WORKS! Just gotta make sure you're using jdk 1.8
     //creates a new table within db selected, with table titled as "hivetable"
     val prop=new Properties()
     prop.put("user","root")
@@ -81,5 +81,5 @@ object YashConsumer extends App {
     //testing on reading an existing mysql into spark df
     val reading = ssql.read.jdbc("jdbc:mysql://localhost:3306/", "proj0.accounts", prop)
     reading.show()
-	*/
+	  */
 }
