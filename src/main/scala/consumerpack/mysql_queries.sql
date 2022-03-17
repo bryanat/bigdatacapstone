@@ -56,19 +56,20 @@ ORDER BY avg_price_person desc);
 -- Queries Mandeep--
 -- Display popular product categories and average price per product categories group by product_category
 create or replace view pop_cat_avg_price as (
-select product_category, MAX(product_count), AVG_price 
+select product_category, product_count, AVG_price 
 from (
-	SELECT extract(MONTH from datetime) as month, extract(YEAR from datetime) as year, product_category, COUNT(product_category) as product_count,round(AVG(price),2) as AVG_price 
-    FROM hivetable
-    WHERE payment_txn_success = 'Y' 
-    GROUP BY month, year, product_category
-    ) as hivetable1
-group by product_category, AVG_price 
-order by MAX(product_count) DESC, AVG_price DESC);
+	select product_category, product_count, round(AVG(price),2) as AVG_price 
+    FROM (
+		select product_category, COUNT(product_category) as product_count, price
+        from hivetable
+        where payment_txn_success = 'Y' 
+        group by product_category) as t1
+    GROUP BY product_category) as t2
+order by product_count DESC, AVG_price DESC);
 
  -- Most Popular Dates For Purchases--
  create or replace view pop_date as(
- SELECT product_name,datetime,Count(*) 
+ SELECT product_name, datetime, Count(*) 
  from hivetable 
  WHERE payment_txn_success = 'Y' 
  GROUP BY datetime ORDER BY Count(*) DESC LIMIT 10);
@@ -77,10 +78,12 @@ order by MAX(product_count) DESC, AVG_price DESC);
 -- Queries Ryan Y
 -- Change in price for products by timeframe
 create or replace view prod_price_change as (
-select product_name, price as sale, datetime
-from hivetable 
-group by product_name, price, datetime 
-order by product_name asc, datetime asc);
+select product_name, round(avg_price, 2) as avg_price, dates
+from (
+select product_name, avg(price) as avg_price, cast(datetime as DATE) as dates
+from hivetable
+group by product_name, dates) as t1
+order by product_name asc, dates asc);
 
 -- Popular cities by most purchases
 create or replace view pop_cities as (
