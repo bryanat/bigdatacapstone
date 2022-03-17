@@ -1,12 +1,12 @@
 -- Yash's queries
--- All failed transactions by country
+-- All Failed Transactions by Country
 create or replace view ft_l as (
 select order_id, payment_txn_id, product_name, price, product_category, city, country 
 from hivetable 
 where payment_txn_success = 'N' 
 order by country asc, city asc);
 
--- count of failed transactions by product category
+-- Count of Failed Transactions by Product Category
 create or replace view ft_c as (
 select product_category, count(payment_txn_id) as quantity
 from hivetable 
@@ -14,7 +14,7 @@ where payment_txn_success = 'N'
 group by product_category
 order by quantity desc);
 
--- count of failed transactions by failure reason
+-- Count of Failed Transactions by Failure Reason
 create or replace view fr_count as (
 select failure_reason, count(payment_txn_id) as quantity 
 from hivetable 
@@ -22,7 +22,7 @@ where payment_txn_success = 'N'
 group by failure_reason
 order by quantity desc);
 
--- count of successful and failed transactions
+-- Count of Successful and Failed transactions
 create or replace view sVf as (
 select payment_txn_success, count(payment_txn_id) as quantity 
 from hivetable 
@@ -47,17 +47,15 @@ ORDER BY avg_price_person desc);
 
 
 -- Queries Mandeep--
--- Display popular product categories and average price per product categories
+-- Display Popular Product Categories and Average Price per Product Categories
 create or replace view pop_cat_avg_price as (
 select product_category, product_count, AVG_price 
-from (
-	select product_category, product_count, round(AVG(price),2) as AVG_price 
-    FROM (
-		select product_category, COUNT(product_category) as product_count, price
-        from hivetable
-        where payment_txn_success = 'Y' 
-        group by product_category) as t1
-    GROUP BY product_category) as t2
+from (	select product_category, product_count, round(AVG(price),2) as AVG_price 
+		from (	select product_category, COUNT(product_category) as product_count, price
+				from hivetable
+				where payment_txn_success = 'Y' 
+				group by product_category) 
+		as t1 group by product_category) as t2
 order by product_count DESC, AVG_price DESC);
 
  -- Most Transactions by Date
