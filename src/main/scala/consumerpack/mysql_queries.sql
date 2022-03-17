@@ -1,5 +1,5 @@
 -- Yash's queries
--- All failed transactions by city, country
+-- All failed transactions by country
 create or replace view ft_l as (
 select order_id, payment_txn_id, product_name, price, product_category, city, country 
 from hivetable 
