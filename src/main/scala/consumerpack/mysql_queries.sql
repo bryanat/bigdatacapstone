@@ -6,13 +6,6 @@ from hivetable
 where payment_txn_success = 'N' 
 order by country asc, city asc);
 
--- failed transactions by price
-create or replace view ft_p as (
-select order_id, payment_txn_id, product_name, price 
-from hivetable 
-where payment_txn_success = 'N' 
-order by price desc);
-
 -- count of failed transactions by product category
 create or replace view ft_c as (
 select product_category, count(payment_txn_id) as quantity
@@ -54,7 +47,7 @@ ORDER BY avg_price_person desc);
 
 
 -- Queries Mandeep--
--- Display popular product categories and average price per product categories group by product_category
+-- Display popular product categories and average price per product categories
 create or replace view pop_cat_avg_price as (
 select product_category, product_count, AVG_price 
 from (
