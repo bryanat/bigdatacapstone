@@ -8,20 +8,22 @@ import scala.collection.mutable.HashMap
 // import kafkapack.KafkaDStreamExceptionHandler
 
 
-//() => KafkaProducer is equivalent to createProducer[KafkaProducer]()
+//////////////code reference link: https://blog.allegro.tech/2015/08/spark-kafka-integration.html//////////////////////////////
+
 class KafkaSink(createProducer: ()=>KafkaProducer[String, String]) extends Serializable {
   //calls the object that creates a lazily evaluated producer
   lazy val producer = createProducer()
-
+  
   //sends the producer record
   def send(topic: String, message: String): Unit= producer.send(new ProducerRecord(topic, message))
   def testsend(topic: String, message: String): RecordMetadata = producer.send(new ProducerRecord(topic, message)).get()
-
-}
   
+}
 
 
 
+
+//() => KafkaProducer is equivalent to createProducer[KafkaProducer]()
   //when KafkaSink object is called, apply method is implemented
   object KafkaSink {
 

@@ -14,7 +14,6 @@ import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.TaskContext
 import contextpack._
-import org.apache.spark.broadcast
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 
@@ -40,14 +39,20 @@ object ClickstreamConsumerStreaming {
     val sc = new SparkContext(sparkConf)
     val ssc  = new StreamingContext(sc, Seconds(2))
     ssc.sparkContext.setLogLevel("ERROR")
-  
+
+
+    //set kafka consumer config
      val kafkaParams = Map[String, Object](
     "bootstrap.servers" -> brokers,
     "key.deserializer" -> classOf[StringDeserializer],
     "value.deserializer" -> classOf[StringDeserializer],
     "group.id" -> "trojan_horse",
+    //earliest will throw an error if no message streams in when consumer starts
     "auto.offset.reset" -> "latest",
     "enable.auto.commit" -> (false: java.lang.Boolean)
+    //  "heartbeat.interval.ms" -> "3000",
+    //  "session.timeout.ms" -> "10000"
+    //"isolation.level"-> "read.committed"
     )
 
     //subscribe to kafka: topics are Array/Set type, not Strings
@@ -58,28 +63,32 @@ object ClickstreamConsumerStreaming {
       Subscribe[String, String](topic, kafkaParams)
     )
     
-    
+    //configure spark session
     val ssql = SparkSession
       .builder
       .config(sparkConf)
       .config("spark.executor.memory", "48120M") 
       .config("spark.sql.warehouse.dir", warehouseLocation)
-      .config("spark.hadoop.dfs.client.use.datanode.hostname", "true")
-      .config("spark.hadoop.dfs.datanode.use.datanode.hostname", "true")
       .enableHiveSupport()
       .getOrCreate()
+
+      // val hadoopConf = sc.hadoopConfiguration
+      // hadoopConf.set("mapreduce.input.fileinputformat.input.dir.recursive", "true")
       
       // Drop the main table if it already exists 
-    ssql.sql("DROP TABLE IF EXISTS hivetable1 PURGE")
+    ssql.sql("DROP TABLE IF EXISTS hivetable1")
       // Create the main table to store your streams 
     ssql.sql("CREATE TABLE IF NOT EXISTS hivetable1(order_id STRING, customer_id STRING," +
         " customer_name STRING, product_id STRING, product_name STRING, product_category STRING, " +
         "payment_type STRING, qty STRING, price STRING, datetime STRING, country STRING, city STRING, " +
         "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING, timestamp STRING) " +
+        //" ROW FORMAT DELIMITED FIELDS TERMINATED BY ','STORED AS TEXTFILE LOCATION 'hdfs://44.200.236.7:9000/user/hive/warehouse/'")
         " ROW FORMAT DELIMITED FIELDS TERMINATED BY ','STORED AS TEXTFILE")
 
-    ssql.sql("DROP TABLE IF EXISTS baddata1 PURGE")
-     ssql.sql("CREATE TABLE IF NOT EXISTS baddata1(order_id STRING, timestamp STRING) STORED AS TEXTFILE")
+    ssql.sql("DROP TABLE IF EXISTS baddata1")
+    ssql.sql("CREATE TABLE IF NOT EXISTS baddata1(order_id STRING, timestamp STRING) " +
+      //"STORED AS TEXTFILE LOCATION 'hdfs://44.200.236.7:9000/user/hive/warehouse/'")
+      "STORED AS TEXTFILE")
     val now = System.currentTimeMillis() 
     println(s"(Consumer) Current unix time is: $now")
     
@@ -90,8 +99,9 @@ object ClickstreamConsumerStreaming {
     
     
     
-    //creates the schema for rdds
-    val schemaString = "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty,price,datetime,country,city," +
+    //creates the schema for dataframes
+    val schemaString = "order_id,customer_id,customer_name,product_id,product_name,product_category,payment_type,qty," +
+      "price,datetime,country,city," +
     "ecommerce_website_name,payment_txn_id,payment_txn_success,failure_reason"
     val schema = StructType(schemaString.split(",", -1).map(fieldName => StructField(fieldName, StringType, true)))
     val schemabadString = "order_id"
@@ -100,36 +110,35 @@ object ClickstreamConsumerStreaming {
     lines.foreachRDD {rdd =>
         //when rdds are streamed in...
         if (rdd!=null) {
-          try {
+          //try {
             val ssql = SparkSession.builder.config(rdd.sparkContext.getConf).getOrCreate()
             import ssql.implicits._
+            //udf for adding the timestamp column
             val currenttimeudf = udf(()=>System.currentTimeMillis())
-            
-            //val msgReceiveTime = System.currentTimeMillis()
-            //println(rdd.collect().mkString)
-            
             //samples from rdd for testing purposes
             //val samplerdd = rdd.sample(false, 0.05, 123)
-            //apply filter on specific columns,     
             val rowRDD = rdd.map(_.split(","))
             val goodRDD = rowRDD.filter(row=>row.length==16) 
             //records with extra or missing columns will be filtered out 
             val badRDD= rowRDD.filter(row=>row.length!=16).map(e=>Row(e(0)))
             val baddf = ssql.createDataFrame(badRDD, schemabad).withColumn("timestamp", currenttimeudf())
-            //order IDs of bad data is inserted into the bad data table
-            baddf.write.option("path", warehouseLocation).mode("append").insertInto("baddata1") 
+            //order IDs of bad data is inserted into bad data table
+            baddf.write
+            //.option("path", "hdfs://44.200.236.7:9000/user/hive/warehouse/")
+            .mode("append").insertInto("baddata1") 
             ssql.sql("SELECT * FROM baddata1").show()
-            //good data is inserted into the main hive table
+            //good data is inserted into the main hivetable
             val finalRDD = goodRDD.map(e ⇒ Row(e(0), e(1), e(2), e(3), e(4), e(5), e(6), e(7), e(8), e(9), e(10), e(11), e(12), e(13), e(14), e(15)))
             val df = ssql.createDataFrame(finalRDD, schema).withColumn("timestamp", currenttimeudf())
-            df.write.option("path", warehouseLocation).mode("append").insertInto("hivetable1")
+            df.write
+            //.option("path", "hdfs://44.200.236.7:9000/user/hive/warehouse/")
+            .mode("append").insertInto("hivetable1")
             ssql.sql("SELECT * FROM hivetable1").show()
-        
-      }
-        catch {
-          //case e: AnalysisException=>println("column number mismatch")
-          //case e: NumberFormatException=>println("bad data in quantity or price") 
-          case e: ArrayIndexOutOfBoundsException=>println("missing or extra column")}
+          
+      // }
+      //   catch {
+      //     case e: NumberFormatException=>println("bad data in quantity or price") 
+      //   }
         }
     }
       ssc.start()
@@ -138,89 +147,14 @@ object ClickstreamConsumerStreaming {
   }
 }
 
-/** Case class for converting RDD to DataFrame */
-// case class Transaction(order_id: String,customer_id: String,customer_name: String,product_id: 
-  //   String,product_name: String,product_category: String,price: String,payment_type:String,qty:String,datetime:String,
-//   city:String, country:String, ecommerce_webname:String, payment_txn_id:String, payment_txn_success:String)
-  // val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
-  
-// val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
-  //   ssc, kafkaParams, topicsSet)
-  
-  // val lines = messages.map(_._2)
-  
-  //val testrdd = rdd.saveAsTextFile("file:///C:/Users/joyce/IdeaProjects/bigdatacapstone/dataset-online/data"+sc.applicationId+"/"+ System.currentTimeMillis())
 
-  // val df = rdd.map{x=>
-    //   println(x)
-    //   Transaction(x(0).toString, x(1).toString, x(2).toString, x(3).toString,
-    // x(4).toString,x(5).toString, x(6).toString, x(7).toString, x(8).toString, x(9).toString,
-    //   x(10).toString,x(11).toString, x(12).toString, x(13).toString, x(14).toString)}
-    //   .toDF("order_id","customer_id", "customer_name" )
-    //for Correlation Matrix sampled data
-    //messagedf.write.mode("append").insertInto("mainhive")
-    // Creates a tempor view using the DataFrame
-    //df.createOrReplaceTempView("messages")
-    //ssql.sql("INSERT INTO TABLE hivetable1 SELECT * FROM messages")
-    // topicdstream.foreachRDD {rdd => 
-      //   rdd.foreach { record =>
-        //get new spark session 
-        //val sc = SparkContext.getOrCreate()
-        // val newconfig = new SparkConf().setMaster("local[*]").setAppName(s"SparkSession#${nr}")
-        // val ssql = SparkSession
-        // .builder
-        // .config(newconfig)
-        // .config("spark.sql.warehouse.dir", warehouseLocation)
-        //  .enableHiveSupport()
-        // .getOrCreate()
-        // ssql.newSession()
-        
-        
-        //import ssql.implicits._
-        //get new spark context
-        //val sc = SparkContext.getOrCreate()
-        //.value() returns deserialized value column
-        //val value = record.value() 
-        //val time = record.timestamp()
-        // val v = value.split(",")
-        //filewriter.write(v+"\n")
-        
-        //try {
-          //RDD[String] to RDD[Case Class] to DF
-       // val messagerdd = sc.parallelize(List(v))
-        // .map(x=>Transaction(x(0).toString, x(1).toString, x(2).toString, x(3).toString,
-        //  x(4).toString,x(5).toString, x(6).toString, x(7).toString, x(8).toString, x(9).toString,
-        // x(10).toString,x(11).toString, x(12).toString, x(13).toString, x(14).toString))
-        //.coalesce(1)
-        //val messagedf = messagerdd.toDF()
-        //messagedf.write.mode("append").insertInto("mainhive")
-      // Creates a temporary view using the DataFrame
-      // messagedf.show()
-      //messagedf.createOrReplaceTempView("csmessages")
-      // val v1 = v(0)
-      // val v2 = v(1)
-      // val v3 = v(2)
-      // val v4 = v(3)
-      // val v5 = v(4)
-      // val v6 = v(5)
-      // val v7 = v(6)
-      // val v8 = v(7)
-      // val v9 = v(8)
-      // val v10 = v(9)
-      // val v11 = v(10)
-      // val v12 = v(11)
-      // val v13 = v(12)
-      // val v14 = v(13)
-      // val v15 = v(14)
-      //Insert continuous streams into Hive table
-      //ssql.sql("INSERT INTO TABLE mainhive SELECT * FROM csmessages")
-      //ssql.sql(s"INSERT INTO TABLE mainhive VALUES ('$v1', '$v2', '$v3', '$v4','$v5','$v6','$v7','$v8','$v9','$v10','$v11','$v12','$v13','$v14','$v15')")
-      
-      // Select the parsed messages from the table using SQL and print it (since it runs on drive display few records)
-      //val messagesqueryDF =
-        //ssql2.sql("SELECT * FROM csmessages")
-        // println(s"========= $time =========")
-        // nr+=1
-        //} catch {case e: NullPointerException=>println("message not added to table")} 
-        // }
-        // }
+
+
+
+
+
+
+
+
+
+
