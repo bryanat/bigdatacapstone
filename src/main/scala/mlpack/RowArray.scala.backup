@@ -1,0 +1,114 @@
+package mlpack
+import contextpack._
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.functions.udf
+import org.apache.spark.sql._
+import org.apache.spark._
+import scala.util.Try
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.functions.broadcast
+
+object RowArray {
+
+    val warehouseLocation = "hdfs://44.195.89.83:9000//remotedir"
+
+
+    val sparkConf = new SparkConf()
+      .set("spark.sql.warehouse.dir", warehouseLocation)
+      .set("spark.sql.catalogImplementation","hive")
+      .setMaster("local[*]")
+      .setAppName("p3")
+
+    val ssql = SparkSession
+      .builder
+      .config(sparkConf)
+      .config("spark.executor.memory", "48120M") 
+      .config("spark.sql.warehouse.dir", warehouseLocation)
+      .enableHiveSupport()
+      .getOrCreate()
+
+  
+
+    def getProductCategory(): Map[String, String] = {
+      val categoryMap = Map[String, String]()
+      var num = 1
+      ssql.sql("SELECT product_category from hivetable").collect.foreach{category=> {
+        if (categoryMap.contains(category(0).toString)!=true) {
+          categoryMap += (category -> num.toString)
+          num+=1
+        }
+      }
+      }
+      categoryMap
+    }
+
+    def getPaymentType(): Map = {
+      val paymentMap = new Map[String]()
+      val num = 1
+      ssql.sql("SELECT payment_type from hivetable").collect.foreach{payment=> {
+        if (paymentMap.contains(payment.toLowerCase())!=true) {
+          paymentMap += (payment -> num.toString)
+          num+=1
+        }
+      }
+      }
+      paymentMap
+    }
+    def getCountry(): Map = {
+      val countryMap = new Map[String]()
+      val num = 1
+      ssql.sql("SELECT payment_type from hivetable").collect.foreach{country=> {
+        if (countryMap.contains(country.toLowerCase())!=true) {
+          countryMap += (country -> num.toString)
+          num+=1
+        }
+      }
+      }
+      countryMap
+    }
+  
+    //returns a scala array of ROW
+    def getArray(): Array[Row] = {
+      //maps for categorical features (all labels and features must be Double type for dense/sparse vectors)
+      //product category, payment type, country, city, website
+      val productCategoryMap = getProductCategory()
+      val paymentTypeMap = getPaymentType()
+      val countryMap = getCountry()
+      val paymentSucessMap = Map("N"->"1" , "Y"->"2")
+        //udfs that get year, month, day, time of day from datetime
+        //if can be converted into integer, 
+        val getyearudf = udf((datetime:String)=> {
+        val x = Try(datetime.split("-").apply(0).toInt).toOption
+        if (x=!None) {x.toString} else {0}})
+        val getmonthudf = udf((datetime:String)=> {
+        val x = Try(datetime.split("-").apply(1).toInt).toOption
+        if (x!=None) {x.toString} else {0}})
+        val getdayudf = udf((datetime:String)=> {
+        val x = Try(datetime.split("-").apply(2).slice(0, 2).toInt).toOption
+        if (x!=None) {x.toString} else {0}})
+        val getcategoryudf = udf((category: String)=>productCategoryMap.getOrElse(category.toLowerCase(), 0))
+        val gettypeudf = udf((payment: String)=>paymentTypeMap.getOrElse(payment.toLowerCase(), 0))
+        val getsucessudf = udf((payment:String)=>paymentSucessMap.getOrElse(payment.toLowerCase(), 0))
+        val getcountryudf = udf((country:String)=>countryMap.getOrElse(country.toLowerCase(), 0))
+        
+
+        val rowArray = ssql.sql("SELECT customer_id, product_id, product_category, payment_type, qty, price, country, datetime, payment_txn_sucess FROM hivetable").toDF("customer_id", "product_id", "product_category", "payment_type", "qty", "price", "country","datetime", "payment_txn_sucess")
+        .filter("customer_id is not NULL").filter("product_id is not NULL").filter("qty is not NULL").filter("price is not NULL").filter("datetime is not NULL").filter("product_category is not NULL").filter("payment_type is not NULL")
+        .filter("payment_txn_sucess is not NULL").filter("datetime is not NULL")
+        .withColumn("time", gettimeudf($"datetime")).withColumn("day",getdayudf($"datetime")).withColumn("month", getmonthudf($"datetime")).withColumn("year", getyearudf($"datetime"))
+        .withColumn("category_id", getcategoryudf($"product_category"))
+        .withColumn("payment_type_id", gettypeudf($"payment_type"))
+        .withColumn("success_id", getsucessudf($"payment_txn_success"))
+        .withColumn("country_id", getcountryudf($"country"))
+        .where(col("sucess")!=0).where(col("payment_type")!=0).where(col("category")!=0).where(col("year")!=0).where(col("month")!=0).where(col("day")!=0).where(col("countr")!=0)
+        .drop("datetime").drop("product_category").drop("payment_type").drop("payment_txn_sucess")
+        .collect()
+        rowArray
+    }
+
+
+}
+
+case class Transaction(order_id: String,customer_id: String,customer_name: String,product_id: 
+    String,product_name: String,product_category: String,price: String,payment_type:String,qty:String,datetime:String,
+  city:String, country:String, ecommerce_webname:String, payment_txn_id:String, payment_txn_success:String)

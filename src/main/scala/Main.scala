@@ -35,12 +35,12 @@ object Main {
     //MainProducerEntry.main() //need two terminals "sbt run" for Kafka entry points
 
     ///Socket Main
-    SocketServerPart
+    //SocketServerPart
 
     ////Producer Main
-    MainProducer.startMainProducer()
+    //MainProducer.startMainProducer()
     ////Consumer Main
-    // MainConsumer.startMainConsumer()    
+     MainConsumer.startMainConsumer()    
     // ryConsumerTest.queryConsumer()
     //val ryProducerTest = new RYProducerTest
     //val ryConsumerTest = new RYConsumer
