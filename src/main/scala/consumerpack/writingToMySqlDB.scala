@@ -30,6 +30,7 @@ object writingToMySqlDB extends App{
     "ecommerce_website_name STRING, payment_txn_id STRING, payment_txn_success STRING, failure_reason STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE")
 
   /*val dfTest = ssql.sql("LOAD DATA LOCAL INPATH 'input/sample-of-final-data.csv' OVERWRITE INTO TABLE hivetable")*/
+  //new data-snapshot.csv file loaded
   val dfTest = ssql.sql("LOAD DATA LOCAL INPATH 'input/data-snapshot.txt' OVERWRITE INTO TABLE hivetable")
   ssql.sql("SELECT * FROM hivetable").show()
 
@@ -50,8 +51,8 @@ object writingToMySqlDB extends App{
     "COUNT(product_category) as product_count,round(AVG(price),2) as AVG_price from " +
     "hivetable WHERE payment_txn_success = 'Y' GROUP BY month,year,product_category )"+
     "group by product_category,AVG_price order by MAX(product_count) DESC ")
-  sqlDf3.show(300)
-  sqlDf3
+   sqlDf3.show(300)
+   sqlDf3
     .coalesce(1) // number of parts/files
     .write
     .mode(SaveMode.Append)
@@ -59,24 +60,22 @@ object writingToMySqlDB extends App{
    // .csv("output/Q1csv")
 
   println("Most Popular Dates For Purchases")
-
-
- /* val sqlDf4=ssql.sql("SELECT product_name,datetime,Count(*) from hivetable WHERE payment_txn_success = 'Y' " +
+ val sqlDf4=ssql.sql("SELECT product_name,datetime,Count(*) from hivetable WHERE payment_txn_success = 'Y' " +
     "GROUP BY datetime,product_name ORDER BY Count(*) DESC LIMIT 10")
-  sqlDf4.show(300)*/
+  sqlDf4.show(300)
 
-  val sqlDf4=ssql.sql("select cast(datetime as date) as dates, " +
+  val sqlDf5=ssql.sql("select cast(datetime as date) as dates, " +
     "count(order_id) as c from hivetable where payment_txn_success = 'Y' " +
     "group by dates order by c desc limit 10")
-  sqlDf4.show(300)
-  /*val sqlDf4 = ssql.sql("SELECT extract(DAY from datetime)as day,extract(MONTH from datetime)as month," +
+  sqlDf5.show(300)
+  val sqlDf6 = ssql.sql("SELECT extract(DAY from datetime)as day,extract(MONTH from datetime)as month," +
     "extract(YEAR from datetime)as year,Count(*) from hivetable WHERE payment_txn_success = 'Y' " +
-    "GROUP BY day,month,year ORDER BY Count(*) DESC LIMIT 10")*/
- /* sqlDf4.show(300)
-  sqlDf4
+    "GROUP BY day,month,year ORDER BY Count(*) DESC LIMIT 10")
+  sqlDf6.show(300)
+  sqlDf6
     .coalesce(1) // number of parts/files
     .write
     .mode(SaveMode.Append)
-    .option("header", true)*/
+    .option("header", true)
     //.csv("output/Q2csv")
 }
